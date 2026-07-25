@@ -71,31 +71,47 @@ Hooks live in `.githooks/` (`core.hooksPath`). They:
 - enforce [Conventional Commits](https://www.conventionalcommits.org/)
 - on push, verify submodule gitlinks still resolve
 
-### 3. Run the OSS MCP (SteadyHelm)
+### 3. Run the OSS MCP (Starling Lite — recommended)
 
 ```bash
-cd steadyhelm
-go build -o steadyhelm .
-./steadyhelm --mode=readonly --transport=stdio
+make starling-lite
+./bin/starling-lite --mode=readonly --transport=stdio \
+  --registry=mcp/tools/registry.json
 ```
 
-Cursor / Claude Desktop:
+Or SteadyHelm alone (cluster tools only):
+
+```bash
+make steadyhelm
+./bin/steadyhelm --mode=readonly --transport=stdio
+```
+
+Cursor / Claude Desktop (full flock tools):
 
 ```json
 {
   "mcpServers": {
-    "steadyhelm": {
-      "command": "/path/to/warble-army/steadyhelm/steadyhelm",
-      "args": ["--mode=readonly", "--transport=stdio"],
+    "warble-army": {
+      "command": "/path/to/warble-army/bin/starling-lite",
+      "args": ["--mode=readonly", "--transport=stdio", "--registry", "/path/to/warble-army/mcp/tools/registry.json"],
       "env": { "KUBECONFIG": "/home/you/.kube/config" }
     }
   }
 }
 ```
 
-See [`mcp/README.md`](mcp/README.md) for the full **Starling Lite** tool surface (scan + cluster + remediate) and example client configs under [`mcp/config/`](mcp/config/).
+See [`mcp/README.md`](mcp/README.md) and [`mcp/starling-lite/README.md`](mcp/starling-lite/README.md).
 
-### 4. Scan manifests (ShrikeOps)
+### 4. Reflexion agent demo
+
+```bash
+make agent-demo
+# or manually:
+./bin/starling-lite --transport=http --addr=:8822 &
+python3 agents/reflexion/run.py --path shrikeops-demo/k8s/bad/root-container.yaml
+```
+
+### 5. Scan manifests (ShrikeOps)
 
 ```bash
 cd shrikeops/scanner
@@ -108,10 +124,10 @@ go run ./cmd/cli/main.go scan ../../shrikeops-demo/k8s/bad/root-container.yaml
 
 | Phase | What | Status |
 |-------|------|--------|
-| **0** | Umbrella + submodules + hooks + master docs | **this repo** |
-| **1** | SteadyHelm release as public MCP; document tool registry | in progress |
-| **2** | Starling Lite facade: `scan_*` + SteadyHelm tools under one MCP | schemas in [`mcp/`](mcp/) |
-| **3** | Reflexion-style actor/critic agents over those tools | planned |
+| **0** | Umbrella + submodules + hooks + master docs | **done** |
+| **1** | SteadyHelm public embed API (`pkg/mcpserver`) | **done** |
+| **2** | Starling Lite facade (`make starling-lite`) | **done** |
+| **3** | Reflexion actor/critic scaffold (`agents/reflexion`) | **scaffold** |
 | **4** | Plugin protocol + SARIF / GitHub Checks marketplace | planned |
 
 **SaaS boundary:** Warble Cloud login, multi-tenant score history, and private `warble-core` stay commercial. Local kubeconfig + dry-run remediations stay OSS.

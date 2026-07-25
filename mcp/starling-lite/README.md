@@ -1,36 +1,69 @@
-# Starling Lite (Phase 2 scaffold)
+# Starling Lite
 
-Thin MCP facade that exposes [`../tools/registry.json`](../tools/registry.json) and dispatches to:
+Thin **OSS MCP facade** that loads [`../tools/registry.json`](../tools/registry.json) and dispatches to:
 
 | Backend | Tools |
 |---------|--------|
-| **SteadyHelm** | `list_*`, `get_*`, `cluster_summary`, `scale_deployment`, `delete_pod` |
-| **ShrikeOps** | `scan_manifest`, `scan_helm`, `scan_cluster_export` |
-| **Local patcher** | `propose_remediation`, `apply_remediation` |
+| **SteadyHelm** (`pkg/mcpserver`) | `list_*`, `get_*`, `cluster_summary`, writes |
+| **ShrikeOps** (`pkg/scan`) | `scan_manifest`, `scan_helm`, `scan_cluster_export` |
+| **Local patcher** | `propose_remediation`, `apply_remediation` (dry-run first) |
 
-## Status
+## Build & run
 
-- **Schemas:** ready under `mcp/tools/`
-- **Binary:** not implemented yet — use SteadyHelm + ShrikeOps CLI until this lands
+From the `warble-army` root:
 
-## Planned package layout
+```bash
+make starling-lite
+./bin/starling-lite --mode=readonly --transport=stdio \
+  --registry=mcp/tools/registry.json
+```
+
+HTTP (agents / Reflexion):
+
+```bash
+./bin/starling-lite --mode=readonly --transport=http --addr=:8822
+curl -s localhost:8822/health
+```
+
+### MCP client config
+
+```json
+{
+  "mcpServers": {
+    "warble-army": {
+      "command": "/path/to/warble-army/bin/starling-lite",
+      "args": ["--mode=readonly", "--transport=stdio", "--registry", "/path/to/mcp/tools/registry.json"],
+      "env": { "KUBECONFIG": "/home/you/.kube/config" }
+    }
+  }
+}
+```
+
+## Layout
 
 ```text
 starling-lite/
-├── README.md          ← this file
-├── cmd/starling-lite/
-│   └── main.go        # flags: --mode, --transport, --registry, --addr
+├── cmd/starling-lite/main.go
 ├── internal/
-│   ├── dispatch/      # name → backend
-│   ├── steadyhelm/    # embed or exec SteadyHelm handlers
-│   ├── shrikeops/     # CLI or HTTP client
-│   └── remediate/     # finding → patch
-└── go.mod
+│   ├── config/
+│   ├── protocol/      # JSON-RPC MCP types
+│   ├── registry/      # load registry.json
+│   ├── scanx/         # ShrikeOps + helm template
+│   ├── remediate/     # propose / apply gates
+│   └── server/        # stdio + HTTP + dispatch
+└── go.mod             # replace → ../../steadyhelm, ../../shrikeops/scanner
 ```
 
-## Acceptance criteria
+## Safety
 
-1. `tools/list` matches registry names (minus write tools in readonly mode).
-2. `scan_manifest` on `shrikeops-demo/k8s/bad/root-container.yaml` returns grade F-class findings.
-3. `cluster_summary` works with valid kubeconfig.
-4. `apply_remediation` with `dry_run=false` without `confirm=true` returns `-32004`.
+- Default `--mode=readonly` hides write tools.
+- `apply_remediation` requires `confirm=true` when `dry_run=false`.
+- Optional `--allow-namespaces=ns1,ns2` for writes.
+- Real cluster apply is still operator/`kubectl` in Phase 2; Phase 3 Reflexion adds gated apply.
+
+## Smoke
+
+```bash
+make test-mcp
+make agent-demo
+```
