@@ -1,0 +1,26 @@
+# gcloud builds submit --config=deploy/agentgateway/cloudbuild.yaml .
+substitutions:
+  _TAG: latest
+  _REGISTRY: us-central1-docker.pkg.dev/warble-tech/warble
+
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - deploy/agentgateway/Dockerfile.starling-lite
+      - -t
+      - ${_REGISTRY}/starling-lite:${_TAG}
+      - -t
+      - ${_REGISTRY}/starling-lite:latest
+      - .
+
+images:
+  - ${_REGISTRY}/starling-lite:${_TAG}
+  - ${_REGISTRY}/starling-lite:latest
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+
+timeout: 1200s

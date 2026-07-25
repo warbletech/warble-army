@@ -22,6 +22,9 @@ spec:
       serviceAccountName: warble-army-mcp
       securityContext:
         runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
         seccompProfile:
           type: RuntimeDefault
       # Prefer general pools — ops-pool no longer exists on warble-cluster
@@ -29,7 +32,7 @@ spec:
         # MCP backend (Warble Army flock tools)
         - name: starling-lite
           # Build+push: make agentgateway-image REGISTRY=us-central1-docker.pkg.dev/warble-tech/warble
-          image: us-central1-docker.pkg.dev/warble-tech/warble/starling-lite:latest
+          image: us-central1-docker.pkg.dev/warble-tech/warble/starling-lite:6c6505f
           imagePullPolicy: IfNotPresent
           args:
             - --mode=readonly
@@ -53,6 +56,8 @@ spec:
               cpu: 500m
               memory: 512Mi
           securityContext:
+            runAsUser: 65532
+            runAsGroup: 65532
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
@@ -88,6 +93,8 @@ spec:
               cpu: 500m
               memory: 512Mi
           securityContext:
+            runAsUser: 65532
+            runAsGroup: 65532
             allowPrivilegeEscalation: false
             capabilities:
               drop: ["ALL"]
