@@ -1,12 +1,13 @@
-# Starling EX — Community Edition (warbleoss.org)
+# Starling EX Community (warbleoss.org)
 
-**Status:** Planned  
+**Status:** Community Edition live (chart + demo); **CNCF donation planned**  
 **Home:** [warbleoss.org](https://warbleoss.org)  
-**Demo MCP (today):** [https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)
+**Demo MCP (today):** [https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)  
+**Governance:** [GOVERNANCE.md](GOVERNANCE.md) — Warble steward today; **plan to donate Starling EX Community to CNCF**. Platform LF work is **Frakma-X**, not this project.
 
 ## What CE is
 
-**Starling EX Community Edition** is the self-hosted, Apache-2.0 (or equivalent) open flock for Kubernetes agent ops:
+**Starling EX Community** (also “Starling EX CE”) is the self-hosted, Apache-2.0 (or equivalent) open flock for Kubernetes agent ops:
 
 | Include in CE | Keep commercial (Warble Cloud) |
 |---------------|--------------------------------|
@@ -25,9 +26,10 @@ CE is **not** a thin open-core tease of every Starling Cloud API. It is a comple
 ```text
 warble-tech/warble-army          # umbrella (submodules + MCP registry) — exists
 warble-tech/shrikeops            # ShrikeOps — exists (public)
-warble-tech/heron-ops            # rename of steadyhelm — planned
-warble-tech/starling-ex-ce       # CE packaging: Helm chart, install docs, examples
+warble-tech/heron-ops            # Heron Ops (was SteadyHelm) — public
+warble-army/charts/starling-ex-ce  # CE packaging: Helm chart — exists
 warble-tech/starling             # product release channel (binaries) — optional CE binaries later
+# Future CNCF org transfer: project name TBD with TOC
 ```
 
 Website:
@@ -81,8 +83,16 @@ Exposes:
 
 - [ ] Discord / Office Hours linked from warbleoss.org
 - [ ] RFC process (reuse `warble-tech/community`)
-- [ ] Showcase: “powered by Starling EX CE”
+- [ ] Showcase: “powered by Starling EX Community”
 - [ ] Optional dual-track: CE tags vs Starling Cloud releases
+
+### Phase D — CNCF donation path
+
+- [ ] Maintainer set + SECURITY.md + CoC on CE surfaces
+- [ ] Adopters list
+- [ ] Trademark plan (Community vs commercial Starling)
+- [ ] Sandbox proposal draft for CNCF TOC / TAG Runtime or App Delivery
+- [ ] Coordinate messaging with **Frakma-X** (LF wing)—no foundation mix-up
 
 ## License stance
 

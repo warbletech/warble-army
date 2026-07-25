@@ -2,8 +2,7 @@
 
 **Open flock of Kubernetes agents + MCP** — scan, observe, propose, remediate.
 
-> Birds of a feather: **[ShrikeOps](brand/shrike-ops/)** hunts bad config, **[Heron Ops](brand/heron-ops/)** (formerly SteadyHelm) gives agents live cluster context via MCP, **Starling Lite / Starling EX CE** coordinates the flock. Community home: **[warbleoss.org](https://warbleoss.org)**.
-
+> Birds of a feather: **[ShrikeOps](brand/shrike-ops/)** hunts bad config, **[Heron Ops](brand/heron-ops/)** (formerly SteadyHelm) gives agents live cluster context via MCP, **Starling EX Community** coordinates the flock (**CNCF donation planned**). Community home: **[warbleoss.org](https://warbleoss.org)**. Platform LF wing: **Frakma-X**.
 This repository is the **umbrella** that wires the flock together with submodules, a stable MCP tool layout, and maintenance hooks. Child product code lives in its own repos under [github.com/warble-tech](https://github.com/warble-tech).
 
 ```text
@@ -224,7 +223,8 @@ make registry && make starling-lite && make test-mcp
 | Doc | Description |
 |-----|-------------|
 | [`docs/BRAND.md`](docs/BRAND.md) | Flock brand map (Heron Ops, ShrikeOps, Starling) |
-| [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md) | Community Edition plan for warbleoss.org |
+| [`docs/GOVERNANCE.md`](docs/GOVERNANCE.md) | Warble / CNCF path / Frakma-X LF wing |
+| [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md) | Starling EX Community + CNCF donation plan |
 | [`docs/HERON_OPS_RENAME.md`](docs/HERON_OPS_RENAME.md) | SteadyHelm → Heron Ops checklist |
 | [`docs/architecture.md`](docs/architecture.md) | Technical stack, OSS vs SaaS |
 | [`docs/MAINTAINING.md`](docs/MAINTAINING.md) | Submodules, remotes, hooks, release pins |

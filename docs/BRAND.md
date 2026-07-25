@@ -1,6 +1,6 @@
 # Warble Army — flock brand map
 
-Open-source birds of Kubernetes ops. Commercial Starling Cloud remains under Warble; **Community Edition** ships under **[warbleoss.org](https://warbleoss.org)**.
+Open-source birds of Kubernetes ops. Commercial Starling Cloud remains under Warble; **Starling EX Community** ships under **[warbleoss.org](https://warbleoss.org)** and is **planned for CNCF donation**. Platform openness under the Linux Foundation lives in **Frakma-X** (LF wing)—see [GOVERNANCE.md](GOVERNANCE.md).
 
 ## The flock
 
@@ -11,7 +11,8 @@ Open-source birds of Kubernetes ops. Commercial Starling Cloud remains under War
 | **Starling Lite** | Starling (CE) | MCP facade: scan + cluster + remediate registry | `warble-army/mcp/starling-lite` | OSS |
 | **Agent Gateway** | — (infra) | Front door: MCP federation, CORS, metrics | `deploy/agentgateway` + agentgateway.dev | Deployed |
 | **Starling EX** | Starling | Full agent-facing K8s ops product | private `warble-core` + public release channel | SaaS / Enterprise |
-| **Starling EX Community Edition** | Starling | Self-hosted CE of Starling EX for the community | `warble-army/charts/starling-ex-ce` + **warbleoss.org** | **Chart + site live** |
+| **Starling EX Community** | Starling | Self-host CE flock (Lite + Heron + Shrike); **CNCF donation planned** | `charts/starling-ex-ce` + **warbleoss.org** | **Chart + site; CNCF path** |
+| **Frakma-X** | — | **Linux Foundation wing** for open FRAKMA / platform work | *forming* | LF program (planned) |
 | **Reflexion** | — | Actor/critic agent loop over MCP tools | `agents/reflexion` | Scaffold |
 | **Army umbrella** | Flock | Submodules, MCP tool registry, CI, brand | `warble-tech/warble-army` | Live |
 
@@ -57,12 +58,23 @@ ShrikeOps spelling stays **ShrikeOps** (product) / `shrikeops` (CLI & repo). Opt
 
 | Domain | Purpose |
 |--------|---------|
-| [warbleoss.org](https://warbleoss.org) | **Home for Community Edition** docs, downloads, community |
+| [warbleoss.org](https://warbleoss.org) | **Starling EX Community** home (CNCF path candidate) |
 | [warblecloud.com](https://warblecloud.com) | Commercial Starling / Warble Cloud product |
-| [frakma.io](https://frakma.io) | Platform / FRAKMA / internal tooling demos |
+| [frakma.io](https://frakma.io) | FRAKMA platform / enterprise |
 | starling-ex.frakma.io/lite | Public **Starling Lite** MCP (CE-friendly demo) |
+| *Frakma-X (LF)* | Linux Foundation wing (when chartered) |
+
+## Foundations (short)
+
+| Wing | Foundation | Project surface |
+|------|------------|-----------------|
+| **Starling EX Community** | **CNCF** (planned donation) | Agent ↔ cluster ops (MCP, scan, remediate) |
+| **Frakma-X** | **Linux Foundation** | Open platform / LLMOps stack collaboration |
+
+Do not say “CNCF project” or “LF project” until the foundation accepts the project. Prefer: *“planning CNCF donation”* / *“Linux Foundation wing”*.
 
 ## See also
 
-- [STARLING_EX_CE.md](STARLING_EX_CE.md) — Community Edition scope and roadmap  
+- [GOVERNANCE.md](GOVERNANCE.md) — commercial vs OSS vs CNCF vs LF  
+- [STARLING_EX_CE.md](STARLING_EX_CE.md) — Community technical scope and roadmap  
 - [architecture.md](architecture.md) — technical stack  
