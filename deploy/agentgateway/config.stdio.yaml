@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Agent Gateway spawns Starling Lite over stdio (no separate MCP process).
+# Useful for single-binary demos and Cursor without a long-running server.
+
+config:
+  logging:
+    format: json
+    level: info
+  adminAddr: "0.0.0.0:15000"
+  statsAddr: "0.0.0.0:15001"
+
+binds:
+  - port: 3000
+    listeners:
+      - routes:
+          - matches:
+              - path:
+                  pathPrefix: /mcp
+            backends:
+              - mcp:
+                  prefixMode: never
+                  statefulMode: stateful
+                  targets:
+                    - name: warble-army
+                      stdio:
+                        cmd: starling-lite
+                        args:
+                          - --mode=readonly
+                          - --transport=stdio
+                          - --registry
+                          - /etc/warble-army/registry.json
+                        env:
+                          KUBECONFIG: /var/run/secrets/kubernetes.io/serviceaccount/..data/.. # optional; prefer mount
+            policies:
+              cors:
+                allowOrigins: ["*"]
+                allowHeaders:
+                  - mcp-protocol-version
+                  - content-type
+                  - mcp-session-id
+                exposeHeaders:
+                  - "Mcp-Session-Id"

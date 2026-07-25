@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: agentgateway-config
+  namespace: warblecloud-ai
+  labels:
+    app: agentgateway
+    app.kubernetes.io/part-of: warble-army
+data:
+  config.yaml: |
+    # yaml-language-server: $schema=https://agentgateway.dev/schema/config
+    config:
+      logging:
+        format: json
+        level: info
+      adminAddr: "0.0.0.0:15000"
+      statsAddr: "0.0.0.0:15001"
+    binds:
+      - port: 3000
+        listeners:
+          - routes:
+              - matches:
+                  - path:
+                      pathPrefix: /mcp
+                backends:
+                  - mcp:
+                      prefixMode: never
+                      statefulMode: stateless
+                      failureMode: failClosed
+                      targets:
+                        - name: warble-army
+                          mcp:
+                            host: 127.0.0.1
+                            port: 8822
+                            path: /mcp
+                policies:
+                  cors:
+                    allowOrigins: ["*"]
+                    allowHeaders:
+                      - mcp-protocol-version
+                      - content-type
+                      - cache-control
+                      - mcp-session-id
+                    exposeHeaders:
+                      - "Mcp-Session-Id"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: warble-army-mcp-registry
+  namespace: warblecloud-ai
+  labels:
+    app: starling-lite
+    app.kubernetes.io/part-of: warble-army
+data:
+  # Truncated pointer — full registry is baked into the starling-lite image.
+  # Override by replacing this ConfigMap from mcp/tools/registry.json if needed.
+  README: |
+    Prefer image-embedded /etc/warble-army/registry.json.
+    To hot-reload schemas, mount this ConfigMap over that path from CI.

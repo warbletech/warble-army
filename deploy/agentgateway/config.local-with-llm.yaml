@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# Same as config.local.yaml plus OpenAI-compatible LLM front door.
+# Requires: export GEMINI_API_KEY=...
+
+config:
+  logging:
+    format: json
+    level: info
+  adminAddr: "0.0.0.0:15000"
+  statsAddr: "0.0.0.0:15001"
+
+binds:
+  - port: 3000
+    listeners:
+      - routes:
+          - matches:
+              - path:
+                  pathPrefix: /mcp
+            backends:
+              - mcp:
+                  prefixMode: never
+                  statefulMode: stateless
+                  targets:
+                    - name: warble-army
+                      mcp:
+                        host: 127.0.0.1
+                        port: 8822
+                        path: /mcp
+            policies:
+              cors:
+                allowOrigins: ["*"]
+                allowHeaders:
+                  - mcp-protocol-version
+                  - content-type
+                  - mcp-session-id
+                exposeHeaders:
+                  - "Mcp-Session-Id"
+
+          - matches:
+              - path:
+                  pathPrefix: /v1
+            backends:
+              - llm:
+                  provider: gemini
+                  model: gemini-2.0-flash
+                  apiKey: "${GEMINI_API_KEY}"

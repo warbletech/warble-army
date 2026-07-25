@@ -1,0 +1,6 @@
+# Optional: reuse warblecloud-ai (existing Service agentgateway).
+# Uncomment to install into a dedicated namespace instead.
+# apiVersion: v1
+# kind: Namespace
+# metadata:
+#   name: warble-army

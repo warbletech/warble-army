@@ -37,6 +37,7 @@ Umbrella-owned (not submodules):
 | Path | Purpose |
 |------|---------|
 | [`mcp/`](mcp/) | Stable MCP tool schemas + Starling Lite facade layout |
+| [`deploy/agentgateway/`](deploy/agentgateway/) | Agent Gateway config + K8s (front door for MCP) |
 | [`docs/`](docs/) | Architecture, safety, submodule maintenance |
 | [`scripts/`](scripts/) | Submodule sync, hook install, checks |
 | [`.githooks/`](.githooks/) | Pre-commit / commit-msg / pre-push |
@@ -111,7 +112,35 @@ make agent-demo
 python3 agents/reflexion/run.py --path shrikeops-demo/k8s/bad/root-container.yaml
 ```
 
-### 5. Scan manifests (ShrikeOps)
+### 5. Agent Gateway front door (recommended for multi-client)
+
+[Agentgateway](https://agentgateway.dev) federates MCP, CORS, metrics, and optional LLM routing:
+
+```bash
+# Terminal A
+make starling-lite
+./bin/starling-lite --mode=readonly --transport=http --addr=:8822 \
+  --registry=mcp/tools/registry.json
+
+# Terminal B
+make agentgateway-local
+# MCP:   http://127.0.0.1:3000/mcp
+# Admin: http://127.0.0.1:15000/ui/
+
+python3 agents/reflexion/run.py --mcp http://127.0.0.1:3000/mcp \
+  --path shrikeops-demo/k8s/bad/root-container.yaml
+```
+
+K8s (replaces the parked nginx stub in `warblecloud-ai`):
+
+```bash
+make agentgateway-image   # needs docker + AR push access
+make agentgateway-apply
+```
+
+Full docs: [`deploy/agentgateway/README.md`](deploy/agentgateway/README.md).
+
+### 6. Scan manifests (ShrikeOps)
 
 ```bash
 cd shrikeops/scanner

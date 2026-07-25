@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agentgateway
+  namespace: warblecloud-ai
+  labels:
+    app: agentgateway
+    app.kubernetes.io/part-of: warble-army
+  annotations:
+    warblecloud.ai/replaced: "real agentgateway.dev + starling-lite (was nginx stub)"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agentgateway
+  template:
+    metadata:
+      labels:
+        app: agentgateway
+        app.kubernetes.io/part-of: warble-army
+    spec:
+      serviceAccountName: warble-army-mcp
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      # Prefer general pools — ops-pool no longer exists on warble-cluster
+      containers:
+        # MCP backend (Warble Army flock tools)
+        - name: starling-lite
+          # Build+push: make agentgateway-image REGISTRY=us-central1-docker.pkg.dev/warble-tech/warble
+          image: us-central1-docker.pkg.dev/warble-tech/warble/starling-lite:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - --mode=readonly
+            - --transport=http
+            - --addr=:8822
+            - --registry=/etc/warble-army/registry.json
+          ports:
+            - name: mcp
+              containerPort: 8822
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: mcp
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+
+        # Agent Gateway — MCP federation + admin UI
+        - name: agentgateway
+          image: cr.agentgateway.dev/agentgateway:v1.4.0-beta.1
+          imagePullPolicy: IfNotPresent
+          args:
+            - -f
+            - /etc/agentgateway/config.yaml
+          ports:
+            - name: http
+              containerPort: 3000
+            - name: admin
+              containerPort: 15000
+            - name: metrics
+              containerPort: 15001
+          readinessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: config
+              mountPath: /etc/agentgateway
+              readOnly: true
+            - name: tmp
+              mountPath: /tmp
+
+      volumes:
+        - name: config
+          configMap:
+            name: agentgateway-config
+            items:
+              - key: config.yaml
+                path: config.yaml
+        - name: tmp
+          emptyDir: {}

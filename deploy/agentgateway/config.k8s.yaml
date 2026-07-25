@@ -1,0 +1,47 @@
+# yaml-language-server: $schema=https://agentgateway.dev/schema/config
+# In-cluster Agent Gateway → Starling Lite MCP (same pod network or Service DNS).
+#
+# Mounted as ConfigMap agentgateway-config in deploy/agentgateway/k8s/.
+
+config:
+  logging:
+    format: json
+    level: info
+  adminAddr: "0.0.0.0:15000"
+  statsAddr: "0.0.0.0:15001"
+
+binds:
+  - port: 3000
+    listeners:
+      - routes:
+          - matches:
+              - path:
+                  pathPrefix: /mcp
+            backends:
+              - mcp:
+                  prefixMode: never
+                  statefulMode: stateless
+                  failureMode: failClosed
+                  targets:
+                    - name: warble-army
+                      mcp:
+                        # Sidecar / same-pod default; override via STARLING_LITE_HOST if split
+                        host: 127.0.0.1
+                        port: 8822
+                        path: /mcp
+            policies:
+              cors:
+                allowOrigins: ["*"]
+                allowHeaders:
+                  - mcp-protocol-version
+                  - content-type
+                  - cache-control
+                  - mcp-session-id
+                exposeHeaders:
+                  - "Mcp-Session-Id"
+
+          - matches:
+              - path:
+                  pathPrefix: /healthz
+            backends:
+              - host: 127.0.0.1:15000

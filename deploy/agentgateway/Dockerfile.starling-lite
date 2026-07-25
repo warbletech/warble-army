@@ -1,0 +1,18 @@
+# Multi-stage build: Starling Lite MCP for Warble Army
+FROM golang:1.22-bookworm AS build
+WORKDIR /src
+# Context must be warble-army repo root (see Makefile agentgateway-image)
+COPY mcp/starling-lite ./mcp/starling-lite
+COPY steadyhelm ./steadyhelm
+COPY shrikeops ./shrikeops
+COPY mcp/tools ./mcp/tools
+WORKDIR /src/mcp/starling-lite
+RUN go mod download && CGO_ENABLED=0 go build -o /out/starling-lite ./cmd/starling-lite
+
+FROM gcr.io/distroless/static-debian12:nonroot
+COPY --from=build /out/starling-lite /usr/local/bin/starling-lite
+COPY --from=build /src/mcp/tools/registry.json /etc/warble-army/registry.json
+USER nonroot:nonroot
+EXPOSE 8822
+ENTRYPOINT ["/usr/local/bin/starling-lite"]
+CMD ["--mode=readonly", "--transport=http", "--addr=:8822", "--registry=/etc/warble-army/registry.json"]
