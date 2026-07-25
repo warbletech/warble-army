@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "starling-ex-ce.fullname" . }}
+  labels:
+    {{- include "starling-ex-ce.labels" . | nindent 4 }}
+  annotations:
+    warblecloud.com/public-demo: {{ .Values.publicDemoUrl | quote }}
+    warblecloud.com/docs: {{ .Values.docsUrl | quote }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "starling-ex-ce.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "starling-ex-ce.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "starling-ex-ce.serviceAccountName" . }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: starling-lite
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - --mode={{ .Values.mode }}
+            - --transport=http
+            - --addr=:8822
+            - --registry=/etc/warble-army/registry.json
+          ports:
+            - name: mcp
+              containerPort: 8822
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: mcp
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            runAsUser: 65532
+            runAsGroup: 65532
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: tmp
+          emptyDir: {}

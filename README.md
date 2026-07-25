@@ -32,7 +32,7 @@ Brand map: [`docs/BRAND.md`](docs/BRAND.md) · CE plan: [`docs/STARLING_EX_CE.md
 |------|--------|---------|------|
 | [`shrikeops/`](shrikeops/) | [warble-tech/shrikeops](https://github.com/warble-tech/shrikeops) | **ShrikeOps** | Manifest / Helm security scanner |
 | [`shrikeops-demo/`](shrikeops-demo/) | [warble-tech/shrikeops-demo](https://github.com/warble-tech/shrikeops-demo) | ShrikeOps | Golden/bad YAML + CI demo |
-| [`steadyhelm/`](steadyhelm/) | [warble-tech/steadyhelm](https://github.com/warble-tech/steadyhelm) | **Heron Ops** (rename) | Live Kubernetes MCP (stdio + HTTP) |
+| [`heron-ops/`](heron-ops/) | [warble-tech/heron-ops](https://github.com/warble-tech/heron-ops) | **Heron Ops** | Live Kubernetes MCP (stdio + HTTP; was SteadyHelm) |
 | [`starling/`](starling/) | [warble-tech/starling](https://github.com/warble-tech/starling) | Starling | CLI **release channel** (binaries; full product source private) |
 
 Umbrella-owned (not submodules):
@@ -87,8 +87,8 @@ make starling-lite
 Or SteadyHelm alone (cluster tools only):
 
 ```bash
-make steadyhelm
-./bin/steadyhelm --mode=readonly --transport=stdio
+make heron-ops
+./bin/heron-ops --mode=readonly --transport=stdio
 ```
 
 Cursor / Claude Desktop (full flock tools):
@@ -185,7 +185,7 @@ Details: [`docs/MAINTAINING.md`](docs/MAINTAINING.md).
 After bumping pins, commit **only** the gitlink change on this umbrella:
 
 ```bash
-git add shrikeops steadyhelm starling shrikeops-demo
+git add shrikeops heron-ops starling shrikeops-demo
 git commit -m "chore(submodules): bump flock to latest"
 ```
 
@@ -233,7 +233,9 @@ make registry && make starling-lite && make test-mcp
 | [`mcp/README.md`](mcp/README.md) | Tool layout + client setup |
 | [`mcp/PROTOCOL.md`](mcp/PROTOCOL.md) | MCP JSON-RPC conventions for this flock |
 | [`starling/INSTRUCTIONS.md`](starling/INSTRUCTIONS.md) | Product Starling setup (verify tools live) |
-| [`steadyhelm/README.md`](steadyhelm/README.md) | SteadyHelm tools & deploy |
+| [`heron-ops/README.md`](heron-ops/README.md) | Heron Ops (cluster MCP) tools & deploy |
+| [`charts/starling-ex-ce/`](charts/starling-ex-ce/) | Starling EX CE Helm chart |
+| [warbleoss.org](https://warbleoss.org) | Community home + Try MCP |
 | [`shrikeops/README.md`](shrikeops/README.md) | Scanner install & API |
 
 ---

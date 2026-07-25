@@ -10,7 +10,7 @@
 	path = starling
 	url = https://github.com/warble-tech/starling.git
 	branch = main
-[submodule "steadyhelm"]
-	path = steadyhelm
-	url = https://github.com/warble-tech/steadyhelm.git
+[submodule "heron-ops"]
+	path = heron-ops
+	url = https://github.com/warble-tech/heron-ops.git
 	branch = master

@@ -24,7 +24,7 @@ git config core.hooksPath .githooks
 | `shrikeops` | `https://github.com/warble-tech/shrikeops.git` | `master` |
 | `shrikeops-demo` | `https://github.com/warble-tech/shrikeops-demo.git` | `master` |
 | `starling` | `https://github.com/warble-tech/starling.git` | `main` |
-| `steadyhelm` | `https://github.com/warble-tech/steadyhelm.git` | `master` |
+| `heron-ops` | `https://github.com/warble-tech/heron-ops.git` | `master` |
 
 Defined in [`.gitmodules`](../.gitmodules).
 
@@ -49,7 +49,7 @@ Shows dirty worktrees, detached SHAs, and ahead/behind vs remote branch.
 
 ```bash
 ./scripts/submodules.sh bump
-git add shrikeops shrikeops-demo starling steadyhelm
+git add shrikeops shrikeops-demo starling heron-ops
 git commit -m "chore(submodules): bump flock"
 ```
 
@@ -64,14 +64,14 @@ This re-writes `origin` from `.gitmodules` for each submodule.
 ### Work inside a child product
 
 ```bash
-cd steadyhelm
+cd heron-ops
 # ... commits on product branch ...
 git push origin HEAD
 cd ..
 # then bump umbrella gitlink
 ./scripts/submodules.sh status
-git add steadyhelm
-git commit -m "chore(submodules): pin steadyhelm to <sha>"
+git add heron-ops
+git commit -m "chore(submodules): pin heron-ops to <sha>"
 ```
 
 **Never** commit product source changes only on the umbrella without pushing the child first — the gitlink would point at a non-public SHA.
@@ -141,4 +141,4 @@ jobs:
 ## Versioning
 
 - Umbrella tags: `army-v0.1.0` pin a known-good set of submodule SHAs.
-- Product tags stay in child repos (`shrikeops v0.x`, `steadyhelm v0.x`).
+- Product tags stay in child repos (`shrikeops v0.x`, `heron-ops v0.x`).

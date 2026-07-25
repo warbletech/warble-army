@@ -21,10 +21,10 @@ repos:
     rev: v4.6.0
     hooks:
       - id: check-yaml
-        exclude: ^(shrikeops|shrikeops-demo|steadyhelm|starling)/
+        exclude: ^(shrikeops|shrikeops-demo|heron-ops|starling)/
       - id: check-json
         files: ^mcp/
       - id: end-of-file-fixer
-        exclude: ^(shrikeops|shrikeops-demo|steadyhelm|starling)/
+        exclude: ^(shrikeops|shrikeops-demo|heron-ops|starling)/
       - id: trailing-whitespace
-        exclude: ^(shrikeops|shrikeops-demo|steadyhelm|starling)/
+        exclude: ^(shrikeops|shrikeops-demo|heron-ops|starling)/

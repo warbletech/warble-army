@@ -3,7 +3,7 @@ FROM golang:1.22-bookworm AS build
 WORKDIR /src
 # Context must be warble-army repo root (see Makefile agentgateway-image)
 COPY mcp/starling-lite ./mcp/starling-lite
-COPY steadyhelm ./steadyhelm
+COPY heron-ops ./heron-ops
 COPY shrikeops ./shrikeops
 COPY mcp/tools ./mcp/tools
 WORKDIR /src/mcp/starling-lite

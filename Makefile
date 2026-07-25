@@ -37,7 +37,7 @@ registry:
 
 steadyhelm heron-ops:
 	mkdir -p $(BIN)
-	cd steadyhelm && go build -o $(BIN)/heron-ops .
+	cd heron-ops && go build -o $(BIN)/heron-ops .
 	ln -sfn heron-ops $(BIN)/steadyhelm
 	@echo "built $(BIN)/heron-ops (alias: $(BIN)/steadyhelm)"
 

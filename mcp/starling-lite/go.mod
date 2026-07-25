@@ -69,6 +69,7 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
-replace github.com/warblecloud/steadyhelm => ../../steadyhelm
+// Heron Ops (product); module path still github.com/warblecloud/steadyhelm until module rename
+replace github.com/warblecloud/steadyhelm => ../../heron-ops
 
 replace github.com/warbletech/shrikeops/scanner => ../../shrikeops/scanner

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "heron-ops": {
+      "command": "heron-ops",
+      "args": ["--mode=readonly", "--transport=stdio"],
+      "env": {
+        "KUBECONFIG": "${HOME}/.kube/config"
+      }
+    }
+  },
+  "_comment": "Legacy binary name steadyhelm still works as a symlink from make heron-ops"
+}

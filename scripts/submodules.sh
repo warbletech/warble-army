@@ -28,7 +28,7 @@ Usage: scripts/submodules.sh <command>
 
 Examples:
   ./scripts/submodules.sh init
-  ./scripts/submodules.sh bump && git add shrikeops steadyhelm && git commit -m "chore(submodules): bump"
+  ./scripts/submodules.sh bump && git add shrikeops heron-ops && git commit -m "chore(submodules): bump"
   ./scripts/submodules.sh add https://github.com/warble-tech/foo.git foo master
 EOF
 }

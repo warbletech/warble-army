@@ -1,0 +1,15 @@
+Starling EX Community Edition installed.
+
+  MCP Service:  {{ include "starling-ex-ce.fullname" . }}.{{ .Release.Namespace }}.svc:{{ .Values.service.port }}
+  Health:       http://{{ include "starling-ex-ce.fullname" . }}.{{ .Release.Namespace }}.svc:{{ .Values.service.port }}/health
+  Tools:        POST /mcp  {"jsonrpc":"2.0","id":1,"method":"tools/list"}
+
+Port-forward:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "starling-ex-ce.fullname" . }} 8822:{{ .Values.service.port }}
+
+Public demo (Warble-hosted):
+  {{ .Values.publicDemoUrl }}
+
+Docs:
+  {{ .Values.docsUrl }}
+  https://github.com/warble-tech/warble-army

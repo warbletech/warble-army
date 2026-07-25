@@ -66,15 +66,15 @@ Exposes:
 - [x] Flock brand map (`docs/BRAND.md`)
 - [x] Heron Ops + ShrikeOps logo marks
 - [x] Document SteadyHelm → Heron Ops transition
-- [ ] Rename GitHub repo `steadyhelm` → `heron-ops` (or create `heron-ops` and archive steadyhelm)
-- [ ] Binary alias: `heron-ops` primary, `steadyhelm` deprecated
-- [ ] warbleoss.org landing (static or Cloudflare Pages)
+- [x] Rename GitHub repo `steadyhelm` → `heron-ops`
+- [x] Binary alias: `heron-ops` primary, `steadyhelm` symlink
+- [x] warbleoss.org landing (GitHub Pages)
 
 ### Phase B — CE package
 
-- [ ] Helm chart `charts/starling-ex-ce` bundling starling-lite + heron-ops SA/RBAC + optional agentgateway
+- [x] Helm chart `charts/starling-ex-ce` bundling starling-lite + heron-ops SA/RBAC
 - [ ] `install.sh` / `make ce-up` against kind / k3s / GKE
-- [ ] Public docs site content for warbleoss.org
+- [x] Public docs site content for warbleoss.org
 - [ ] Good first issues + CONTRIBUTING under CE repos
 
 ### Phase C — Community loop

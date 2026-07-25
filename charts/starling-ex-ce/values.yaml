@@ -1,0 +1,59 @@
+# Starling EX Community Edition — default values
+
+nameOverride: ""
+fullnameOverride: "starling-ex-ce"
+
+image:
+  repository: us-central1-docker.pkg.dev/warble-tech/warble/starling-lite
+  tag: "6c6505f"
+  pullPolicy: IfNotPresent
+
+# In-cluster MCP (Starling Lite embeds Heron Ops cluster tools)
+replicaCount: 1
+
+serviceAccount:
+  create: true
+  name: ""
+  # Cluster-wide read for Heron Ops tools
+  clusterRole: true
+
+service:
+  type: ClusterIP
+  port: 8822
+
+# MCP server mode: readonly | readwrite
+mode: readonly
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+# Optional public Ingress (e.g. starling-ex.frakma.io/lite)
+ingress:
+  enabled: false
+  className: nginx
+  host: starling-ex.frakma.io
+  path: /lite/(.*)
+  pathType: ImplementationSpecific
+  # rewrite /lite/mcp → /mcp
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    warblecloud.com/public-url: https://starling-ex.frakma.io/lite/mcp
+  tls:
+    enabled: true
+    secretName: starling-ex-lite-tls
+
+# Demo link (docs only)
+publicDemoUrl: https://starling-ex.frakma.io/lite/mcp
+docsUrl: https://warbleoss.org

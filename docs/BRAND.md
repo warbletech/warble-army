@@ -7,11 +7,11 @@ Open-source birds of Kubernetes ops. Commercial Starling Cloud remains under War
 | Product (public name) | Bird | Role | Repo / code today | Status |
 |-----------------------|------|------|-------------------|--------|
 | **ShrikeOps** | Shrike | Hunt misconfigs, CVEs, deprecated APIs; scored reports | `warble-tech/shrikeops` | OSS (Apache-2.0) |
-| **Heron Ops** | Heron | Live cluster MCP — observe pods, logs, events, metrics; gated writes | was **SteadyHelm** → `warble-tech/steadyhelm` (rename to `heron-ops`) | OSS rebrand in progress |
+| **Heron Ops** | Heron | Live cluster MCP — observe pods, logs, events, metrics; gated writes | `warble-tech/heron-ops` (was SteadyHelm) | **OSS renamed** |
 | **Starling Lite** | Starling (CE) | MCP facade: scan + cluster + remediate registry | `warble-army/mcp/starling-lite` | OSS |
 | **Agent Gateway** | — (infra) | Front door: MCP federation, CORS, metrics | `deploy/agentgateway` + agentgateway.dev | Deployed |
 | **Starling EX** | Starling | Full agent-facing K8s ops product | private `warble-core` + public release channel | SaaS / Enterprise |
-| **Starling EX Community Edition** | Starling | Self-hosted CE of Starling EX for the community | → **warbleoss.org** / `warble-tech/starling-ex-ce` (planned) | Planned |
+| **Starling EX Community Edition** | Starling | Self-hosted CE of Starling EX for the community | `warble-army/charts/starling-ex-ce` + **warbleoss.org** | **Chart + site live** |
 | **Reflexion** | — | Actor/critic agent loop over MCP tools | `agents/reflexion` | Scaffold |
 | **Army umbrella** | Flock | Submodules, MCP tool registry, CI, brand | `warble-tech/warble-army` | Live |
 

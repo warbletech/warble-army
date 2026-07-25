@@ -1,0 +1,22 @@
+apiVersion: v2
+name: starling-ex-ce
+description: Starling EX Community Edition — Heron Ops + Starling Lite MCP for self-hosted Kubernetes agent ops (warbleoss.org)
+type: application
+version: 0.1.0
+appVersion: "0.2.0"
+home: https://warbleoss.org
+sources:
+  - https://github.com/warble-tech/warble-army
+  - https://github.com/warble-tech/heron-ops
+  - https://github.com/warble-tech/shrikeops
+keywords:
+  - kubernetes
+  - mcp
+  - heron-ops
+  - shrikeops
+  - starling
+  - warbleoss
+maintainers:
+  - name: Warble Tech
+    email: contact@warblecloud.com
+    url: https://warbleoss.org
