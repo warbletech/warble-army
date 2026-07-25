@@ -55,11 +55,12 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 - [x] Clear product rename (Heron Ops, ShrikeOps)
 - [x] Live demo MCP (`starling-ex.frakma.io/lite/mcp`)
 - [x] CE Helm chart
-- [ ] Documented maintainers + CoC + security policy on CE surfaces
-- [ ] Adopters list / production references
-- [ ] CNCF TOC / TAG outreach draft
+- [x] Documented maintainers + CoC + security policy → [docs/cncf/](cncf/)
+- [x] Adopters list (seed) + sandbox application **draft** → [cncf/SANDBOX_APPLICATION.md](cncf/SANDBOX_APPLICATION.md)
+- [ ] Multi-org maintainers / real external adopters
+- [ ] CNCF TAG presentation / Day 0 GTR
 - [ ] Trademark and name clearance (“Starling EX Community” vs commercial Starling)
-
+- [ ] File Sandbox issue on `cncf/sandbox` + Contribution Agreement
 Until donation completes, **Warble / ChirpStack** remains copyright holder and steward; language on sites must say **“planning CNCF donation”**, not “CNCF project”.
 
 ## Frakma-X → Linux Foundation wing
@@ -99,6 +100,7 @@ Frakma-X does **not** replace Starling EX Community’s CNCF path. Different lay
 
 ## Related docs
 
+- [cncf/](cncf/) — **CNCF Sandbox application draft + checklist**  
 - [BRAND.md](BRAND.md) — product / bird names  
 - [STARLING_EX_CE.md](STARLING_EX_CE.md) — CE technical scope  
 - [architecture.md](architecture.md) — stack  

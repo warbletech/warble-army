@@ -224,6 +224,7 @@ make registry && make starling-lite && make test-mcp
 |-----|-------------|
 | [`docs/BRAND.md`](docs/BRAND.md) | Flock brand map (Heron Ops, ShrikeOps, Starling) |
 | [`docs/GOVERNANCE.md`](docs/GOVERNANCE.md) | Warble / CNCF path / Frakma-X LF wing |
+| [`docs/cncf/`](docs/cncf/) | **CNCF Sandbox application draft + CoC/SECURITY** |
 | [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md) | Starling EX Community + CNCF donation plan |
 | [`docs/HERON_OPS_RENAME.md`](docs/HERON_OPS_RENAME.md) | SteadyHelm → Heron Ops checklist |
 | [`docs/architecture.md`](docs/architecture.md) | Technical stack, OSS vs SaaS |
