@@ -1,0 +1,65 @@
+# Public Starling Lite MCP:
+#   https://starling-ex.frakma.io/lite/mcp
+#   https://starling-ex.frakma.io/lite/health
+#
+# Strips the /lite prefix onto starling-lite Service (:8822).
+# Agentgateway remains the in-cluster federation front door;
+# public path uses Starling Lite HTTP MCP directly (JSON-RPC).
+#
+# Existing paths on this host (other namespaces):
+#   /      → starling-frontend site
+#   /api   → license-api
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: starling-lite
+  namespace: warblecloud-ai
+  labels:
+    app: agentgateway
+    app.kubernetes.io/name: starling-lite
+    app.kubernetes.io/part-of: warble-army
+    app.kubernetes.io/component: mcp-gateway
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+
+    # /lite/mcp → /mcp , /lite/health → /health
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+
+    # MCP-friendly proxy settings
+    nginx.ingress.kubernetes.io/proxy-http-version: "1.1"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+    # CORS for browser MCP clients / inspectors
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization,mcp-protocol-version,mcp-session-id,Accept"
+    nginx.ingress.kubernetes.io/cors-expose-headers: "Mcp-Session-Id,Content-Type"
+
+    # Runbook annotations
+    warblecloud.com/public-url: https://starling-ex.frakma.io/lite/mcp
+    warblecloud.com/mcp-path: /lite/mcp
+    warblecloud.com/backend: starling-lite
+    warblecloud.com/docs: https://github.com/warble-tech/warble-army/tree/main/deploy/agentgateway
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - starling-ex.frakma.io
+      secretName: starling-ex-lite-tls
+  rules:
+    - host: starling-ex.frakma.io
+      http:
+        paths:
+          - path: /lite/(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: starling-lite
+                port:
+                  number: 8822

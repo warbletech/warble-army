@@ -138,6 +138,8 @@ make agentgateway-image   # needs docker + AR push access
 make agentgateway-apply
 ```
 
+**Public (GKE):** [https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)
+
 Full docs: [`deploy/agentgateway/README.md`](deploy/agentgateway/README.md).
 
 ### 6. Scan manifests (ShrikeOps)

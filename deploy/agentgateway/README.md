@@ -69,6 +69,29 @@ kubectl -n warblecloud-ai port-forward svc/agentgateway 3000:3000
 # Admin: kubectl port-forward svc/agentgateway 15000:15000
 ```
 
+### Public URL (production)
+
+| URL | Backend |
+|-----|---------|
+| **https://starling-ex.frakma.io/lite/mcp** | Starling Lite MCP (JSON-RPC HTTP) |
+| https://starling-ex.frakma.io/lite/health | Health probe |
+| https://starling-ex.frakma.io/ | Marketing site (unchanged) |
+| https://starling-ex.frakma.io/api | License API (unchanged) |
+
+In-cluster federation still uses **Agent Gateway** (`svc/agentgateway`). The public `/lite` path hits Starling Lite directly so clients get simple MCP JSON-RPC without streamable-HTTP session friction.
+
+Ingress: `deploy/agentgateway/k8s/50-ingress.yaml` (namespace `warblecloud-ai`).
+
+```json
+{
+  "mcpServers": {
+    "warble-army": {
+      "url": "https://starling-ex.frakma.io/lite/mcp"
+    }
+  }
+}
+```
+
 ### Cluster clients
 
 ```json

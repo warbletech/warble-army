@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/part-of: warble-army
   annotations:
     warblecloud.ai/replaced: "real agentgateway.dev + starling-lite (was nginx stub)"
+    warblecloud.com/public-url: https://starling-ex.frakma.io/lite/mcp
 spec:
   replicas: 1
   selector:
