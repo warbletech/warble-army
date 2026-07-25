@@ -9,8 +9,9 @@
 └────────────┬──────────────┬──────────────┬──────────────────────┘
              │ submodule    │ submodule    │ submodule
              ▼              ▼              ▼
-        shrikeops      steadyhelm       starling
-        (scanner)      (OSS MCP)      (release only)
+        shrikeops      steadyhelm/      starling
+        ShrikeOps      heron-ops       (release / SaaS)
+        (scanner)      (Heron Ops MCP)
              │              │              │
              └──────┬───────┘              │
                     ▼                      │

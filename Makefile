@@ -35,9 +35,11 @@ status:
 registry:
 	./scripts/check-mcp-registry.sh
 
-steadyhelm:
+steadyhelm heron-ops:
 	mkdir -p $(BIN)
-	cd steadyhelm && go build -o $(BIN)/steadyhelm .
+	cd steadyhelm && go build -o $(BIN)/heron-ops .
+	ln -sfn heron-ops $(BIN)/steadyhelm
+	@echo "built $(BIN)/heron-ops (alias: $(BIN)/steadyhelm)"
 
 starling-lite: registry
 	mkdir -p $(BIN)

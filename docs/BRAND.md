@@ -1,0 +1,68 @@
+# Warble Army — flock brand map
+
+Open-source birds of Kubernetes ops. Commercial Starling Cloud remains under Warble; **Community Edition** ships under **[warbleoss.org](https://warbleoss.org)**.
+
+## The flock
+
+| Product (public name) | Bird | Role | Repo / code today | Status |
+|-----------------------|------|------|-------------------|--------|
+| **ShrikeOps** | Shrike | Hunt misconfigs, CVEs, deprecated APIs; scored reports | `warble-tech/shrikeops` | OSS (Apache-2.0) |
+| **Heron Ops** | Heron | Live cluster MCP — observe pods, logs, events, metrics; gated writes | was **SteadyHelm** → `warble-tech/steadyhelm` (rename to `heron-ops`) | OSS rebrand in progress |
+| **Starling Lite** | Starling (CE) | MCP facade: scan + cluster + remediate registry | `warble-army/mcp/starling-lite` | OSS |
+| **Agent Gateway** | — (infra) | Front door: MCP federation, CORS, metrics | `deploy/agentgateway` + agentgateway.dev | Deployed |
+| **Starling EX** | Starling | Full agent-facing K8s ops product | private `warble-core` + public release channel | SaaS / Enterprise |
+| **Starling EX Community Edition** | Starling | Self-hosted CE of Starling EX for the community | → **warbleoss.org** / `warble-tech/starling-ex-ce` (planned) | Planned |
+| **Reflexion** | — | Actor/critic agent loop over MCP tools | `agents/reflexion` | Scaffold |
+| **Army umbrella** | Flock | Submodules, MCP tool registry, CI, brand | `warble-tech/warble-army` | Live |
+
+### Bird metaphor (keep it consistent)
+
+- **Shrike** — impales prey on thorns → pins findings to a scored report.  
+- **Heron** — still water, sudden strike → calm observation of the cluster, precise tool use.  
+- **Starling** — murmurations / flock coordination → multi-tool agents and product surface.  
+- **Army / flock** — the collection of specialized birds working together.
+
+## Logos
+
+| Mark | Path |
+|------|------|
+| Heron Ops | [`brand/heron-ops/heron-ops-logo.jpg`](../brand/heron-ops/heron-ops-logo.jpg) |
+| ShrikeOps | [`brand/shrike-ops/shrike-ops-logo.jpg`](../brand/shrike-ops/shrike-ops-logo.jpg) |
+
+Use on white or light backgrounds. Wordmark optional: **Heron Ops** / **ShrikeOps** in Inter or system sans, weight 600.
+
+## Naming rules
+
+| Context | Prefer | Avoid |
+|---------|--------|-------|
+| User-facing docs, website, warbleoss.org | **Heron Ops**, **ShrikeOps**, **Starling EX CE** | SteadyHelm (legacy) |
+| CLI binary (transition) | `heron-ops` (new), keep `steadyhelm` alias one major | Breaking rename without alias |
+| Go module (transition) | `github.com/warble-tech/heron-ops` after migrate | Silent dual modules forever |
+| GitHub org for pure OSS | `warble-tech` or future `warble-oss` | Mixing private SaaS secrets into CE repos |
+| Public MCP URL (today) | `https://starling-ex.frakma.io/lite/mcp` | Advertising private endpoints as CE |
+
+## Package identity (transition)
+
+```text
+SteadyHelm  ──rename──►  Heron Ops
+  binary: steadyhelm  →  heron-ops  (+ steadyhelm symlink)
+  module: github.com/warblecloud/steadyhelm
+       →  github.com/warble-tech/heron-ops
+  pkg:    pkg/mcpserver (unchanged API surface)
+```
+
+ShrikeOps spelling stays **ShrikeOps** (product) / `shrikeops` (CLI & repo). Optional hyphenated **shrike-ops** only in prose for parallelism with heron-ops.
+
+## Domains
+
+| Domain | Purpose |
+|--------|---------|
+| [warbleoss.org](https://warbleoss.org) | **Home for Community Edition** docs, downloads, community |
+| [warblecloud.com](https://warblecloud.com) | Commercial Starling / Warble Cloud product |
+| [frakma.io](https://frakma.io) | Platform / FRAKMA / internal tooling demos |
+| starling-ex.frakma.io/lite | Public **Starling Lite** MCP (CE-friendly demo) |
+
+## See also
+
+- [STARLING_EX_CE.md](STARLING_EX_CE.md) — Community Edition scope and roadmap  
+- [architecture.md](architecture.md) — technical stack  

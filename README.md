@@ -2,7 +2,7 @@
 
 **Open flock of Kubernetes agents + MCP** — scan, observe, propose, remediate.
 
-> Birds of a feather: **ShrikeOps** hunts bad config, **SteadyHelm** gives agents live cluster context via MCP, **Starling** is the product release channel for agent-facing ops, and demos keep the loop honest.
+> Birds of a feather: **[ShrikeOps](brand/shrike-ops/)** hunts bad config, **[Heron Ops](brand/heron-ops/)** (formerly SteadyHelm) gives agents live cluster context via MCP, **Starling Lite / Starling EX CE** coordinates the flock. Community home: **[warbleoss.org](https://warbleoss.org)**.
 
 This repository is the **umbrella** that wires the flock together with submodules, a stable MCP tool layout, and maintenance hooks. Child product code lives in its own repos under [github.com/warble-tech](https://github.com/warble-tech).
 
@@ -12,33 +12,37 @@ This repository is the **umbrella** that wires the flock together with submodule
               ▼
      mcp/starling-lite   ← tool registry (this repo)
       ├── scan_*         → ShrikeOps
-      ├── cluster_*      → SteadyHelm
+      ├── cluster_*      → Heron Ops (SteadyHelm → heron-ops)
       └── remediate_*    → dry-run patches (guardrailed)
               │
      ┌────────┼────────┐
      ▼        ▼        ▼
- ShrikeOps  SteadyHelm  Starling (release / SaaS)
-  scanner    live MCP    product binaries
+ ShrikeOps  Heron Ops   Starling EX CE (warbleoss.org)
+  scanner   live MCP    self-host community edition
 ```
+
+Public demo MCP: **[https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)**  
+Brand map: [`docs/BRAND.md`](docs/BRAND.md) · CE plan: [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md)
 
 ---
 
 ## Submodules
 
-| Path | Remote | Role |
-|------|--------|------|
-| [`shrikeops/`](shrikeops/) | [warble-tech/shrikeops](https://github.com/warble-tech/shrikeops) | Manifest / Helm security scanner |
-| [`shrikeops-demo/`](shrikeops-demo/) | [warble-tech/shrikeops-demo](https://github.com/warble-tech/shrikeops-demo) | Golden/bad YAML + CI demo |
-| [`steadyhelm/`](steadyhelm/) | [warble-tech/steadyhelm](https://github.com/warble-tech/steadyhelm) | **OSS Kubernetes MCP server** (stdio + HTTP) |
-| [`starling/`](starling/) | [warble-tech/starling](https://github.com/warble-tech/starling) | Starling CLI **release channel** (binaries; product source private) |
+| Path | Remote | Product | Role |
+|------|--------|---------|------|
+| [`shrikeops/`](shrikeops/) | [warble-tech/shrikeops](https://github.com/warble-tech/shrikeops) | **ShrikeOps** | Manifest / Helm security scanner |
+| [`shrikeops-demo/`](shrikeops-demo/) | [warble-tech/shrikeops-demo](https://github.com/warble-tech/shrikeops-demo) | ShrikeOps | Golden/bad YAML + CI demo |
+| [`steadyhelm/`](steadyhelm/) | [warble-tech/steadyhelm](https://github.com/warble-tech/steadyhelm) | **Heron Ops** (rename) | Live Kubernetes MCP (stdio + HTTP) |
+| [`starling/`](starling/) | [warble-tech/starling](https://github.com/warble-tech/starling) | Starling | CLI **release channel** (binaries; full product source private) |
 
 Umbrella-owned (not submodules):
 
 | Path | Purpose |
 |------|---------|
-| [`mcp/`](mcp/) | Stable MCP tool schemas + Starling Lite facade layout |
-| [`deploy/agentgateway/`](deploy/agentgateway/) | Agent Gateway config + K8s (front door for MCP) |
-| [`docs/`](docs/) | Architecture, safety, submodule maintenance |
+| [`mcp/`](mcp/) | Stable MCP tool schemas + Starling Lite facade |
+| [`deploy/agentgateway/`](deploy/agentgateway/) | Agent Gateway + public `/lite` Ingress |
+| [`brand/`](brand/) | Heron Ops + ShrikeOps logos |
+| [`docs/`](docs/) | Architecture, brand, CE plan, safety |
 | [`scripts/`](scripts/) | Submodule sync, hook install, checks |
 | [`.githooks/`](.githooks/) | Pre-commit / commit-msg / pre-push |
 
@@ -156,10 +160,12 @@ go run ./cmd/cli/main.go scan ../../shrikeops-demo/k8s/bad/root-container.yaml
 | Phase | What | Status |
 |-------|------|--------|
 | **0** | Umbrella + submodules + hooks + master docs | **done** |
-| **1** | SteadyHelm public embed API (`pkg/mcpserver`) | **done** |
-| **2** | Starling Lite facade (`make starling-lite`) | **done** |
-| **3** | Reflexion actor/critic scaffold (`agents/reflexion`) | **scaffold** |
-| **4** | Plugin protocol + SARIF / GitHub Checks marketplace | planned |
+| **1** | Heron Ops embed API (`pkg/mcpserver`, was SteadyHelm) | **done** |
+| **2** | Starling Lite facade + public `/lite` MCP | **done** |
+| **3** | Reflexion actor/critic scaffold | **scaffold** |
+| **4** | Heron Ops rename + warbleoss.org CE packaging | **in progress** |
+| **5** | Starling EX Community Edition on warbleoss.org | planned |
+| **6** | Plugin protocol + SARIF / GitHub Checks | planned |
 
 **SaaS boundary:** Warble Cloud login, multi-tenant score history, and private `warble-core` stay commercial. Local kubeconfig + dry-run remediations stay OSS.
 
@@ -217,7 +223,10 @@ make registry && make starling-lite && make test-mcp
 
 | Doc | Description |
 |-----|-------------|
-| [`docs/architecture.md`](docs/architecture.md) | Flock diagram, OSS vs SaaS |
+| [`docs/BRAND.md`](docs/BRAND.md) | Flock brand map (Heron Ops, ShrikeOps, Starling) |
+| [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md) | Community Edition plan for warbleoss.org |
+| [`docs/HERON_OPS_RENAME.md`](docs/HERON_OPS_RENAME.md) | SteadyHelm → Heron Ops checklist |
+| [`docs/architecture.md`](docs/architecture.md) | Technical stack, OSS vs SaaS |
 | [`docs/MAINTAINING.md`](docs/MAINTAINING.md) | Submodules, remotes, hooks, release pins |
 | [`docs/safety.md`](docs/safety.md) | RBAC, write gates, audit |
 | [`docs/gke-pdb-unpermissive-2026-07.md`](docs/gke-pdb-unpermissive-2026-07.md) | GKE Active Assist PDB fix on `warble-cluster` |
