@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+# pre-commit: dirty submodules, secrets heuristic, MCP registry.
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+fail() { echo "pre-commit: $*" >&2; exit 1; }
+
+# ── Dirty submodules (staged gitlink with dirty worktree is confusing) ────────
+if [[ -f .gitmodules ]]; then
+  while IFS= read -r path; do
+    [[ -z "$path" ]] && continue
+    if [[ -d "$path" ]] && git -C "$path" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+      if [[ -n "$(git -C "$path" status --porcelain 2>/dev/null)" ]]; then
+        # Allow if only the gitlink is staged and user force — still warn hard
+        fail "submodule '$path' has a dirty worktree. Commit/stash inside it, or discard, then retry."
+      fi
+    fi
+  done < <(git config --file .gitmodules --get-regexp path 2>/dev/null | awk '{print $2}')
+fi
+
+# ── Secrets heuristic on staged files ─────────────────────────────────────────
+SECRET_PATTERNS=(
+  'BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY'
+  'AKIA[0-9A-Z]{16}'
+  'api[_-]?key["\s:=]+[a-zA-Z0-9]{20,}'
+)
+
+while IFS= read -r -d '' f; do
+  # skip binary-ish
+  if git check-attr filter -- "$f" 2>/dev/null | grep -q 'lfs'; then
+    continue
+  fi
+  for pat in "${SECRET_PATTERNS[@]}"; do
+    if git show ":$f" 2>/dev/null | grep -Eiq "$pat"; then
+      fail "possible secret in staged file: $f (pattern /$pat/). Unstage or use a secret manager."
+    fi
+  done
+done < <(git diff --cached --name-only -z --diff-filter=ACM)
+
+# ── MCP registry when tools change ────────────────────────────────────────────
+if git diff --cached --name-only | grep -qE '^mcp/tools/'; then
+  if [[ -x "$ROOT/scripts/check-mcp-registry.sh" ]]; then
+    "$ROOT/scripts/check-mcp-registry.sh" || fail "MCP registry check failed"
+  fi
+fi
+
+exit 0

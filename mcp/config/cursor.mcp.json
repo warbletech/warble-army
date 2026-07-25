@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "steadyhelm": {
+      "command": "steadyhelm",
+      "args": ["--mode=readonly", "--transport=stdio"],
+      "env": {
+        "KUBECONFIG": "${env:HOME}/.kube/config"
+      }
+    }
+  }
+}

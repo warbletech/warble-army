@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# commit-msg: Conventional Commits
+set -euo pipefail
+
+MSG_FILE="${1:-}"
+[[ -n "$MSG_FILE" && -f "$MSG_FILE" ]] || exit 0
+
+# strip comments
+subject="$(grep -v '^#' "$MSG_FILE" | head -n1 | sed 's/[[:space:]]*$//')"
+
+# allow merge/revert
+if [[ "$subject" =~ ^Merge\  ]] || [[ "$subject" =~ ^Revert\  ]]; then
+  exit 0
+fi
+
+# type(scope)?: description
+# types aligned with community CONTRIBUTING
+if ! echo "$subject" | grep -Eq '^(feat|fix|docs|chore|refactor|test|ci|perf|style|build)(\([a-z0-9/_-]+\))?!?: .+'; then
+  cat >&2 <<EOF
+commit-msg: subject must follow Conventional Commits:
+
+  <type>(optional-scope): <description>
+
+  types: feat fix docs chore refactor test ci perf style build
+
+  got: $subject
+
+  examples:
+    docs(mcp): document scan_helm schema
+    chore(submodules): bump steadyhelm
+    feat(starling-lite): dispatch scan_manifest
+EOF
+  exit 1
+fi
+
+exit 0

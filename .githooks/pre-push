@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# pre-push: gitlinks resolve; MCP registry always green before push
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+cd "$ROOT"
+
+fail() { echo "pre-push: $*" >&2; exit 1; }
+
+if [[ -f .gitmodules ]]; then
+  while IFS= read -r path; do
+    [[ -z "$path" ]] && continue
+    if [[ ! -e "$path" ]]; then
+      fail "submodule path missing: $path (run ./scripts/submodules.sh init)"
+    fi
+    if ! git -C "$path" rev-parse HEAD >/dev/null 2>&1; then
+      fail "submodule not checked out: $path"
+    fi
+  done < <(git config --file .gitmodules --get-regexp path 2>/dev/null | awk '{print $2}')
+fi
+
+if [[ -x "$ROOT/scripts/check-mcp-registry.sh" ]]; then
+  "$ROOT/scripts/check-mcp-registry.sh" || fail "MCP registry invalid"
+fi
+
+exit 0

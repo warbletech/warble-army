@@ -1,0 +1,62 @@
+{
+  "group": "remediate",
+  "backend": "starling-lite",
+  "description": "Propose and (optionally) apply remediations. Dry-run by default.",
+  "tools": [
+    {
+      "name": "propose_remediation",
+      "mode": "readonly",
+      "description": "Given a finding or issue id, produce a JSON patch / strategic merge patch / YAML snippet. Never mutates the cluster.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "Kubernetes kind, e.g. Deployment"
+          },
+          "name": { "type": "string", "description": "Resource name" },
+          "namespace": { "type": "string", "description": "Namespace" },
+          "issue": {
+            "type": "string",
+            "description": "Issue id or rule name, e.g. missing-resource-limits, runAsNonRoot"
+          },
+          "finding": {
+            "type": "object",
+            "description": "Optional full ShrikeOps finding object"
+          }
+        },
+        "required": ["kind", "name", "issue"]
+      }
+    },
+    {
+      "name": "apply_remediation",
+      "mode": "readwrite",
+      "description": "Apply a previously proposed patch. Requires readwrite mode, namespace allowlist, and confirm=true. Prefer dry_run=true first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "description": "Kubernetes kind" },
+          "name": { "type": "string", "description": "Resource name" },
+          "namespace": { "type": "string", "description": "Namespace" },
+          "issue": {
+            "type": "string",
+            "description": "Issue id or rule name"
+          },
+          "patch": {
+            "type": "string",
+            "description": "Patch body (JSON or YAML) from propose_remediation"
+          },
+          "dry_run": {
+            "type": "boolean",
+            "description": "If true (default), server-side dry-run only"
+          },
+          "confirm": {
+            "type": "boolean",
+            "description": "Must be true to apply when dry_run=false"
+          }
+        },
+        "required": ["kind", "name", "namespace", "issue"]
+      }
+    }
+  ]
+}

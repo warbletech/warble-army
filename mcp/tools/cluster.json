@@ -1,0 +1,208 @@
+{
+  "group": "cluster",
+  "backend": "steadyhelm",
+  "description": "Live Kubernetes observe and gated mutate tools (SteadyHelm).",
+  "tools": [
+    {
+      "name": "list_namespaces",
+      "mode": "readonly",
+      "description": "List all Kubernetes namespaces in the cluster.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "list_pods",
+      "mode": "readonly",
+      "description": "List pods in a namespace, optionally filtered by label selector.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Kubernetes namespace. Leave empty for all namespaces."
+          },
+          "label_selector": {
+            "type": "string",
+            "description": "Optional label selector, e.g. app=payment-svc"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_pod",
+      "mode": "readonly",
+      "description": "Get detailed status of a specific pod.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Pod name" }
+        },
+        "required": ["namespace", "name"]
+      }
+    },
+    {
+      "name": "get_pod_logs",
+      "mode": "readonly",
+      "description": "Fetch recent logs from a pod container.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Pod name" },
+          "container": {
+            "type": "string",
+            "description": "Container name (optional, defaults to first container)"
+          },
+          "tail_lines": {
+            "type": "integer",
+            "description": "Number of log lines to return (default 100)"
+          }
+        },
+        "required": ["namespace", "name"]
+      }
+    },
+    {
+      "name": "list_nodes",
+      "mode": "readonly",
+      "description": "List all nodes with their status, roles, and resource capacity.",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "list_events",
+      "mode": "readonly",
+      "description": "List Kubernetes events, optionally filtered by namespace or field selector.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          },
+          "field_selector": {
+            "type": "string",
+            "description": "Optional field selector, e.g. involvedObject.name=my-pod"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_deployments",
+      "mode": "readonly",
+      "description": "List deployments with replica counts and rollout status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_hpas",
+      "mode": "readonly",
+      "description": "List HorizontalPodAutoscalers with current/desired/min/max replica counts and metrics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_pod_metrics",
+      "mode": "readonly",
+      "description": "List live CPU and memory usage for pods (requires metrics-server).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_node_metrics",
+      "mode": "readonly",
+      "description": "List live CPU and memory usage for nodes (requires metrics-server).",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "list_services",
+      "mode": "readonly",
+      "description": "List Services with their type, cluster IP, and port mappings.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_configmap",
+      "mode": "readonly",
+      "description": "Read the data keys of a ConfigMap (values are shown).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "ConfigMap name" }
+        },
+        "required": ["namespace", "name"]
+      }
+    },
+    {
+      "name": "cluster_summary",
+      "mode": "readonly",
+      "description": "Return a concise health summary: node count/status, pod phase counts, recent Warning events, HPA saturation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Scope summary to a namespace. Empty = cluster-wide."
+          }
+        }
+      }
+    },
+    {
+      "name": "scale_deployment",
+      "mode": "readwrite",
+      "description": "Scale a Deployment to the specified replica count. WRITE — requires readwrite mode.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Deployment name" },
+          "replicas": { "type": "integer", "description": "Desired replica count" }
+        },
+        "required": ["namespace", "name", "replicas"]
+      }
+    },
+    {
+      "name": "delete_pod",
+      "mode": "readwrite",
+      "description": "Delete a pod by name (triggers restart). WRITE — requires readwrite mode.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Pod name" }
+        },
+        "required": ["namespace", "name"]
+      }
+    }
+  ]
+}

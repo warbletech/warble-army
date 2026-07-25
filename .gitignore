@@ -1,0 +1,28 @@
+# Local env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+kubeconfig
+*.kubeconfig
+
+# Build artifacts
+*.exe
+*.test
+/bin/
+dist/
+node_modules/
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Go
+steadyhelm/steadyhelm
+shrikeops/scanner/shrikeops
+
+# Optional pre-commit
+.pre-commit-local/

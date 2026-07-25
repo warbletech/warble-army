@@ -1,0 +1,30 @@
+# Optional: pip install pre-commit && pre-commit install
+# Native hooks in .githooks/ work without this file.
+repos:
+  - repo: local
+    hooks:
+      - id: check-mcp-registry
+        name: check MCP tool registry
+        entry: ./scripts/check-mcp-registry.sh
+        language: system
+        files: ^mcp/tools/
+        pass_filenames: false
+
+      - id: submodule-status
+        name: warn on dirty submodules
+        entry: bash -c 'git submodule status | grep -E "^[^ ]" >/dev/null && exit 0; exit 0'
+        language: system
+        pass_filenames: false
+        always_run: true
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-yaml
+        exclude: ^(shrikeops|shrikeops-demo|steadyhelm|starling)/
+      - id: check-json
+        files: ^mcp/
+      - id: end-of-file-fixer
+        exclude: ^(shrikeops|shrikeops-demo|steadyhelm|starling)/
+      - id: trailing-whitespace
+        exclude: ^(shrikeops|shrikeops-demo|steadyhelm|starling)/

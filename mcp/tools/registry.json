@@ -1,0 +1,342 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "warble-army-mcp",
+  "version": "0.1.0",
+  "description": "Canonical MCP tools/list for Warble Army (Starling Lite surface). Backends: steadyhelm, shrikeops, starling-lite.",
+  "groups": ["cluster", "scan", "remediate"],
+  "tools": [
+    {
+      "name": "list_namespaces",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List all Kubernetes namespaces in the cluster.",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "list_pods",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List pods in a namespace, optionally filtered by label selector.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Kubernetes namespace. Leave empty for all namespaces."
+          },
+          "label_selector": {
+            "type": "string",
+            "description": "Optional label selector, e.g. app=payment-svc"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_pod",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "Get detailed status of a specific pod.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Pod name" }
+        },
+        "required": ["namespace", "name"]
+      }
+    },
+    {
+      "name": "get_pod_logs",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "Fetch recent logs from a pod container.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Pod name" },
+          "container": {
+            "type": "string",
+            "description": "Container name (optional, defaults to first container)"
+          },
+          "tail_lines": {
+            "type": "integer",
+            "description": "Number of log lines to return (default 100)"
+          }
+        },
+        "required": ["namespace", "name"]
+      }
+    },
+    {
+      "name": "list_nodes",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List all nodes with their status, roles, and resource capacity.",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "list_events",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List Kubernetes events, optionally filtered by namespace or field selector.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          },
+          "field_selector": {
+            "type": "string",
+            "description": "Optional field selector, e.g. involvedObject.name=my-pod"
+          }
+        }
+      }
+    },
+    {
+      "name": "list_deployments",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List deployments with replica counts and rollout status.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_hpas",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List HorizontalPodAutoscalers with current/desired/min/max replica counts and metrics.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_pod_metrics",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List live CPU and memory usage for pods (requires metrics-server).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "list_node_metrics",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List live CPU and memory usage for nodes (requires metrics-server).",
+      "inputSchema": { "type": "object", "properties": {} }
+    },
+    {
+      "name": "list_services",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "List Services with their type, cluster IP, and port mappings.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to query. Empty = all namespaces."
+          }
+        }
+      }
+    },
+    {
+      "name": "get_configmap",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "Read the data keys of a ConfigMap (values are shown).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "ConfigMap name" }
+        },
+        "required": ["namespace", "name"]
+      }
+    },
+    {
+      "name": "cluster_summary",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readonly",
+      "description": "Return a concise health summary: node count/status, pod phase counts, recent Warning events, HPA saturation.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Scope summary to a namespace. Empty = cluster-wide."
+          }
+        }
+      }
+    },
+    {
+      "name": "scale_deployment",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readwrite",
+      "description": "Scale a Deployment to the specified replica count. WRITE — requires readwrite mode.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Deployment name" },
+          "replicas": { "type": "integer", "description": "Desired replica count" }
+        },
+        "required": ["namespace", "name", "replicas"]
+      }
+    },
+    {
+      "name": "delete_pod",
+      "group": "cluster",
+      "backend": "steadyhelm",
+      "mode": "readwrite",
+      "description": "Delete a pod by name (triggers restart). WRITE — requires readwrite mode.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Kubernetes namespace" },
+          "name": { "type": "string", "description": "Pod name" }
+        },
+        "required": ["namespace", "name"]
+      }
+    },
+    {
+      "name": "scan_manifest",
+      "group": "scan",
+      "backend": "shrikeops",
+      "mode": "readonly",
+      "description": "Scan a Kubernetes YAML manifest for security, API stability, reliability, and lint findings.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Filesystem path to YAML file or directory" },
+          "manifest": { "type": "string", "description": "Inline YAML content (alternative to path)" },
+          "source": { "type": "string", "description": "Label for the scan source in the report" }
+        }
+      }
+    },
+    {
+      "name": "scan_helm",
+      "group": "scan",
+      "backend": "shrikeops",
+      "mode": "readonly",
+      "description": "Render a Helm chart and scan the output with ShrikeOps.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chart_path": { "type": "string", "description": "Path to Helm chart directory" },
+          "values_files": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Optional -f values files"
+          },
+          "set": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Optional --set key/value overrides"
+          },
+          "release_name": {
+            "type": "string",
+            "description": "Helm release name used for templating (default: scan)"
+          }
+        },
+        "required": ["chart_path"]
+      }
+    },
+    {
+      "name": "scan_cluster_export",
+      "group": "scan",
+      "backend": "shrikeops",
+      "mode": "readonly",
+      "description": "Export selected live workloads as YAML and scan them.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": { "type": "string", "description": "Namespace to export" },
+          "kinds": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Resource kinds to export"
+          }
+        }
+      }
+    },
+    {
+      "name": "propose_remediation",
+      "group": "remediate",
+      "backend": "starling-lite",
+      "mode": "readonly",
+      "description": "Produce a patch for an issue; never mutates the cluster.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string", "description": "Kubernetes kind, e.g. Deployment" },
+          "name": { "type": "string", "description": "Resource name" },
+          "namespace": { "type": "string", "description": "Namespace" },
+          "issue": {
+            "type": "string",
+            "description": "Issue id or rule name, e.g. missing-resource-limits"
+          },
+          "finding": {
+            "type": "object",
+            "description": "Optional full ShrikeOps finding object"
+          }
+        },
+        "required": ["kind", "name", "issue"]
+      }
+    },
+    {
+      "name": "apply_remediation",
+      "group": "remediate",
+      "backend": "starling-lite",
+      "mode": "readwrite",
+      "description": "Apply a proposed patch. Requires readwrite, allowlist, confirm=true. Prefer dry_run=true first.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": { "type": "string" },
+          "name": { "type": "string" },
+          "namespace": { "type": "string" },
+          "issue": { "type": "string" },
+          "patch": { "type": "string", "description": "Patch body from propose_remediation" },
+          "dry_run": { "type": "boolean", "description": "Default true" },
+          "confirm": { "type": "boolean", "description": "Must be true when dry_run=false" }
+        },
+        "required": ["kind", "name", "namespace", "issue"]
+      }
+    }
+  ]
+}

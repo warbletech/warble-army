@@ -1,0 +1,77 @@
+{
+  "group": "scan",
+  "backend": "shrikeops",
+  "description": "Kubernetes manifest and Helm chart scanning (ShrikeOps).",
+  "tools": [
+    {
+      "name": "scan_manifest",
+      "mode": "readonly",
+      "description": "Scan a Kubernetes YAML manifest for security, API stability, reliability, and lint findings. Returns score, grade, and findings with remediation hints.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Filesystem path to a YAML file or directory of manifests"
+          },
+          "manifest": {
+            "type": "string",
+            "description": "Inline YAML content (alternative to path)"
+          },
+          "source": {
+            "type": "string",
+            "description": "Label for the scan source in the report (e.g. deployment.yaml)"
+          }
+        }
+      }
+    },
+    {
+      "name": "scan_helm",
+      "mode": "readonly",
+      "description": "Render a Helm chart (helm template) and scan the output with ShrikeOps.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "chart_path": {
+            "type": "string",
+            "description": "Path to Helm chart directory"
+          },
+          "values_files": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Optional -f values files"
+          },
+          "set": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Optional --set key/value overrides"
+          },
+          "release_name": {
+            "type": "string",
+            "description": "Helm release name used for templating (default: scan)"
+          }
+        },
+        "required": ["chart_path"]
+      }
+    },
+    {
+      "name": "scan_cluster_export",
+      "mode": "readonly",
+      "description": "Export selected live workloads as YAML and scan them (GKE/EKS/AKS or any kubeconfig). Prefer for air-gapped score of running config.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "namespace": {
+            "type": "string",
+            "description": "Namespace to export. Empty = all (use carefully)."
+          },
+          "kinds": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Resource kinds to export (default: Deployment,StatefulSet,DaemonSet,CronJob)"
+          }
+        }
+      }
+    }
+  ]
+}

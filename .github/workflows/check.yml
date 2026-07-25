@@ -1,0 +1,20 @@
+name: check
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  submodules-and-mcp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Submodule status
+        run: ./scripts/submodules.sh status
+
+      - name: MCP registry
+        run: ./scripts/check-mcp-registry.sh
