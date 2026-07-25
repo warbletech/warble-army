@@ -1,18 +1,17 @@
 {
   "mcpServers": {
     "warble-army": {
-      "command": "starling-lite",
+      "command": "/path/to/warble-army/bin/starling-lite",
       "args": [
-        "mcp",
-        "--stdio",
         "--mode=readonly",
-        "--registry=mcp/tools/registry.json"
+        "--transport=stdio",
+        "--registry",
+        "/path/to/warble-army/mcp/tools/registry.json"
       ],
       "env": {
-        "KUBECONFIG": "${HOME}/.kube/config",
-        "SHRIKEOPS_BIN": "shrikeops"
+        "KUBECONFIG": "${HOME}/.kube/config"
       }
     }
   },
-  "_comment": "starling-lite binary is Phase 2. Until then use steadyhelm.example.json plus shrikeops CLI separately."
+  "_comment": "Build with: make starling-lite  (from warble-army root)"
 }
