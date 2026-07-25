@@ -169,6 +169,19 @@ Safety defaults: readonly mode, namespace allowlists, dry-run first. See [`docs/
 
 ---
 
+## CI
+
+GitHub Actions (`.github/workflows/check.yml`) on every push/PR:
+
+1. Submodule status + MCP registry validation  
+2. Build **SteadyHelm** + **Starling Lite**, `tools/list` + `scan_manifest` smoke  
+3. **Reflexion agent** against HTTP MCP  
+
+```bash
+# local parity
+make registry && make starling-lite && make test-mcp
+```
+
 ## Docs
 
 | Doc | Description |
@@ -176,6 +189,7 @@ Safety defaults: readonly mode, namespace allowlists, dry-run first. See [`docs/
 | [`docs/architecture.md`](docs/architecture.md) | Flock diagram, OSS vs SaaS |
 | [`docs/MAINTAINING.md`](docs/MAINTAINING.md) | Submodules, remotes, hooks, release pins |
 | [`docs/safety.md`](docs/safety.md) | RBAC, write gates, audit |
+| [`docs/gke-pdb-unpermissive-2026-07.md`](docs/gke-pdb-unpermissive-2026-07.md) | GKE Active Assist PDB fix on `warble-cluster` |
 | [`mcp/README.md`](mcp/README.md) | Tool layout + client setup |
 | [`mcp/PROTOCOL.md`](mcp/PROTOCOL.md) | MCP JSON-RPC conventions for this flock |
 | [`starling/INSTRUCTIONS.md`](starling/INSTRUCTIONS.md) | Product Starling setup (verify tools live) |

@@ -4,6 +4,11 @@ on:
   push:
     branches: [main, master]
   pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   submodules-and-mcp:
@@ -18,3 +23,140 @@ jobs:
 
       - name: MCP registry
         run: ./scripts/check-mcp-registry.sh
+
+  build-starling-lite:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache-dependency-path: |
+            mcp/starling-lite/go.sum
+            steadyhelm/go.sum
+            shrikeops/scanner/go.sum
+
+      - name: Build SteadyHelm
+        run: |
+          mkdir -p bin
+          cd steadyhelm && go build -o ../bin/steadyhelm .
+
+      - name: Build Starling Lite
+        run: |
+          cd mcp/starling-lite
+          go mod tidy
+          go test ./...
+          go build -o ../../bin/starling-lite ./cmd/starling-lite
+
+      - name: MCP tools/list smoke
+        run: |
+          set -euo pipefail
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","clientInfo":{"name":"ci","version":"0"},"capabilities":{}}}' \
+            '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
+            | ./bin/starling-lite \
+                --mode=readonly \
+                --transport=stdio \
+                --registry="${GITHUB_WORKSPACE}/mcp/tools/registry.json" \
+            2>/tmp/sl.err \
+            | tee /tmp/sl.out
+          python3 - <<'PY'
+          import json,sys
+          tools=None
+          for line in open("/tmp/sl.out"):
+              line=line.strip()
+              if not line: continue
+              r=json.loads(line)
+              if r.get("id")==2:
+                  tools=r["result"]["tools"]
+          assert tools is not None, "no tools/list response"
+          # readonly: write tools filtered
+          names={t["name"] for t in tools}
+          assert "scan_manifest" in names, names
+          assert "cluster_summary" in names, names
+          assert "propose_remediation" in names, names
+          assert "scale_deployment" not in names, "write tools should be hidden in readonly"
+          print(f"ok tools/list count={len(tools)}")
+          PY
+
+      - name: scan_manifest smoke (demo YAML)
+        run: |
+          set -euo pipefail
+          MANIFEST="${GITHUB_WORKSPACE}/shrikeops-demo/k8s/bad/root-container.yaml"
+          printf '%s\n' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","clientInfo":{"name":"ci","version":"0"},"capabilities":{}}}' \
+            "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"scan_manifest\",\"arguments\":{\"path\":\"${MANIFEST}\",\"source\":\"root-container.yaml\"}}}" \
+            | ./bin/starling-lite \
+                --mode=readonly \
+                --transport=stdio \
+                --registry="${GITHUB_WORKSPACE}/mcp/tools/registry.json" \
+            2>/tmp/scan.err \
+            | tee /tmp/scan.out
+          python3 - <<'PY'
+          import json
+          for line in open("/tmp/scan.out"):
+              line=line.strip()
+              if not line: continue
+              r=json.loads(line)
+              if r.get("id")!=3: continue
+              assert not r.get("error"), r
+              text=r["result"]["content"][0]["text"]
+              report=json.loads(text)
+              assert "score" in report and "findings" in report, report.keys()
+              print("ok scan_manifest source=", report.get("source"),
+                    "grade=", report.get("score",{}).get("grade"),
+                    "findings=", len(report.get("findings") or []))
+              break
+          else:
+              raise SystemExit("no tools/call response")
+          PY
+
+      - name: Upload binaries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: warble-army-bin
+          path: |
+            bin/starling-lite
+            bin/steadyhelm
+          retention-days: 7
+
+  reflexion-agent:
+    runs-on: ubuntu-latest
+    needs: build-starling-lite
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.22.x"
+          cache-dependency-path: mcp/starling-lite/go.sum
+
+      - name: Build Starling Lite
+        run: |
+          mkdir -p bin
+          cd mcp/starling-lite && go mod tidy && go build -o ../../bin/starling-lite ./cmd/starling-lite
+
+      - name: Run Reflexion agent over HTTP MCP
+        run: |
+          set -euo pipefail
+          ./bin/starling-lite \
+            --mode=readonly \
+            --transport=http \
+            --addr=127.0.0.1:8822 \
+            --registry="${GITHUB_WORKSPACE}/mcp/tools/registry.json" \
+            >/tmp/sl-http.log 2>&1 &
+          echo $! > /tmp/sl.pid
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8822/health && break
+            sleep 0.5
+          done
+          python3 agents/reflexion/run.py \
+            --mcp http://127.0.0.1:8822/mcp \
+            --path shrikeops-demo/k8s/bad/root-container.yaml
+          kill "$(cat /tmp/sl.pid)" 2>/dev/null || true
