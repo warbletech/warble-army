@@ -36,12 +36,12 @@ Repos must be **public** before filing or claiming open source. Wave order: see 
 
 | Repo | Public? |
 |------|---------|
-| warbleoss.org | ⬜ |
-| shrikeops-demo | ⬜ |
-| shrikeops | ⬜ |
-| heron-ops | ⬜ |
-| warble-army | ⬜ |
-| community | ⬜ |
+| warbleoss.org | ✅ public |
+| shrikeops-demo | ✅ public |
+| shrikeops | ✅ public |
+| heron-ops | ✅ public |
+| warble-army | ✅ public |
+| community | ✅ public |
 
 ## After TOC acceptance (do not start early)
 
