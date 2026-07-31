@@ -21,6 +21,7 @@ This repository is the **umbrella** that wires the flock together with submodule
 ```
 
 Public demo MCP: **[https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)**  
+Always-on PaaS deploy (Railway / Fly — independent of GKE): [`deploy/railway/README.md`](deploy/railway/README.md)  
 Brand map: [`docs/BRAND.md`](docs/BRAND.md) · CE plan: [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md)
 
 ---

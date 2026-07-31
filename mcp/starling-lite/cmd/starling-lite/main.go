@@ -1,27 +1,30 @@
 package main
 
 import (
+	"encoding/base64"
 	"flag"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/config"
 	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/server"
 )
 
-const version = "0.2.0"
+// version is overridden at build time: -ldflags "-X main.version=..."
+var version = "0.2.1"
 
 func main() {
 	var (
-		mode       = flag.String("mode", "readonly", "Server mode: readonly | readwrite")
-		transport  = flag.String("transport", "stdio", "MCP transport: stdio | http")
-		addr       = flag.String("addr", ":8822", "HTTP listen address (transport=http)")
-		kubeconfig = flag.String("kubeconfig", "", "Path to kubeconfig (default: env / ~/.kube/config)")
-		namespace  = flag.String("namespace", "", "Restrict cluster tools to one namespace")
-		registry   = flag.String("registry", "", "Path to mcp/tools/registry.json (default: auto-discover)")
-		allowNS    = flag.String("allow-namespaces", "", "Comma-separated write allowlist (empty = all when readwrite)")
+		mode       = flag.String("mode", envOr("STARLING_MODE", "readonly"), "Server mode: readonly | readwrite (env STARLING_MODE)")
+		transport  = flag.String("transport", envOr("STARLING_TRANSPORT", "stdio"), "MCP transport: stdio | http (env STARLING_TRANSPORT)")
+		addr       = flag.String("addr", defaultAddr(), "HTTP listen address (env PORT or STARLING_ADDR; PaaS uses PORT)")
+		kubeconfig = flag.String("kubeconfig", envOr("KUBECONFIG", ""), "Path to kubeconfig (default: env KUBECONFIG / ~/.kube/config)")
+		namespace  = flag.String("namespace", envOr("STARLING_NAMESPACE", ""), "Restrict cluster tools to one namespace")
+		registry   = flag.String("registry", envOr("STARLING_REGISTRY", ""), "Path to mcp/tools/registry.json (default: auto-discover)")
+		allowNS    = flag.String("allow-namespaces", envOr("STARLING_ALLOW_NAMESPACES", ""), "Comma-separated write allowlist (empty = all when readwrite)")
 		ver        = flag.Bool("version", false, "Print version and exit")
 	)
 	flag.Parse()
@@ -35,6 +38,15 @@ func main() {
 	if *ver {
 		fmt.Printf("starling-lite %s\n", version)
 		os.Exit(0)
+	}
+
+	// Optional: KUBECONFIG_B64 for Railway/Fly secrets (no file mount needed)
+	if *kubeconfig == "" {
+		if path, err := materializeKubeconfigB64(); err != nil {
+			log.Printf("[starling-lite] KUBECONFIG_B64 ignored: %v", err)
+		} else if path != "" {
+			*kubeconfig = path
+		}
 	}
 
 	regPath := *registry
@@ -74,6 +86,57 @@ func main() {
 	default:
 		log.Fatalf("[starling-lite] unknown transport %q", cfg.Transport)
 	}
+}
+
+func envOr(key, def string) string {
+	if v := strings.TrimSpace(os.Getenv(key)); v != "" {
+		return v
+	}
+	return def
+}
+
+// defaultAddr prefers PaaS PORT (Railway, Fly, Render, Heroku-style).
+func defaultAddr() string {
+	if v := strings.TrimSpace(os.Getenv("STARLING_ADDR")); v != "" {
+		if strings.HasPrefix(v, ":") || strings.Contains(v, ":") {
+			return v
+		}
+		return ":" + v
+	}
+	if p := strings.TrimSpace(os.Getenv("PORT")); p != "" {
+		if strings.HasPrefix(p, ":") {
+			return p
+		}
+		return ":" + p
+	}
+	return ":8822"
+}
+
+// materializeKubeconfigB64 writes KUBECONFIG_B64 to a temp file for cluster tools.
+// Leave unset on public demos so only scan/remediate work (no cloud dependency).
+func materializeKubeconfigB64() (string, error) {
+	raw := strings.TrimSpace(os.Getenv("KUBECONFIG_B64"))
+	if raw == "" {
+		return "", nil
+	}
+	b, err := base64.StdEncoding.DecodeString(raw)
+	if err != nil {
+		// allow raw kubeconfig pasted without base64 (small files)
+		if strings.Contains(raw, "apiVersion:") {
+			b = []byte(raw)
+		} else {
+			return "", fmt.Errorf("decode: %w", err)
+		}
+	}
+	dir := filepath.Join(os.TempDir(), "starling-lite")
+	if err := os.MkdirAll(dir, 0o700); err != nil {
+		return "", err
+	}
+	path := filepath.Join(dir, "kubeconfig")
+	if err := os.WriteFile(path, b, 0o600); err != nil {
+		return "", err
+	}
+	return path, nil
 }
 
 func discoverRegistry() string {

@@ -25,6 +25,18 @@ HTTP (agents / Reflexion):
 curl -s localhost:8822/health
 ```
 
+### Always-on PaaS (Railway / Fly / Render)
+
+Independent of GKE — scan tools work with **no** kubeconfig:
+
+```bash
+# Docker (same image Railway uses)
+make railway-image
+make railway-run   # http://127.0.0.1:8080/health  and  /mcp
+```
+
+See [`deploy/railway/README.md`](../../deploy/railway/README.md) for Railway deploy steps and env vars (`PORT`, `KUBECONFIG_B64`).
+
 ### MCP client config
 
 ```json

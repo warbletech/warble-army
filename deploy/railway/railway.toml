@@ -1,0 +1,30 @@
+# Railway config — deploy from warble-army repo root
+# Docs: https://docs.railway.app/reference/config-as-code
+#
+# Dashboard:
+#   1. New Project → Deploy from GitHub → warble-tech/warble-army
+#   2. Root Directory: /  (repo root)
+#   3. Or set Dockerfile path below
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "deploy/railway/Dockerfile"
+# watchPatterns keep rebuilds focused
+watchPatterns = [
+  "mcp/starling-lite/**",
+  "heron-ops/**",
+  "shrikeops/**",
+  "mcp/tools/**",
+  "deploy/railway/**",
+]
+
+[deploy]
+# Always-on: use a paid plan / disable sleep in Railway service settings
+# Healthcheck — Go serves GET /health
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+
+# Public HTTP
+# Railway maps $PORT automatically; our binary reads PORT

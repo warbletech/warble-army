@@ -1,10 +1,12 @@
 .PHONY: help hooks submodules status registry starling-lite steadyhelm test-mcp agent-demo \
-	agentgateway-bin agentgateway-local agentgateway-image agentgateway-apply clean
+	agentgateway-bin agentgateway-local agentgateway-image agentgateway-apply \
+	railway-image railway-run clean
 
 ROOT := $(abspath .)
 BIN  := $(ROOT)/bin
 AGW_VERSION ?= v1.4.0-beta.1
 REGISTRY ?= us-central1-docker.pkg.dev/warble-tech/warble
+RAILWAY_IMAGE ?= starling-lite:railway
 
 help:
 	@echo "Warble Army targets:"
@@ -20,6 +22,8 @@ help:
 	@echo "  make agentgateway-local starling-lite HTTP + agentgateway front door"
 	@echo "  make agentgateway-image build/push starling-lite container"
 	@echo "  make agentgateway-apply kubectl apply deploy/agentgateway/k8s"
+	@echo "  make railway-image      docker build always-on PaaS image (Railway/Fly)"
+	@echo "  make railway-run        run PaaS image locally on :8080"
 	@echo "  make clean              remove bin/"
 
 hooks:
@@ -96,6 +100,15 @@ agentgateway-apply:
 	kubectl apply -f $(ROOT)/deploy/agentgateway/k8s/
 	kubectl -n warblecloud-ai rollout status deploy/agentgateway --timeout=180s || true
 	kubectl -n warblecloud-ai get deploy,svc,pods -l app=agentgateway
+
+# ── Always-on PaaS (Railway / Fly / Render) ──────────────────────────────────
+
+railway-image:
+	docker build -f $(ROOT)/deploy/railway/Dockerfile -t $(RAILWAY_IMAGE) $(ROOT)
+	@echo "built $(RAILWAY_IMAGE) — deploy: see deploy/railway/README.md"
+
+railway-run: railway-image
+	docker run --rm -p 8080:8080 -e PORT=8080 -e STARLING_MODE=readonly $(RAILWAY_IMAGE)
 
 clean:
 	rm -rf $(BIN)

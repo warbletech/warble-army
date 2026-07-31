@@ -1,4 +1,5 @@
-# Multi-stage build: Starling Lite MCP for Warble Army
+# Multi-stage build: Starling Lite MCP for Warble Army (GKE / local)
+# For Railway/Fly always-on PaaS, prefer deploy/railway/Dockerfile (PORT-aware).
 FROM golang:1.22-bookworm AS build
 WORKDIR /src
 # Context must be warble-army repo root (see Makefile agentgateway-image)
@@ -7,12 +8,15 @@ COPY heron-ops ./heron-ops
 COPY shrikeops ./shrikeops
 COPY mcp/tools ./mcp/tools
 WORKDIR /src/mcp/starling-lite
-RUN go mod download && CGO_ENABLED=0 go build -o /out/starling-lite ./cmd/starling-lite
+RUN go mod tidy && CGO_ENABLED=0 go build -ldflags="-s -w" -o /out/starling-lite ./cmd/starling-lite
 
 FROM gcr.io/distroless/static-debian12:nonroot
 COPY --from=build /out/starling-lite /usr/local/bin/starling-lite
 COPY --from=build /src/mcp/tools/registry.json /etc/warble-army/registry.json
+ENV PORT=8822 \
+    STARLING_MODE=readonly \
+    STARLING_TRANSPORT=http
 USER nonroot:nonroot
 EXPOSE 8822
 ENTRYPOINT ["/usr/local/bin/starling-lite"]
-CMD ["--mode=readonly", "--transport=http", "--addr=:8822", "--registry=/etc/warble-army/registry.json"]
+CMD ["--mode=readonly", "--transport=http", "--registry=/etc/warble-army/registry.json"]

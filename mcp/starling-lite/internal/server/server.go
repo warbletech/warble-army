@@ -15,7 +15,7 @@ import (
 	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/registry"
 	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/remediate"
 	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/scanx"
-	"github.com/warblecloud/steadyhelm/pkg/mcpserver"
+	"github.com/warble-tech/heron-ops/pkg/mcpserver"
 )
 
 // Server is the Starling Lite MCP facade.
@@ -67,10 +67,18 @@ func (s *Server) ServeStdio() error {
 	return sc.Err()
 }
 
-// ServeHTTP exposes POST /mcp and GET /health.
+// ServeHTTP exposes POST /mcp and GET /health (also / and /lite/* for PaaS / legacy paths).
 func (s *Server) ServeHTTP(addr string) error {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/mcp", func(w http.ResponseWriter, r *http.Request) {
+	handleMCP := func(w http.ResponseWriter, r *http.Request) {
+		// CORS for browser-based MCP testers (safe for public readonly demo)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		}
 		if r.Method != http.MethodPost {
 			http.Error(w, "POST only", http.StatusMethodNotAllowed)
 			return
@@ -83,16 +91,29 @@ func (s *Server) ServeHTTP(addr string) error {
 		resp := s.handle(r.Context(), raw)
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp)
-	})
-	mux.HandleFunc("/health", func(w http.ResponseWriter, _ *http.Request) {
+	}
+	handleHealth := func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		st := map[string]any{
 			"status":  "ok",
 			"server":  "starling-lite",
 			"version": s.cfg.Version,
 			"mode":    s.cfg.Mode,
 			"cluster": s.cluster != nil,
+			"mcp":     "/mcp",
 		}
 		_ = json.NewEncoder(w).Encode(st)
+	}
+	mux.HandleFunc("/mcp", handleMCP)
+	mux.HandleFunc("/lite/mcp", handleMCP)
+	mux.HandleFunc("/health", handleHealth)
+	mux.HandleFunc("/lite/health", handleHealth)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/" {
+			http.NotFound(w, r)
+			return
+		}
+		handleHealth(w, r)
 	})
 	return http.ListenAndServe(addr, mux)
 }

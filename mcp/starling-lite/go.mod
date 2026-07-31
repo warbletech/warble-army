@@ -3,8 +3,8 @@ module github.com/warble-tech/warble-army/mcp/starling-lite
 go 1.22
 
 require (
-	github.com/warblecloud/steadyhelm v0.0.0
-	github.com/warbletech/shrikeops/scanner v0.0.0
+	github.com/warble-tech/heron-ops v0.0.0
+	github.com/warble-tech/shrikeops/scanner v0.0.0
 )
 
 require (
@@ -69,7 +69,7 @@ require (
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
 
-// Heron Ops (product); module path still github.com/warblecloud/steadyhelm until module rename
-replace github.com/warblecloud/steadyhelm => ../../heron-ops
+// Local OSS modules (Docker build copies them next to this tree)
+replace github.com/warble-tech/heron-ops => ../../heron-ops
 
-replace github.com/warbletech/shrikeops/scanner => ../../shrikeops/scanner
+replace github.com/warble-tech/shrikeops/scanner => ../../shrikeops/scanner

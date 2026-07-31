@@ -73,10 +73,12 @@ kubectl -n warblecloud-ai port-forward svc/agentgateway 3000:3000
 
 | URL | Backend |
 |-----|---------|
-| **https://starling-ex.frakma.io/lite/mcp** | Starling Lite MCP (JSON-RPC HTTP) |
+| **https://starling-ex.frakma.io/lite/mcp** | Starling Lite MCP on GKE (JSON-RPC HTTP) |
 | https://starling-ex.frakma.io/lite/health | Health probe |
 | https://starling-ex.frakma.io/ | Marketing site (unchanged) |
 | https://starling-ex.frakma.io/api | License API (unchanged) |
+
+**Always-on alternative (no GKE):** deploy Starling Lite to Railway / Fly / Render so the public MCP stays up when cloud infra is down or rebuilt — see [`deploy/railway/README.md`](../railway/README.md).
 
 In-cluster federation still uses **Agent Gateway** (`svc/agentgateway`). The public `/lite` path hits Starling Lite directly so clients get simple MCP JSON-RPC without streamable-HTTP session friction.
 

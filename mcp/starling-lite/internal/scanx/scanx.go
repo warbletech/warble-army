@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/warbletech/shrikeops/scanner/pkg/scan"
+	"github.com/warble-tech/shrikeops/scanner/pkg/scan"
 )
 
 // Manifest runs ShrikeOps on a path or inline YAML.
