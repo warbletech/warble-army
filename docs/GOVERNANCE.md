@@ -51,7 +51,8 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 
 ### Maturity checklist (before sandbox / incubation proposal)
 
-- [x] Public Apache-2.0 (or equivalent) components
+- [ ] **GitHub repos public** (Wave 1: warbleoss.org, shrikeops-demo, shrikeops, heron-ops, warble-army, community) — *currently private; blocks filing*
+- [x] Apache-2.0 (or equivalent) LICENSE files on primary components
 - [x] Clear product rename (Heron Ops, ShrikeOps)
 - [x] Live demo MCP (`starling-ex.frakma.io/lite/mcp`)
 - [x] CE Helm chart
@@ -61,6 +62,9 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 - [ ] CNCF TAG presentation / Day 0 GTR
 - [ ] Trademark and name clearance (“Starling EX Community” vs commercial Starling)
 - [ ] File Sandbox issue on `cncf/sandbox` + Contribution Agreement
+
+**Portfolio open order + LFX crowdfunding path:** monorepo `OSS_PORTFOLIO_ALIGNMENT.md` (warble-opensource workspace).
+
 Until donation completes, **Warble / ChirpStack** remains copyright holder and steward; language on sites must say **“planning CNCF donation”**, not “CNCF project”.
 
 ## Frakma-X → Linux Foundation wing

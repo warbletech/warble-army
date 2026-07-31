@@ -1,18 +1,31 @@
-# warbleoss.org — landing content draft
+# warbleoss.org — landing content (source of truth for copy)
 
-Use this as copy for the static site (Cloudflare Pages / GitHub Pages).
+Implement in [`warbleoss.org/index.html`](../../warbleoss.org/index.html) (workspace) / `github.com/warble-tech/warbleoss.org`.  
+Portfolio order and open-source waves: monorepo [`OSS_PORTFOLIO_ALIGNMENT.md`](../../OSS_PORTFOLIO_ALIGNMENT.md).
+
+---
+
+## Banner
+
+**Starling EX Community** — planning **CNCF** donation (Sandbox path) · **Frakma-X** — Linux Foundation wing for platform / LLMOps
 
 ---
 
 ## Hero
 
 **Warble OSS**  
-Open-source Kubernetes agent ops. Scan. Observe. Remediate.
+Open-source Kubernetes agent ops
 
-Birds of a feather — **ShrikeOps**, **Heron Ops**, **Starling EX Community**  
-*(planning donation to the CNCF)*. Platform openness under the Linux Foundation: **Frakma-X**.
+Scan with **ShrikeOps**. Observe with **Heron Ops**. Coordinate with **Starling EX Community**.  
+Birds of a feather — self-hosted, no lock-in. Adapt and extend the flock under Apache-2.0.
 
-[Get started](#install) · [GitHub](https://github.com/warble-tech/warble-army) · [Live MCP demo](https://starling-ex.frakma.io/lite/mcp)
+Pills:
+
+- CNCF Sandbox — application draft  
+- Frakma-X · LF wing (forming)  
+- Self-host CE · no phone-home  
+
+CTAs: [Try MCP live](https://starling-ex.frakma.io/lite/mcp) · [Get the army](https://github.com/warble-tech/warble-army) · Easy first PR
 
 ---
 
@@ -24,12 +37,22 @@ Security scanner for manifests & Helm. Impales misconfigs before production.
 
 ### Heron Ops
 Kubernetes MCP server. Live pods, logs, events, metrics for any agent IDE.  
-→ (was SteadyHelm) github.com/warble-tech/steadyhelm → heron-ops
+→ (was SteadyHelm) github.com/warble-tech/heron-ops
 
 ### Starling EX Community
-Self-hosted Community Edition: Starling Lite + Heron Ops + ShrikeOps, one chart.  
+Self-hosted CE: Starling Lite + Heron Ops + ShrikeOps, one chart.  
 **Planned CNCF donation** (Warble stewards until then).  
-→ github.com/warble-tech/warble-army/docs/STARLING_EX_CE.md · GOVERNANCE.md
+→ warble-army charts/starling-ex-ce · GOVERNANCE.md
+
+---
+
+## Easy places to start (contributor funnel)
+
+| Track | Repos | Why |
+|-------|-------|-----|
+| Good first | shrikeops-demo, shrikeops, heron-ops | Small surface, fixtures, flags, docs |
+| Docs / site | warbleoss.org, community | No cluster required |
+| LF wing seed | frakma-oss, warble-bootstrap | Platform patterns + local k3s |
 
 ---
 
@@ -43,6 +66,13 @@ cd warble-army && make starling-lite
 
 Live demo: `https://starling-ex.frakma.io/lite/mcp`
 
+Helm:
+
+```bash
+helm upgrade --install starling-ex-ce ./charts/starling-ex-ce \
+  --namespace warble-army --create-namespace
+```
+
 ---
 
 ## Foundations
@@ -51,7 +81,19 @@ Live demo: `https://starling-ex.frakma.io/lite/mcp`
 |--|---------------------------|--------------|
 | Layer | Agent ↔ cluster ops (MCP) | Platform / LLMOps openness |
 | Path | **CNCF donation (planned)** | **Linux Foundation wing** |
-| Today | warbleoss.org + army repos | Forming under LF |
+| Today | warbleoss.org + army repos | frakma-oss forming under LF |
+| Funding later | LFX after Sandbox + community | LF program / separate fund |
+
+## Community
+
+- Discord Office Hours: Saturday 7–8 PM IST — https://discord.gg/WHsJkEFTt  
+- RFCs / WGs / showcase — github.com/warble-tech/community  
+
+## Support / crowdfunding
+
+- **Now:** use CE, PRs, adopters list, stars  
+- **Next:** [LFX Crowdfunding](https://crowdfunding.lfx.linuxfoundation.org/) after 100% public OSS + multi-contributor traction  
+- **Enterprise (optional):** warblecloud.com · frakma.io/enterprise  
 
 ## Commercial
 

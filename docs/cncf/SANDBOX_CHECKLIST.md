@@ -30,6 +30,19 @@ Track readiness before opening https://github.com/cncf/sandbox/issues/new?templa
 | Speaking rules (not “CNCF project” yet) | ✅ GOVERNANCE.md |
 | Adopters with real orgs | ⬜ need ≥1–3 named if possible |
 
+## Public visibility (blocker)
+
+Repos must be **public** before filing or claiming open source. Wave order: see monorepo `OSS_PORTFOLIO_ALIGNMENT.md`.
+
+| Repo | Public? |
+|------|---------|
+| warbleoss.org | ⬜ |
+| shrikeops-demo | ⬜ |
+| shrikeops | ⬜ |
+| heron-ops | ⬜ |
+| warble-army | ⬜ |
+| community | ⬜ |
+
 ## After TOC acceptance (do not start early)
 
 - [ ] Transfer trademarks / domains / GitHub orgs per CNCF  
@@ -37,6 +50,7 @@ Track readiness before opening https://github.com/cncf/sandbox/issues/new?templa
 - [ ] LFX Insights  
 - [ ] Onboarding template from cncf/sandbox  
 - [ ] Community meetings + maintainers from multiple orgs  
+- [ ] Consider [LFX Crowdfunding](https://docs.linuxfoundation.org/lfx/crowdfunding/apply-for-crowdfunding) (needs 100% OSS, multi-contributor, ~100+ stars)  
 
 ## Owners
 
