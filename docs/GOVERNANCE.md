@@ -51,7 +51,7 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 
 ### Maturity checklist (before sandbox / incubation proposal)
 
-- [x] **GitHub repos public** (Wave 1: warbleoss.org, shrikeops-demo, shrikeops, heron-ops, warble-army, community) — *opened 2026-07-31*
+- [ ] **GitHub repos public** (Wave 1 flock) — *review freeze 2026-07-31: private until post-fix approval*
 - [x] Apache-2.0 (or equivalent) LICENSE files on primary components
 - [x] Clear product rename (Heron Ops, ShrikeOps)
 - [x] Live demo MCP (`starling-ex.frakma.io/lite/mcp`)
