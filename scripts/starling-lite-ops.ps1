@@ -9,7 +9,7 @@
 .EXAMPLE
   .\scripts\starling-lite-ops.ps1 help
   .\scripts\starling-lite-ops.ps1 smoke
-  .\scripts\starling-lite-ops.ps1 smoke -Url https://p4a4cpbh.up.railway.app
+  .\scripts\starling-lite-ops.ps1 smoke -Url https://starling-lite-production.up.railway.app
   .\scripts\starling-lite-ops.ps1 railway-up
   .\scripts\starling-lite-ops.ps1 cloudflare-dns -HostName mcp -Zone warbleoss.org
   .\scripts\starling-lite-ops.ps1 all
@@ -23,7 +23,7 @@ param(
   )]
   [string]$Command = 'help',
 
-  [string]$Url = $(if ($env:RAILWAY_PUBLIC_URL) { $env:RAILWAY_PUBLIC_URL } else { 'https://p4a4cpbh.up.railway.app' }),
+  [string]$Url = $(if ($env:RAILWAY_PUBLIC_URL) { $env:RAILWAY_PUBLIC_URL } else { 'https://starling-lite-production.up.railway.app' }),
   [string]$HostName = 'mcp',
   [string]$Zone = 'warbleoss.org',
   [string]$Target = $(if ($env:RAILWAY_CNAME_TARGET) { $env:RAILWAY_CNAME_TARGET } else { 'p4a4cpbh.up.railway.app' }),
