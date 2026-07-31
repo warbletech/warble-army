@@ -24,6 +24,8 @@ help:
 	@echo "  make agentgateway-apply kubectl apply deploy/agentgateway/k8s"
 	@echo "  make railway-image      docker build always-on PaaS image (Railway/Fly)"
 	@echo "  make railway-run        run PaaS image locally on :8080"
+	@echo "  make ops-smoke          smoke public Railway MCP (scripts/starling-lite-ops.sh)"
+	@echo "  make ops-deploy         railway up via helper script"
 	@echo "  make clean              remove bin/"
 
 hooks:
@@ -109,6 +111,12 @@ railway-image:
 
 railway-run: railway-image
 	docker run --rm -p 8080:8080 -e PORT=8080 -e STARLING_MODE=readonly $(RAILWAY_IMAGE)
+
+ops-smoke:
+	$(ROOT)/scripts/starling-lite-ops.sh smoke
+
+ops-deploy:
+	$(ROOT)/scripts/starling-lite-ops.sh railway-up
 
 clean:
 	rm -rf $(BIN)

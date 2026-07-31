@@ -142,6 +142,29 @@ Same shape as the GKE demo:
 
 ---
 
+## Helper scripts (Linux + PowerShell)
+
+From repo root:
+
+```bash
+# Linux / macOS
+./scripts/starling-lite-ops.sh help
+./scripts/starling-lite-ops.sh smoke --url https://starling-lite-production.up.railway.app
+./scripts/starling-lite-ops.sh railway-up
+./scripts/starling-lite-ops.sh cloudflare-dns --host mcp --zone warbleoss.org
+```
+
+```powershell
+# Windows PowerShell
+.\scripts\starling-lite-ops.ps1 help
+.\scripts\starling-lite-ops.ps1 smoke -Url https://starling-lite-production.up.railway.app
+.\scripts\starling-lite-ops.ps1 railway-up
+.\scripts\starling-lite-ops.ps1 cloudflare-dns -HostName mcp -Zone warbleoss.org
+```
+
+Cloudflare needs `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ZONE_ID` (or gcloud secrets
+`cloudflare-api-token` / `cloudflare-zone-id` on Linux).
+
 ## Local Docker (parity with Railway)
 
 ```bash

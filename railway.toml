@@ -1,0 +1,19 @@
+# Starling Lite always-on MCP — Railway
+# https://github.com/warble-tech/warble-army/tree/main/deploy/railway
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "deploy/railway/Dockerfile"
+watchPatterns = [
+  "mcp/starling-lite/**",
+  "heron-ops/**",
+  "shrikeops/**",
+  "mcp/tools/**",
+  "deploy/railway/**",
+]
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
