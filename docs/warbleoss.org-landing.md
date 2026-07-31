@@ -52,7 +52,8 @@ Self-hosted CE: Starling Lite + Heron Ops + ShrikeOps, one chart.
 |-------|-------|-----|
 | Good first | shrikeops-demo, shrikeops, heron-ops | Small surface, fixtures, flags, docs |
 | Docs / site | warbleoss.org, community | No cluster required |
-| LF wing seed | frakma-oss, warble-bootstrap | Platform patterns + local k3s |
+| Local stack | warble-bootstrap (public) | k3s / Rancher one-shot |
+| LF wing | Frakma-X (planned); frakma-oss **private** | Not public OSS until chartered |
 
 ---
 
