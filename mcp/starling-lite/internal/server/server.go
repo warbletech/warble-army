@@ -59,7 +59,7 @@ func (s *Server) ServeStdio() error {
 		if len(line) == 0 {
 			continue
 		}
-		resp := s.handle(context.Background(), line)
+		resp := s.handle(context.Background(), line, "")
 		s.mu.Lock()
 		_ = enc.Encode(resp)
 		s.mu.Unlock()
@@ -68,13 +68,15 @@ func (s *Server) ServeStdio() error {
 }
 
 // ServeHTTP exposes POST /mcp and GET /health (also / and /lite/* for PaaS / legacy paths).
+// Honors MCP 2026-07-28 headers: MCP-Protocol-Version, Mcp-Method, Mcp-Name (SEP-2243).
 func (s *Server) ServeHTTP(addr string) error {
 	mux := http.NewServeMux()
 	handleMCP := func(w http.ResponseWriter, r *http.Request) {
 		// CORS for browser-based MCP testers (safe for public readonly demo)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization, MCP-Protocol-Version, Mcp-Method, Mcp-Name")
+		w.Header().Set("Access-Control-Expose-Headers", "MCP-Protocol-Version, Mcp-Method")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusNoContent)
 			return
@@ -88,19 +90,33 @@ func (s *Server) ServeHTTP(addr string) error {
 			http.Error(w, "bad JSON", http.StatusBadRequest)
 			return
 		}
-		resp := s.handle(r.Context(), raw)
+		// Header-based method routing (optional; body method still authoritative if set)
+		headerVer := r.Header.Get("MCP-Protocol-Version")
+		if headerVer == "" {
+			headerVer = r.Header.Get("Mcp-Protocol-Version")
+		}
+		resp := s.handle(r.Context(), raw, headerVer)
+		// Echo negotiated version for gateways
+		if v, ok := negotiatedVersion(resp); ok {
+			w.Header().Set("MCP-Protocol-Version", v)
+		}
+		if m := r.Header.Get("Mcp-Method"); m != "" {
+			w.Header().Set("Mcp-Method", m)
+		}
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(resp)
 	}
 	handleHealth := func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		st := map[string]any{
-			"status":  "ok",
-			"server":  "starling-lite",
-			"version": s.cfg.Version,
-			"mode":    s.cfg.Mode,
-			"cluster": s.cluster != nil,
-			"mcp":     "/mcp",
+			"status":             "ok",
+			"server":             "starling-lite",
+			"version":            s.cfg.Version,
+			"mode":               s.cfg.Mode,
+			"cluster":            s.cluster != nil,
+			"mcp":                "/mcp",
+			"protocolVersions":   protocol.SupportedProtocolVersions,
+			"protocolPreferred":  protocol.LatestProtocolVersion,
 		}
 		_ = json.NewEncoder(w).Encode(st)
 	}
@@ -118,7 +134,28 @@ func (s *Server) ServeHTTP(addr string) error {
 	return http.ListenAndServe(addr, mux)
 }
 
-func (s *Server) handle(ctx context.Context, raw []byte) protocol.Response {
+func negotiatedVersion(resp protocol.Response) (string, bool) {
+	if resp.Result == nil {
+		return "", false
+	}
+	switch r := resp.Result.(type) {
+	case protocol.InitializeResult:
+		return r.ProtocolVersion, r.ProtocolVersion != ""
+	case protocol.DiscoverResult:
+		return r.ProtocolVersion, r.ProtocolVersion != ""
+	case *protocol.InitializeResult:
+		if r != nil {
+			return r.ProtocolVersion, r.ProtocolVersion != ""
+		}
+	case *protocol.DiscoverResult:
+		if r != nil {
+			return r.ProtocolVersion, r.ProtocolVersion != ""
+		}
+	}
+	return "", false
+}
+
+func (s *Server) handle(ctx context.Context, raw []byte, headerProtocol string) protocol.Response {
 	var req protocol.Request
 	if err := json.Unmarshal(raw, &req); err != nil {
 		return protocol.ErrResponse(nil, -32700, "parse error")
@@ -126,16 +163,34 @@ func (s *Server) handle(ctx context.Context, raw []byte) protocol.Response {
 
 	switch req.Method {
 	case "initialize":
+		var params protocol.InitializeParams
+		_ = json.Unmarshal(req.Params, &params)
+		ver := protocol.Negotiate(firstNonEmpty(params.ProtocolVersion, headerProtocol))
 		return protocol.Response{
 			JSONRPC: "2.0",
 			ID:      req.ID,
 			Result: protocol.InitializeResult{
-				ProtocolVersion: "2024-11-05",
+				ProtocolVersion: ver,
 				ServerInfo:      protocol.ServerInfo{Name: "starling-lite", Version: s.cfg.Version},
-				Capabilities:    map[string]any{"tools": map[string]any{}},
+				Capabilities:    protocol.DefaultCapabilities(),
+				Instructions:    protocol.DefaultInstructions(),
+			},
+		}
+	case "server/discover":
+		// MCP 2026-07-28 optional capability probe (no session required)
+		ver := protocol.Negotiate(headerProtocol)
+		return protocol.Response{
+			JSONRPC: "2.0",
+			ID:      req.ID,
+			Result: protocol.DiscoverResult{
+				ProtocolVersion: ver,
+				ServerInfo:      protocol.ServerInfo{Name: "starling-lite", Version: s.cfg.Version},
+				Capabilities:    protocol.DefaultCapabilities(),
+				Instructions:    protocol.DefaultInstructions(),
 			},
 		}
 	case "notifications/initialized":
+		// Legacy handshake ack — accepted for 2024/2025 clients; no-op on 2026-07-28
 		return protocol.Response{}
 	case "tools/list":
 		tools := s.reg.Filtered(s.cfg.Mode)
@@ -150,7 +205,11 @@ func (s *Server) handle(ctx context.Context, raw []byte) protocol.Response {
 		return protocol.Response{
 			JSONRPC: "2.0",
 			ID:      req.ID,
-			Result:  protocol.ToolsListResult{Tools: defs},
+			Result: protocol.ToolsListResult{
+				Tools:      defs,
+				TtlMs:      60_000, // cacheable list (SEP-2549)
+				CacheScope: "server",
+			},
 		}
 	case "tools/call":
 		var params protocol.ToolCallParams
@@ -164,6 +223,15 @@ func (s *Server) handle(ctx context.Context, raw []byte) protocol.Response {
 	default:
 		return protocol.ErrResponse(req.ID, -32601, fmt.Sprintf("method not found: %s", req.Method))
 	}
+}
+
+func firstNonEmpty(vals ...string) string {
+	for _, v := range vals {
+		if v != "" {
+			return v
+		}
+	}
+	return ""
 }
 
 func (s *Server) dispatch(ctx context.Context, params protocol.ToolCallParams) protocol.ToolCallResult {

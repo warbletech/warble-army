@@ -66,6 +66,16 @@ starling-lite/
 └── go.mod             # replace → ../../steadyhelm, ../../shrikeops/scanner
 ```
 
+## MCP protocol versions
+
+| Version | Status in Starling Lite |
+|---------|-------------------------|
+| **2026-07-28** | Preferred — stateless core, `server/discover`, list cache hints, header routing |
+| **2025-03-26** | Negotiated if client asks |
+| **2024-11-05** | Still accepted (legacy initialize handshake) |
+
+Community shorthand often calls **2026-07-28** “MCP 2.0”. Health JSON exposes `protocolVersions` / `protocolPreferred`.
+
 ## Safety
 
 - Default `--mode=readonly` hides write tools.

@@ -14,7 +14,7 @@ import (
 )
 
 // version is overridden at build time: -ldflags "-X main.version=..."
-var version = "0.2.1"
+var version = "0.3.0"
 
 func main() {
 	var (
