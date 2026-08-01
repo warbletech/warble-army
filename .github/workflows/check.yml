@@ -1,5 +1,6 @@
 name: check
 
+# GitHub-hosted public runners only (ubuntu-latest). No self-hosted runners.
 on:
   push:
     branches: [main, master]
@@ -12,7 +13,9 @@ concurrency:
 
 jobs:
   submodules-and-mcp:
+    name: submodules (ubuntu-latest)
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,7 +28,9 @@ jobs:
         run: ./scripts/check-mcp-registry.sh
 
   build-starling-lite:
+    name: starling-lite (ubuntu-latest)
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,13 +41,14 @@ jobs:
           go-version: "1.22.x"
           cache-dependency-path: |
             mcp/starling-lite/go.sum
-            steadyhelm/go.sum
+            heron-ops/go.sum
             shrikeops/scanner/go.sum
 
-      - name: Build SteadyHelm
+      - name: Build Heron Ops
         run: |
           mkdir -p bin
-          cd steadyhelm && go build -o ../bin/steadyhelm .
+          (cd heron-ops && go build -o ../bin/heron-ops .)
+          ln -sfn heron-ops bin/steadyhelm
 
       - name: Build Starling Lite
         run: |
@@ -55,7 +61,7 @@ jobs:
         run: |
           set -euo pipefail
           printf '%s\n' \
-            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","clientInfo":{"name":"ci","version":"0"},"capabilities":{}}}' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2026-07-28","clientInfo":{"name":"ci","version":"0"},"capabilities":{}}}' \
             '{"jsonrpc":"2.0","id":2,"method":"tools/list"}' \
             | ./bin/starling-lite \
                 --mode=readonly \
@@ -87,7 +93,7 @@ jobs:
           set -euo pipefail
           MANIFEST="${GITHUB_WORKSPACE}/shrikeops-demo/k8s/bad/root-container.yaml"
           printf '%s\n' \
-            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2024-11-05","clientInfo":{"name":"ci","version":"0"},"capabilities":{}}}' \
+            '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2026-07-28","clientInfo":{"name":"ci","version":"0"},"capabilities":{}}}' \
             "{\"jsonrpc\":\"2.0\",\"id\":3,\"method\":\"tools/call\",\"params\":{\"name\":\"scan_manifest\",\"arguments\":{\"path\":\"${MANIFEST}\",\"source\":\"root-container.yaml\"}}}" \
             | ./bin/starling-lite \
                 --mode=readonly \
@@ -121,12 +127,14 @@ jobs:
           name: warble-army-bin
           path: |
             bin/starling-lite
-            bin/steadyhelm
+            bin/heron-ops
           retention-days: 7
 
   reflexion-agent:
+    name: reflexion (ubuntu-latest)
     runs-on: ubuntu-latest
     needs: build-starling-lite
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
