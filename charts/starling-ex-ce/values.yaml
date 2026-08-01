@@ -54,6 +54,6 @@ ingress:
     enabled: true
     secretName: starling-ex-lite-tls
 
-# Demo link (docs only)
-publicDemoUrl: https://starling-ex.frakma.io/lite/mcp
+# Demo link (docs only) — always-on Railway / custom domain
+publicDemoUrl: https://mcp.warbleoss.org/mcp
 docsUrl: https://warbleoss.org

@@ -14,7 +14,7 @@ COPY mcp/tools ./mcp/tools
 
 WORKDIR /src/mcp/starling-lite
 RUN go mod tidy \
- && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X main.version=0.2.1" -o /out/starling-lite ./cmd/starling-lite
+ && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X main.version=0.3.0" -o /out/starling-lite ./cmd/starling-lite
 
 FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /

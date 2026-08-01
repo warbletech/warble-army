@@ -1,12 +1,14 @@
 .PHONY: help hooks submodules status registry starling-lite steadyhelm test-mcp agent-demo \
 	agentgateway-bin agentgateway-local agentgateway-image agentgateway-apply \
-	railway-image railway-run clean
+	railway-image railway-run ce-up ce-preview ce-docker ce-helm-template ce-down ce-smoke ce-status \
+	ops-smoke ops-deploy clean
 
 ROOT := $(abspath .)
 BIN  := $(ROOT)/bin
 AGW_VERSION ?= v1.4.0-beta.1
 REGISTRY ?= us-central1-docker.pkg.dev/warble-tech/warble
 RAILWAY_IMAGE ?= starling-lite:railway
+CE_PORT ?= 8822
 
 help:
 	@echo "Warble Army targets:"
@@ -24,7 +26,13 @@ help:
 	@echo "  make agentgateway-apply kubectl apply deploy/agentgateway/k8s"
 	@echo "  make railway-image      docker build always-on PaaS image (Railway/Fly)"
 	@echo "  make railway-run        run PaaS image locally on :8080"
-	@echo "  make ops-smoke          smoke public Railway MCP (scripts/starling-lite-ops.sh)"
+	@echo "  make ce-preview         CE dry-run: helm template + docs (no cluster write)"
+	@echo "  make ce-up              CE local preview (build + MCP on :$(CE_PORT))"
+	@echo "  make ce-docker          CE docker preview on :$(CE_PORT)"
+	@echo "  make ce-helm-template   helm template starling-ex-ce only"
+	@echo "  make ce-smoke           smoke local CE or URL=..."
+	@echo "  make ce-down            stop local CE process/container"
+	@echo "  make ops-smoke          smoke public Railway MCP (mcp.warbleoss.org)"
 	@echo "  make ops-deploy         railway up via helper script"
 	@echo "  make clean              remove bin/"
 
@@ -113,10 +121,45 @@ railway-run: railway-image
 	docker run --rm -p 8080:8080 -e PORT=8080 -e STARLING_MODE=readonly $(RAILWAY_IMAGE)
 
 ops-smoke:
-	$(ROOT)/scripts/starling-lite-ops.sh smoke
+	$(ROOT)/scripts/starling-lite-ops.sh smoke --url https://mcp.warbleoss.org
 
 ops-deploy:
 	$(ROOT)/scripts/starling-lite-ops.sh railway-up
+
+# ── Starling EX Community Edition (local preview first) ──────────────────────
+
+ce-preview: ce-helm-template
+	@echo ""
+	@echo "CE preview: helm template OK. Next:"
+	@echo "  make ce-up          # local binary MCP on :$(CE_PORT)"
+	@echo "  make ce-docker      # container MCP on :$(CE_PORT)"
+	@echo "  make ce-smoke       # curl health + tools/list"
+	@echo "  Public demo: https://mcp.warbleoss.org/mcp"
+
+ce-up:
+	CE_PORT=$(CE_PORT) $(ROOT)/scripts/install.sh local
+
+ce-docker:
+	CE_PORT=$(CE_PORT) $(ROOT)/scripts/install.sh docker
+
+ce-helm-template:
+	$(ROOT)/scripts/install.sh helm-template
+
+ce-helm:
+	$(ROOT)/scripts/install.sh helm
+
+ce-smoke:
+	@if [ -n "$(URL)" ]; then \
+	  $(ROOT)/scripts/install.sh smoke "$(URL)"; \
+	else \
+	  CE_PORT=$(CE_PORT) $(ROOT)/scripts/install.sh smoke; \
+	fi
+
+ce-down:
+	$(ROOT)/scripts/install.sh down
+
+ce-status:
+	$(ROOT)/scripts/install.sh status
 
 clean:
 	rm -rf $(BIN)

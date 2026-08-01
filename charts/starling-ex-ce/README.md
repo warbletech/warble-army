@@ -2,7 +2,33 @@
 
 **Starling EX Community Edition** — deploys Starling Lite MCP (Heron Ops cluster tools + ShrikeOps scan tools) with RBAC.
 
-## Install
+## Local preview first (recommended)
+
+```bash
+# from warble-army root
+make ce-preview          # helm template only — no cluster write
+make ce-up               # local binary MCP on :8822
+make ce-smoke            # health + tools/list
+make ce-down             # stop
+
+# or Docker
+make ce-docker
+```
+
+Installer: [`scripts/install.sh`](../../scripts/install.sh)
+
+```bash
+./scripts/install.sh help
+./scripts/install.sh local
+./scripts/install.sh docker
+./scripts/install.sh helm-template
+# helm install only when you intend to use the current kube context:
+# CE_FORCE=1 ./scripts/install.sh helm   # required if context is GKE/prod-looking
+```
+
+Always-on public demo (no install): https://mcp.warbleoss.org/mcp
+
+## Install (Helm — cluster)
 
 ```bash
 helm upgrade --install starling-ex-ce ./charts/starling-ex-ce \
@@ -30,7 +56,7 @@ helm upgrade --install starling-ex-ce ./charts/starling-ex-ce \
 | `image.repository` | AR starling-lite | Container image |
 | `serviceAccount.clusterRole` | `true` | Heron Ops read ClusterRole |
 | `ingress.enabled` | `false` | Public Ingress |
-| `publicDemoUrl` | starling-ex.frakma.io/lite/mcp | Documented Try MCP link |
+| `publicDemoUrl` | mcp.warbleoss.org/mcp | Documented Try MCP link |
 
 ## Components
 

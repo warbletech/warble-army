@@ -46,20 +46,34 @@ warbleoss.org/
 ## Install story (target UX)
 
 ```bash
-# One-liner (planned)
-curl -fsSL https://warbleoss.org/install.sh | bash
+# From clone (works today)
+git clone --recurse-submodules https://github.com/warble-tech/warble-army.git
+cd warble-army
+make ce-preview    # dry-run
+make ce-up         # local MCP :8822
+make ce-smoke
 
-# Or Helm
-helm repo add warbleoss https://warbleoss.org/charts
-helm install starling-ex-ce warbleoss/starling-ex-ce \
-  --namespace warble-army --create-namespace
+# Or Helm on a cluster you own
+./scripts/install.sh helm-template
+# CE_FORCE=1 ./scripts/install.sh helm   # if context is GKE — explicit opt-in
+
+# Hosted always-on (no install)
+curl -sS https://mcp.warbleoss.org/health
+```
+
+One-liner / helm repo (later):
+
+```bash
+# Planned: curl -fsSL https://warbleoss.org/install.sh | bash
+# Planned: helm repo add warbleoss https://warbleoss.org/charts
 ```
 
 Exposes:
 
-- MCP: `https://<your-host>/lite/mcp` (or ClusterIP)  
+- MCP: `http://127.0.0.1:8822/mcp` (local) or Service/Ingress  
+- Hosted: https://mcp.warbleoss.org/mcp  
 - Optional Agent Gateway admin UI  
-- ShrikeOps scan API (optional)
+- ShrikeOps scan tools via Starling Lite
 
 ## Phased roadmap
 
@@ -75,7 +89,8 @@ Exposes:
 ### Phase B — CE package
 
 - [x] Helm chart `charts/starling-ex-ce` bundling starling-lite + heron-ops SA/RBAC
-- [ ] `install.sh` / `make ce-up` against kind / k3s / GKE
+- [x] `install.sh` / `make ce-up` (local + docker preview; helm guarded)
+- [x] `make ce-preview` helm template dry-run
 - [x] Public docs site content for warbleoss.org
 - [ ] Good first issues + CONTRIBUTING under CE repos
 
