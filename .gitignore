@@ -32,3 +32,6 @@ shrikeops/scanner/shrikeops
 # Optional pre-commit
 .pre-commit-local/
 bin/
+
+# Railway force-redeploy stamps
+deploy/railway/.deploy-stamp
