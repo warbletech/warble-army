@@ -1,0 +1,44 @@
+# Sample Warble healing recipe (policy-gated)
+# Map to Executor after Critic approval.
+apiVersion: warblecloud.ai/v1alpha1
+kind: HealingRecipe
+metadata:
+  name: payments-api-crashloop-diagnose
+  labels:
+    warble.domain: sre
+    warble.blast: low
+spec:
+  recipeId: recipe.payments.api.crashloop_diagnose.v1
+  match:
+    alerts:
+      - KubePodCrashLooping
+    namespaces:
+      - payments
+    components:
+      - payments-api
+  steps:
+    - id: capture_logs
+      action: diagnose_logs
+      params:
+        tail: 200
+        previous: true
+      autonomy: observe
+    - id: check_events
+      action: diagnose_events
+      params:
+        fieldSelector: "involvedObject.name={{ .pod }}"
+      autonomy: observe
+    - id: rollback_if_bad_deploy
+      action: rollback_deployment
+      when: "last_deploy_within_30m && exit_code != 0"
+      autonomy: supervised
+      requiresCritic: true
+  guardrails:
+    maxActionsPerIncident: 5
+    deny:
+      - delete_namespace
+      - disable_tls
+      - rm_rf_logs
+  playbooks:
+    - /playbooks/sre-incident.md
+    - /playbooks/samples/actor.proposal.sample.json

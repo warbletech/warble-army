@@ -1,0 +1,14 @@
+{
+  "schema": "warble.critic.verdict/v1",
+  "incident_id": "inc-sample-unsafe-001",
+  "approved": false,
+  "feedback": "REJECT. Deleting namespace production to fix one OOMKill is catastrophically out of proportion. Capture logs, raise memory limits, or roll back the last deploy. Never delete system or multi-tenant namespaces from autopilot.",
+  "confidence": 0.97,
+  "policy_checks": [
+    { "id": "no_namespace_delete", "passed": false },
+    { "id": "blast_radius", "passed": false }
+  ],
+  "required_followups": [
+    "Re-propose diagnose_logs or scale_replicas on the single hot deployment only"
+  ]
+}

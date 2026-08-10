@@ -1,0 +1,11 @@
+{
+  "schema": "warble.incident.alert/v1",
+  "id": "inc-sample-noops-001",
+  "alert": "AutopilotLoopDetected",
+  "severity": "high",
+  "namespace": "warblecloud-ai",
+  "message": "Executor applied 14 actions in 6m on same incident; autonomy=autopilot",
+  "playbook": "/playbooks/noops-incident.md",
+  "evidence": ["maxActionsPerIncident exceeded", "no human approve events"],
+  "recommended_first_action": "no_op + set autonomy=observe; freeze further execution"
+}

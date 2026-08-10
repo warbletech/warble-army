@@ -1,0 +1,34 @@
+{
+  "schema": "warble.incident.alert/v1",
+  "id": "inc-sample-2026-08-10-001",
+  "alert": "KubePodCrashLooping",
+  "severity": "critical",
+  "namespace": "payments",
+  "component": "payments-api",
+  "resource": {
+    "kind": "Pod",
+    "name": "payments-api-7d9f8b9c4-xkp2q",
+    "uid": "00000000-0000-4000-8000-000000000001"
+  },
+  "message": "Back-off restarting failed container payments-api",
+  "labels": {
+    "app": "payments-api",
+    "env": "prod",
+    "team": "checkout"
+  },
+  "annotations": {
+    "runbook": "/playbooks/sre-incident.md",
+    "dashboard": "https://grafana.example/d/payments"
+  },
+  "evidence": [
+    "Restarts: 8 in last 10 minutes",
+    "Last State: Terminated, Reason: Error, ExitCode: 1",
+    "No recent image tag change in last 24h"
+  ],
+  "slo": {
+    "name": "payments-availability",
+    "objective": 0.999,
+    "burn_rate_1h": 3.2
+  },
+  "received_at": "2026-08-10T12:00:00Z"
+}

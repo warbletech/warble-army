@@ -1,0 +1,27 @@
+{
+  "schema": "warble.actor.proposal/v1",
+  "incident_id": "inc-sample-2026-08-10-001",
+  "proposed_action": {
+    "type": "diagnose_logs",
+    "target_resource": {
+      "namespace": "payments",
+      "kind": "pod",
+      "name": "payments-api-7d9f8b9c4-xkp2q"
+    },
+    "parameters": {
+      "command": "kubectl logs -n payments payments-api-7d9f8b9c4-xkp2q --previous --tail=200",
+      "container": "payments-api"
+    }
+  },
+  "reasoning": "Eight restarts in ten minutes indicates fast-fail during init. Previous container logs are the highest-information non-mutating signal before any restart or scale action.",
+  "confidence_score": 0.86,
+  "estimated_slo_impact": {
+    "latency": "+0%",
+    "availability": "+0%"
+  },
+  "recipe_id": "recipe.payments.api.crashloop_diagnose.v1",
+  "playbook_refs": [
+    "/playbooks/sre-incident.md",
+    "/playbooks/platform-devops-incident.md"
+  ]
+}

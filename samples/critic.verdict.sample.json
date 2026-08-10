@@ -1,0 +1,16 @@
+{
+  "schema": "warble.critic.verdict/v1",
+  "incident_id": "inc-sample-2026-08-10-001",
+  "approved": true,
+  "feedback": "Approved. diagnose_logs is minimum blast radius. Do not restart or scale until exit reason and last log lines are captured. If OOMKilled, follow with memory limit review rather than delete-pod loops.",
+  "confidence": 0.91,
+  "policy_checks": [
+    { "id": "no_system_ns_delete", "passed": true },
+    { "id": "mutating_requires_evidence", "passed": true },
+    { "id": "slo_impact_declared", "passed": true }
+  ],
+  "required_followups": [
+    "If exit code 137 → container_oom class; raise limits or fix leak",
+    "If config parse error → rollback last ConfigMap/Secret change"
+  ]
+}
