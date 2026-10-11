@@ -5,7 +5,7 @@ How to keep the umbrella, submodules, remotes, and hooks healthy.
 ## One-time setup (clone)
 
 ```bash
-git clone --recurse-submodules https://github.com/warble-tech/warble-army.git
+git clone --recurse-submodules https://github.com/warbletech/warble-army.git
 cd warble-army
 ./scripts/install-hooks.sh
 ./scripts/submodules.sh status
@@ -21,10 +21,10 @@ git config core.hooksPath .githooks
 
 | Path | URL | Tracked branch |
 |------|-----|----------------|
-| `shrikeops` | `https://github.com/warble-tech/shrikeops.git` | `master` |
-| `shrikeops-demo` | `https://github.com/warble-tech/shrikeops-demo.git` | `master` |
-| `starling` | `https://github.com/warble-tech/starling.git` | `main` |
-| `heron-ops` | `https://github.com/warble-tech/heron-ops.git` | `master` |
+| `shrikeops` | `https://github.com/warbletech/shrikeops.git` | `master` |
+| `shrikeops-demo` | `https://github.com/warbletech/shrikeops-demo.git` | `master` |
+| `starling` | `https://github.com/warbletech/starling.git` | `main` |
+| `heron-ops` | `https://github.com/warbletech/heron-ops.git` | `master` |
 
 Defined in [`.gitmodules`](../.gitmodules).
 
@@ -79,7 +79,7 @@ git commit -m "chore(submodules): pin heron-ops to <sha>"
 ## Adding a new flock member (submodule)
 
 ```bash
-./scripts/submodules.sh add https://github.com/warble-tech/NEW.git path/NEW [branch]
+./scripts/submodules.sh add https://github.com/warbletech/NEW.git path/NEW [branch]
 ./scripts/install-hooks.sh   # no-op if already set; re-assert hooksPath
 git commit -m "chore(submodules): add NEW"
 ```
@@ -115,8 +115,8 @@ Config: [`.pre-commit-config.yaml`](../.pre-commit-config.yaml). Native `.githoo
 ## Publishing this umbrella
 
 ```bash
-# create empty repo on GitHub: warble-tech/warble-army
-git remote add origin https://github.com/warble-tech/warble-army.git
+# create empty repo on GitHub: warbletech/warble-army
+git remote add origin https://github.com/warbletech/warble-army.git
 git push -u origin main
 ```
 

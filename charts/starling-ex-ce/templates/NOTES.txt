@@ -12,4 +12,4 @@ Public demo (Warble-hosted):
 
 Docs:
   {{ .Values.docsUrl }}
-  https://github.com/warble-tech/warble-army
+  https://github.com/warbletech/warble-army

@@ -2,7 +2,7 @@
 # Docs: https://docs.railway.app/reference/config-as-code
 #
 # Dashboard:
-#   1. New Project → Deploy from GitHub → warble-tech/warble-army
+#   1. New Project → Deploy from GitHub → warbletech/warble-army
 #   2. Root Directory: /  (repo root)
 #   3. Or set Dockerfile path below
 

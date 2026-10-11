@@ -56,5 +56,5 @@ Incident / PR / chat
 ## Module identity note
 
 - SteadyHelm Go module path: `github.com/warblecloud/steadyhelm` (historical).
-- Git remotes use `github.com/warble-tech/*`.
-- Prefer **warble-tech** for new public repos; document renames in MAINTAINING when unified.
+- Git remotes use `github.com/warbletech/*`.
+- Prefer **warbletech** for new public repos; document renames in MAINTAINING when unified.

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Starling EX Community Edition installer / local preview
-# https://warbleoss.org · https://github.com/warble-tech/warble-army
+# https://warbleoss.org · https://github.com/warbletech/warble-army
 #
 # Usage:
 #   ./scripts/install.sh                 # same as local

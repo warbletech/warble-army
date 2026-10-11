@@ -24,7 +24,7 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 | Name | Role | Host today | Long-term intent |
 |------|------|------------|------------------|
 | **Warble Cloud** / ChirpStack LLP | Commercial product, trademarks, enterprise | warblecloud.com | Stays commercial |
-| **Warble Army** / warbleoss.org | Umbrella for OSS birds (docs, charts, brand) | GitHub `warble-tech/*` | Neutral OSS home |
+| **Warble Army** / warbleoss.org | Umbrella for OSS birds (docs, charts, brand) | GitHub `warbletech/*` | Neutral OSS home |
 | **Starling EX Community** | Self-host agent ops CE (MCP flock) | warble-army + public repos | **Plan: donate to CNCF** |
 | **Starling EX** (product) | Full commercial / SaaS agent platform | private core + release channel | Warble Cloud |
 | **FRAKMA** | MLOps/LLMOps platform brand | frakma.io | Product / platform |

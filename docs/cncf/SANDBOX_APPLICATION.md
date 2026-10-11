@@ -44,33 +44,33 @@ The commercial Starling Cloud product (multi-tenant SaaS, billing, hosted histor
 
 ### Org repo URL
 
-`N/A` (multi-repo under `github.com/warble-tech`, not all org repos in scope)
+`N/A` (multi-repo under `github.com/warbletech`, not all org repos in scope)
 
 ### Project repo URL in scope of application
 
 Primary umbrella:  
-https://github.com/warble-tech/warble-army
+https://github.com/warbletech/warble-army
 
 ### Additional repos in scope of the application
 
-- https://github.com/warble-tech/heron-ops — Heron Ops (Kubernetes MCP server)  
-- https://github.com/warble-tech/shrikeops — ShrikeOps scanner  
-- https://github.com/warble-tech/shrikeops-demo — scanner demos / golden manifests  
-- https://github.com/warble-tech/starling — public release channel (binaries; product docs) — *optional; confirm before filing*  
+- https://github.com/warbletech/heron-ops — Heron Ops (Kubernetes MCP server)  
+- https://github.com/warbletech/shrikeops — ShrikeOps scanner  
+- https://github.com/warbletech/shrikeops-demo — scanner demos / golden manifests  
+- https://github.com/warbletech/starling — public release channel (binaries; product docs) — *optional; confirm before filing*  
 - Helm chart lives in `warble-army/charts/starling-ex-ce`
 
 **Explicitly out of scope:** private `warble-core`, Warble Cloud SaaS, commercial Starling EX control plane, Frakma-X / FRAKMA commercial platform (Frakma-X is a separate Linux Foundation wing).
 
 ### Website URL
 
-https://warble-tech.github.io/warbleoss.org/  
+https://warbletech.github.io/warbleoss.org/  
 (Custom domain https://warbleoss.org pending DNS)
 
 Live MCP demo: https://starling-ex.frakma.io/lite/mcp  
 
 ### Roadmap
 
-https://github.com/warble-tech/warble-army/blob/main/docs/STARLING_EX_CE.md  
+https://github.com/warbletech/warble-army/blob/main/docs/STARLING_EX_CE.md  
 
 ### Roadmap context
 
@@ -78,23 +78,23 @@ Near-term: harden CE install (Helm + install script), complete community governa
 
 ### Contributing guide
 
-https://github.com/warble-tech/warble-army/blob/main/docs/cncf/CONTRIBUTING.md  
+https://github.com/warbletech/warble-army/blob/main/docs/cncf/CONTRIBUTING.md  
 
 ### Code of Conduct (CoC)
 
-https://github.com/warble-tech/warble-army/blob/main/docs/cncf/CODE_OF_CONDUCT.md  
+https://github.com/warbletech/warble-army/blob/main/docs/cncf/CODE_OF_CONDUCT.md  
 
 ### Adopters
 
-https://github.com/warble-tech/warble-army/blob/main/docs/cncf/ADOPTERS.md  
+https://github.com/warbletech/warble-army/blob/main/docs/cncf/ADOPTERS.md  
 
 ### Maintainers file
 
-https://github.com/warble-tech/warble-army/blob/main/docs/cncf/MAINTAINERS.md  
+https://github.com/warbletech/warble-army/blob/main/docs/cncf/MAINTAINERS.md  
 
 ### Security policy file
 
-https://github.com/warble-tech/warble-army/blob/main/docs/cncf/SECURITY.md  
+https://github.com/warbletech/warble-army/blob/main/docs/cncf/SECURITY.md  
 
 ### Standard or specification?
 
@@ -200,7 +200,7 @@ Not yet. Plan: present to relevant TAG (App Delivery and/or Runtime) and complet
 ### Additional information
 
 - Public MCP demo: https://starling-ex.frakma.io/lite/mcp  
-- Flock brand map: https://github.com/warble-tech/warble-army/blob/main/docs/BRAND.md  
+- Flock brand map: https://github.com/warbletech/warble-army/blob/main/docs/BRAND.md  
 - Separation of **Frakma-X** (Linux Foundation wing for platform) from this CNCF agent-ops path is intentional.  
 - Commercial site: https://warblecloud.com (not in scope)
 

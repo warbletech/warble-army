@@ -23,14 +23,14 @@ SteadyHelm is accurate but opaque. **Heron** matches the Warble Army bird flock 
 - [ ] Add `main` package name string `heron-ops` in version output; keep `steadyhelm` binary name temporarily  
 - [ ] `go build -o heron-ops` in Makefile; install both names  
 - [ ] Module path: either  
-  - **A.** `github.com/warble-tech/heron-ops` with `replace` during migration, or  
+  - **A.** `github.com/warbletech/heron-ops` with `replace` during migration, or  
   - **B.** Keep module path one release, rename module next minor  
 - [ ] `pkg/mcpserver` serverInfo name: `heron-ops`  
 - [ ] Update Homebrew formula when published  
 
 ### 3. GitHub
 
-- [ ] Create `warble-tech/heron-ops` **or** rename `steadyhelm` → `heron-ops`  
+- [ ] Create `warbletech/heron-ops` **or** rename `steadyhelm` → `heron-ops`  
 - [ ] Redirect old submodule URL in warble-army `.gitmodules`  
 - [ ] Topics: `mcp`, `kubernetes`, `heron-ops`, `warbleoss`  
 

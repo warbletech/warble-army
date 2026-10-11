@@ -1,6 +1,6 @@
 # warbleoss.org — landing content (source of truth for copy)
 
-Implement in [`warbleoss.org/index.html`](../../warbleoss.org/index.html) (workspace) / `github.com/warble-tech/warbleoss.org`.  
+Implement in [`warbleoss.org/index.html`](../../warbleoss.org/index.html) (workspace) / `github.com/warbletech/warbleoss.org`.  
 Portfolio order and open-source waves: monorepo [`OSS_PORTFOLIO_ALIGNMENT.md`](../../OSS_PORTFOLIO_ALIGNMENT.md).
 
 ---
@@ -25,7 +25,7 @@ Pills:
 - Frakma-X · LF wing (forming)  
 - Self-host CE · no phone-home  
 
-CTAs: [Try MCP live](https://starling-ex.frakma.io/lite/mcp) · [Get the army](https://github.com/warble-tech/warble-army) · Easy first PR
+CTAs: [Try MCP live](https://starling-ex.frakma.io/lite/mcp) · [Get the army](https://github.com/warbletech/warble-army) · Easy first PR
 
 ---
 
@@ -33,11 +33,11 @@ CTAs: [Try MCP live](https://starling-ex.frakma.io/lite/mcp) · [Get the army](h
 
 ### ShrikeOps
 Security scanner for manifests & Helm. Impales misconfigs before production.  
-→ github.com/warble-tech/shrikeops
+→ github.com/warbletech/shrikeops
 
 ### Heron Ops
 Kubernetes MCP server. Live pods, logs, events, metrics for any agent IDE.  
-→ (was SteadyHelm) github.com/warble-tech/heron-ops
+→ (was SteadyHelm) github.com/warbletech/heron-ops
 
 ### Starling EX Community
 Self-hosted CE: Starling Lite + Heron Ops + ShrikeOps, one chart.  
@@ -60,7 +60,7 @@ Self-hosted CE: Starling Lite + Heron Ops + ShrikeOps, one chart.
 ## Install (preview)
 
 ```bash
-git clone --recurse-submodules https://github.com/warble-tech/warble-army.git
+git clone --recurse-submodules https://github.com/warbletech/warble-army.git
 cd warble-army && make starling-lite
 ./bin/starling-lite --mode=readonly --transport=http --addr=:8822
 ```
@@ -88,7 +88,7 @@ helm upgrade --install starling-ex-ce ./charts/starling-ex-ce \
 ## Community
 
 - Discord Office Hours: Saturday 7–8 PM IST — https://discord.gg/WHsJkEFTt  
-- RFCs / WGs / showcase — github.com/warble-tech/community  
+- RFCs / WGs / showcase — github.com/warbletech/community  
 
 ## Support / crowdfunding
 
