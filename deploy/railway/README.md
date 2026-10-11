@@ -23,7 +23,7 @@ Today’s GKE demo (`starling-ex.frakma.io/lite/mcp`) can stay as primary or bec
 | Capability | Without kubeconfig | With `KUBECONFIG_B64` secret |
 |------------|--------------------|------------------------------|
 | `tools/list`, health | ✅ | ✅ |
-| ShrikeOps `scan_*` | ✅ | ✅ |
+| ShrikeOps `scan_*` (image ships pluto, polaris, kube-score) | ✅ | ✅ |
 | Dry-run remediation | ✅ | ✅ |
 | Live cluster MCP (`list_pods`, …) | ❌ graceful | ✅ points at **your** cluster API |
 
