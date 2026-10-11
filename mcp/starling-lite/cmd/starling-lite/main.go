@@ -9,8 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/config"
-	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/server"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/config"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/server"
 )
 
 // version is overridden at build time: -ldflags "-X main.version=..."

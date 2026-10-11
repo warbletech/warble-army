@@ -10,12 +10,12 @@ import (
 	"os"
 	"sync"
 
-	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/config"
-	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/protocol"
-	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/registry"
-	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/remediate"
-	"github.com/warble-tech/warble-army/mcp/starling-lite/internal/scanx"
-	"github.com/warble-tech/heron-ops/pkg/mcpserver"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/config"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/protocol"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/registry"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/remediate"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/scanx"
+	"github.com/warbletech/heron-ops/pkg/mcpserver"
 )
 
 // Server is the Starling Lite MCP facade.
