@@ -6,7 +6,7 @@
     {
       "name": "scan_manifest",
       "mode": "readonly",
-      "description": "Scan a Kubernetes YAML manifest for security, API stability, reliability, and lint findings. Returns score, grade, and findings with remediation hints.",
+      "description": "Scan a Kubernetes YAML manifest for security, API stability, reliability, and lint findings. Returns score, grade, and findings with remediation hints. If a scanner (pluto/polaris/kube-score) is unavailable the result has incomplete=true, grade N/A and a warning.",
       "inputSchema": {
         "type": "object",
         "properties": {

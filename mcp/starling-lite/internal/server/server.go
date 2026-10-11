@@ -338,9 +338,19 @@ func (s *Server) callRemediate(name string, args map[string]any) protocol.ToolCa
 	ns, _ := args["namespace"].(string)
 	issue, _ := args["issue"].(string)
 
+	req := remediate.Request{Kind: kind, Name: n, Namespace: ns, Issue: issue}
+	req.Container, _ = args["container"].(string)
+	req.Manifest, _ = args["manifest"].(string)
+	if f, ok := args["finding"].(map[string]any); ok {
+		req.FindingResource, _ = f["resource"].(string)
+		if req.Issue == "" {
+			req.Issue, _ = f["id"].(string)
+		}
+	}
+
 	switch name {
 	case "propose_remediation":
-		p, err := remediate.Propose(kind, n, ns, issue)
+		p, err := remediate.ProposeFor(req)
 		if err != nil {
 			return protocol.ErrorResult(err.Error())
 		}
@@ -356,7 +366,7 @@ func (s *Server) callRemediate(name string, args map[string]any) protocol.ToolCa
 		}
 		patch, _ := args["patch"].(string)
 		if patch == "" {
-			p, err := remediate.Propose(kind, n, ns, issue)
+			p, err := remediate.ProposeFor(req)
 			if err != nil {
 				return protocol.ErrorResult(err.Error())
 			}

@@ -37,7 +37,15 @@ func Manifest(path, manifest, source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	b, err := json.MarshalIndent(rep, "", "  ")
+	raw, err := json.Marshal(rep)
+	if err != nil {
+		return "", err
+	}
+	out, err := Normalize(raw)
+	if err != nil {
+		return "", err
+	}
+	b, err := json.MarshalIndent(out, "", "  ")
 	if err != nil {
 		return "", err
 	}

@@ -4,6 +4,21 @@
 #   docker build -f deploy/railway/Dockerfile -t starling-lite .
 #   docker run -p 8080:8080 -e PORT=8080 starling-lite
 
+# ShrikeOps scanners — without these, scan_* results are reported as incomplete.
+# Static Go binaries, so they run on distroless/static. Versions match the
+# ShrikeOps README "Requirements" (parsers are tested against them).
+FROM alpine:3.20 AS scanners
+ARG TARGETARCH=amd64
+ARG PLUTO_VERSION=5.24.4
+ARG POLARIS_VERSION=10.2.5
+ARG KUBE_SCORE_VERSION=1.20.0
+RUN apk add --no-cache curl tar \
+ && mkdir -p /out \
+ && curl -fsSL "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz -C /out pluto \
+ && curl -fsSL "https://github.com/FairwindsOps/polaris/releases/download/v${POLARIS_VERSION}/polaris_${POLARIS_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz -C /out polaris \
+ && curl -fsSL "https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}/kube-score_${KUBE_SCORE_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz -C /out kube-score \
+ && /out/pluto version && /out/polaris version && /out/kube-score version
+
 FROM golang:1.22-bookworm AS build
 WORKDIR /src
 
@@ -19,6 +34,7 @@ RUN go mod tidy \
 FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /
 COPY --from=build /out/starling-lite /usr/local/bin/starling-lite
+COPY --from=scanners /out/pluto /out/polaris /out/kube-score /usr/local/bin/
 COPY --from=build /src/mcp/tools/registry.json /etc/warble-army/registry.json
 
 # Railway injects PORT; default 8080 is common on PaaS

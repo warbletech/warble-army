@@ -238,7 +238,7 @@
       "group": "scan",
       "backend": "shrikeops",
       "mode": "readonly",
-      "description": "Scan a Kubernetes YAML manifest for security, API stability, reliability, and lint findings.",
+      "description": "Scan a Kubernetes YAML manifest for security, API stability, reliability, and lint findings. If a scanner (pluto/polaris/kube-score) is unavailable the result has incomplete=true, grade N/A and a warning.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -299,7 +299,7 @@
       "group": "remediate",
       "backend": "starling-lite",
       "mode": "readonly",
-      "description": "Produce a patch for an issue; never mutates the cluster.",
+      "description": "Produce a dry-run patch for an issue. With container/manifest/finding: strategic-merge patch naming the containers; otherwise a JSON patch on the first container plus missing_inputs. Never mutates the cluster.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -313,7 +313,9 @@
           "finding": {
             "type": "object",
             "description": "Optional full ShrikeOps finding object"
-          }
+          },
+          "container": { "type": "string", "description": "Container to patch. Else taken from finding.resource (.../container:<name>) or manifest; if unknown, a JSON patch on the first container is returned." },
+          "manifest": { "type": "string", "description": "Optional resource YAML (multi-doc ok) used to find the real container names." }
         },
         "required": ["kind", "name", "issue"]
       }
@@ -332,6 +334,8 @@
           "namespace": { "type": "string" },
           "issue": { "type": "string" },
           "patch": { "type": "string", "description": "Patch body from propose_remediation" },
+          "container": { "type": "string", "description": "Container to patch. Else taken from finding.resource (.../container:<name>) or manifest; if unknown, a JSON patch on the first container is returned." },
+          "manifest": { "type": "string", "description": "Optional resource YAML (multi-doc ok) used to find the real container names." },
           "dry_run": { "type": "boolean", "description": "Default true" },
           "confirm": { "type": "boolean", "description": "Must be true when dry_run=false" }
         },
