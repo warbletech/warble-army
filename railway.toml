@@ -1,5 +1,5 @@
 # Starling Lite always-on MCP — Railway
-# https://github.com/warble-tech/warble-army/tree/main/deploy/railway
+# https://github.com/warbletech/warble-army/tree/main/deploy/railway
 
 [build]
 builder = "DOCKERFILE"

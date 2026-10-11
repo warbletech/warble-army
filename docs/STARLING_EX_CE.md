@@ -24,11 +24,11 @@ CE is **not** a thin open-core tease of every Starling Cloud API. It is a comple
 ## Proposed repo layout (warbleoss.org era)
 
 ```text
-warble-tech/warble-army          # umbrella (submodules + MCP registry) — exists
-warble-tech/shrikeops            # ShrikeOps — exists (public)
-warble-tech/heron-ops            # Heron Ops (was SteadyHelm) — public
+warbletech/warble-army          # umbrella (submodules + MCP registry) — exists
+warbletech/shrikeops            # ShrikeOps — exists (public)
+warbletech/heron-ops            # Heron Ops (was SteadyHelm) — public
 warble-army/charts/starling-ex-ce  # CE packaging: Helm chart — exists
-warble-tech/starling             # product release channel (binaries) — optional CE binaries later
+warbletech/starling             # product release channel (binaries) — optional CE binaries later
 # Future CNCF org transfer: project name TBD with TOC
 ```
 
@@ -47,7 +47,7 @@ warbleoss.org/
 
 ```bash
 # From clone (works today)
-git clone --recurse-submodules https://github.com/warble-tech/warble-army.git
+git clone --recurse-submodules https://github.com/warbletech/warble-army.git
 cd warble-army
 make ce-preview    # dry-run
 make ce-up         # local MCP :8822
@@ -97,7 +97,7 @@ Exposes:
 ### Phase C — Community loop
 
 - [ ] Discord / Office Hours linked from warbleoss.org
-- [ ] RFC process (reuse `warble-tech/community`)
+- [ ] RFC process (reuse `warbletech/community`)
 - [ ] Showcase: “powered by Starling EX Community”
 - [ ] Optional dual-track: CE tags vs Starling Cloud releases
 
@@ -112,7 +112,7 @@ Exposes:
 ## License stance
 
 - Prefer **Apache-2.0** for CE components (aligned with ShrikeOps / SteadyHelm today).  
-- CLA/DCO as used on warble-tech repos.  
+- CLA/DCO as used on warbletech repos.  
 - Commercial add-ons stay out of CE git history (no API keys, no proprietary Brain dumps).
 
 ## Boundary with frakma.io / warblecloud.com

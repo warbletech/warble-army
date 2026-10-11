@@ -37,7 +37,7 @@ Cluster tools always depend on *some* Kubernetes API (yours or a small free-tier
 ### A. One-click from GitHub (UI)
 
 1. https://railway.app → **New Project** → **Deploy from GitHub repo**
-2. Select **`warble-tech/warble-army`** (public)
+2. Select **`warbletech/warble-army`** (public)
 3. Settings:
    - **Root Directory:** repository root
    - **Builder:** Dockerfile

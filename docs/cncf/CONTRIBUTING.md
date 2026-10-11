@@ -10,15 +10,15 @@ All participation is governed by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 | Area | Repository |
 |------|------------|
-| Umbrella, MCP registry, Helm CE, docs | [warble-tech/warble-army](https://github.com/warble-tech/warble-army) |
-| Heron Ops (cluster MCP) | [warble-tech/heron-ops](https://github.com/warble-tech/heron-ops) |
-| ShrikeOps scanner | [warble-tech/shrikeops](https://github.com/warble-tech/shrikeops) |
-| Scanner demos | [warble-tech/shrikeops-demo](https://github.com/warble-tech/shrikeops-demo) |
+| Umbrella, MCP registry, Helm CE, docs | [warbletech/warble-army](https://github.com/warbletech/warble-army) |
+| Heron Ops (cluster MCP) | [warbletech/heron-ops](https://github.com/warbletech/heron-ops) |
+| ShrikeOps scanner | [warbletech/shrikeops](https://github.com/warbletech/shrikeops) |
+| Scanner demos | [warbletech/shrikeops-demo](https://github.com/warbletech/shrikeops-demo) |
 
 ## Development setup (army)
 
 ```bash
-git clone --recurse-submodules https://github.com/warble-tech/warble-army.git
+git clone --recurse-submodules https://github.com/warbletech/warble-army.git
 cd warble-army
 ./scripts/install-hooks.sh
 make heron-ops

@@ -45,7 +45,7 @@ metadata:
     warblecloud.com/public-url: https://starling-ex.frakma.io/lite/mcp
     warblecloud.com/mcp-path: /lite/mcp
     warblecloud.com/backend: starling-lite
-    warblecloud.com/docs: https://github.com/warble-tech/warble-army/tree/main/deploy/agentgateway
+    warblecloud.com/docs: https://github.com/warbletech/warble-army/tree/main/deploy/agentgateway
 spec:
   ingressClassName: nginx
   tls:

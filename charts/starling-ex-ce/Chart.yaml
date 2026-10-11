@@ -6,9 +6,9 @@ version: 0.1.0
 appVersion: "0.2.0"
 home: https://warbleoss.org
 sources:
-  - https://github.com/warble-tech/warble-army
-  - https://github.com/warble-tech/heron-ops
-  - https://github.com/warble-tech/shrikeops
+  - https://github.com/warbletech/warble-army
+  - https://github.com/warbletech/heron-ops
+  - https://github.com/warbletech/shrikeops
 keywords:
   - kubernetes
   - mcp

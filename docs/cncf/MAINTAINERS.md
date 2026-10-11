@@ -13,9 +13,9 @@ Seed list for CNCF Sandbox application. Expand as multi-org maintainers join.
 
 | Component | Repo | Maintainers |
 |-----------|------|-------------|
-| Army umbrella / CE chart / MCP registry | warble-tech/warble-army | Warble Tech |
-| Heron Ops | warble-tech/heron-ops | Warble Tech |
-| ShrikeOps | warble-tech/shrikeops | Warble Tech |
+| Army umbrella / CE chart / MCP registry | warbletech/warble-army | Warble Tech |
+| Heron Ops | warbletech/heron-ops | Warble Tech |
+| ShrikeOps | warbletech/shrikeops | Warble Tech |
 
 ## Becoming a maintainer
 
