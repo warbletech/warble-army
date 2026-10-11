@@ -3,7 +3,7 @@
 **Open flock of Kubernetes agents + MCP** — scan, observe, propose, remediate.
 
 > Birds of a feather: **[ShrikeOps](brand/shrike-ops/)** hunts bad config, **[Heron Ops](brand/heron-ops/)** (formerly SteadyHelm) gives agents live cluster context via MCP, **Starling EX Community** coordinates the flock (**CNCF donation planned**). Community home: **[warbleoss.org](https://warbleoss.org)**. Platform LF wing: **Frakma-X**.
-This repository is the **umbrella** that wires the flock together with submodules, a stable MCP tool layout, and maintenance hooks. Child product code lives in its own repos under [github.com/warble-tech](https://github.com/warble-tech).
+This repository is the **umbrella** that wires the flock together with submodules, a stable MCP tool layout, and maintenance hooks. Child product code lives in its own repos under [github.com/warbletech](https://github.com/warbletech).
 
 ```text
   IDE / Claude / Cursor / custom agent
@@ -20,7 +20,7 @@ This repository is the **umbrella** that wires the flock together with submodule
   scanner   live MCP    self-host community edition
 ```
 
-Public demo MCP: **[https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)**  
+Public demo MCP: **[https://mcp.warbleoss.org](https://mcp.warbleoss.org)**  
 Always-on PaaS deploy (Railway / Fly — independent of GKE): [`deploy/railway/README.md`](deploy/railway/README.md)  
 Brand map: [`docs/BRAND.md`](docs/BRAND.md) · CE plan: [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md)
 
@@ -30,9 +30,9 @@ Brand map: [`docs/BRAND.md`](docs/BRAND.md) · CE plan: [`docs/STARLING_EX_CE.md
 
 | Path | Remote | Product | Role |
 |------|--------|---------|------|
-| [`shrikeops/`](shrikeops/) | [warble-tech/shrikeops](https://github.com/warble-tech/shrikeops) | **ShrikeOps** | Manifest / Helm security scanner |
-| [`shrikeops-demo/`](shrikeops-demo/) | [warble-tech/shrikeops-demo](https://github.com/warble-tech/shrikeops-demo) | ShrikeOps | Golden/bad YAML + CI demo |
-| [`heron-ops/`](heron-ops/) | [warble-tech/heron-ops](https://github.com/warble-tech/heron-ops) | **Heron Ops** | Live Kubernetes MCP (stdio + HTTP; was SteadyHelm) |
+| [`shrikeops/`](shrikeops/) | [warbletech/shrikeops](https://github.com/warbletech/shrikeops) | **ShrikeOps** | Manifest / Helm security scanner |
+| [`shrikeops-demo/`](shrikeops-demo/) | [warbletech/shrikeops-demo](https://github.com/warbletech/shrikeops-demo) | ShrikeOps | Golden/bad YAML + CI demo |
+| [`heron-ops/`](heron-ops/) | [warbletech/heron-ops](https://github.com/warbletech/heron-ops) | **Heron Ops** | Live Kubernetes MCP (stdio + HTTP; was SteadyHelm) |
 | [`starling/`](starling/) | [warble-tech/starling](https://github.com/warble-tech/starling) | Starling | CLI **release channel** (binaries; full product source private) |
 
 Umbrella-owned (not submodules):
@@ -53,7 +53,7 @@ Umbrella-owned (not submodules):
 ### 1. Clone with submodules
 
 ```bash
-git clone --recurse-submodules https://github.com/warble-tech/warble-army.git
+git clone --recurse-submodules https://github.com/warbletech/warble-army.git
 cd warble-army
 ```
 
@@ -142,7 +142,7 @@ make agentgateway-image   # needs docker + AR push access
 make agentgateway-apply
 ```
 
-**Public (GKE):** [https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)
+**Public (always-on):** [https://mcp.warbleoss.org](https://mcp.warbleoss.org)
 
 Full docs: [`deploy/agentgateway/README.md`](deploy/agentgateway/README.md).
 
@@ -244,8 +244,8 @@ make registry && make starling-lite && make test-mcp
 
 ## Community
 
-- Working groups: [agents](https://github.com/warble-tech/community/tree/main/working-groups/agents), [k8s](https://github.com/warble-tech/community/tree/main/working-groups/k8s)
-- Discord · Office Hours — see [warble-tech/community](https://github.com/warble-tech/community)
+- Working groups: [agents](https://github.com/warbletech/community/tree/main/working-groups/agents), [k8s](https://github.com/warbletech/community/tree/main/working-groups/k8s)
+- Discord · Office Hours — see [warbletech/community](https://github.com/warbletech/community)
 - Product site: [warblecloud.com](https://warblecloud.com)
 
 ---
