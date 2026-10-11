@@ -8,7 +8,7 @@
 	branch = master
 [submodule "starling"]
 	path = starling
-	url = https://github.com/warble-tech/starling.git
+	url = https://github.com/warbletech/starling.git
 	branch = main
 [submodule "heron-ops"]
 	path = heron-ops

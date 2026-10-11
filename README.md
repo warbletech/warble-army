@@ -33,7 +33,7 @@ Brand map: [`docs/BRAND.md`](docs/BRAND.md) · CE plan: [`docs/STARLING_EX_CE.md
 | [`shrikeops/`](shrikeops/) | [warbletech/shrikeops](https://github.com/warbletech/shrikeops) | **ShrikeOps** | Manifest / Helm security scanner |
 | [`shrikeops-demo/`](shrikeops-demo/) | [warbletech/shrikeops-demo](https://github.com/warbletech/shrikeops-demo) | ShrikeOps | Golden/bad YAML + CI demo |
 | [`heron-ops/`](heron-ops/) | [warbletech/heron-ops](https://github.com/warbletech/heron-ops) | **Heron Ops** | Live Kubernetes MCP (stdio + HTTP; was SteadyHelm) |
-| [`starling/`](starling/) | [warble-tech/starling](https://github.com/warble-tech/starling) | Starling | CLI **release channel** (binaries; full product source private) |
+| [`starling/`](starling/) | [warbletech/starling](https://github.com/warbletech/starling) | Starling | CLI **release channel** (binaries; full product source private) |
 
 Umbrella-owned (not submodules):
 
