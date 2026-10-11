@@ -2,6 +2,7 @@ package scanx
 
 import (
 	"encoding/json"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -90,5 +91,34 @@ func TestManifestWithoutToolsIsIncomplete(t *testing.T) {
 	s := r["score"].(map[string]any)
 	if r["incomplete"] != true || s["grade"] != "N/A" || s["complete"] != false {
 		t.Fatalf("expected incomplete report, got incomplete=%v score=%v", r["incomplete"], s)
+	}
+}
+
+// With the scanners installed (deploy images, CI), a known-bad manifest must
+// produce a complete, graded, non-passing report.
+func TestManifestWithToolsIsGraded(t *testing.T) {
+	for _, tool := range []string{"pluto", "polaris", "kube-score"} {
+		if _, err := exec.LookPath(tool); err != nil {
+			t.Skipf("%s not installed", tool)
+		}
+	}
+	path := filepath.Join("..", "..", "..", "..", "shrikeops-demo", "k8s", "bad", "privileged-pod.yaml")
+	out, err := Manifest(path, "", "")
+	if err != nil {
+		t.Skipf("shrikeops-demo submodule not checked out: %v", err)
+	}
+	var r map[string]any
+	if err := json.Unmarshal([]byte(out), &r); err != nil {
+		t.Fatal(err)
+	}
+	s := r["score"].(map[string]any)
+	if r["incomplete"] != false || s["complete"] != true {
+		t.Fatalf("expected complete report, got %v", s)
+	}
+	if g := s["grade"]; g == "A" || g == "B" || g == "N/A" {
+		t.Fatalf("privileged pod graded %v (score %v)", g, s)
+	}
+	if sec, _ := s["security"].(float64); sec > 50 {
+		t.Fatalf("security = %v, polaris findings not counted", sec)
 	}
 }
