@@ -1,10 +1,10 @@
 [submodule "shrikeops"]
 	path = shrikeops
-	url = https://github.com/warble-tech/shrikeops.git
+	url = https://github.com/warbletech/shrikeops.git
 	branch = master
 [submodule "shrikeops-demo"]
 	path = shrikeops-demo
-	url = https://github.com/warble-tech/shrikeops-demo.git
+	url = https://github.com/warbletech/shrikeops-demo.git
 	branch = master
 [submodule "starling"]
 	path = starling
@@ -12,5 +12,5 @@
 	branch = main
 [submodule "heron-ops"]
 	path = heron-ops
-	url = https://github.com/warble-tech/heron-ops.git
+	url = https://github.com/warbletech/heron-ops.git
 	branch = master
