@@ -1,0 +1,125 @@
+name: deploy-starling-lite
+
+# CD for the public Starling Lite MCP (https://mcp.warbleoss.org) on Railway.
+#  - pull_request touching the service: build deploy/railway/Dockerfile and smoke the container.
+#  - push to main touching the service (same paths as railway.toml watchPatterns) or a manual
+#    run: the same checks, then `railway up` to production, then a production smoke test that
+#    waits for /health to report this commit, checks tools/list, and requires scan_manifest to
+#    be complete (not "incomplete").
+#
+# Needs (repo Settings -> Environments -> production):
+#   secret   RAILWAY_TOKEN    Railway *project* token for the production environment
+#   variable RAILWAY_SERVICE  Railway service name of Starling Lite (e.g. starling-lite)
+#   variable MCP_URL          optional, default https://mcp.warbleoss.org
+# Plus the existing repo secret WARBLE_CI_PAT (private submodules), as in check.yml.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "mcp/starling-lite/**"
+      - "heron-ops"
+      - "heron-ops/**"
+      - "shrikeops"
+      - "shrikeops/**"
+      - "mcp/tools/**"
+      - "deploy/railway/**"
+      - "railway.toml"
+      - "scripts/ci/starling-lite-smoke.py"
+      - ".github/workflows/deploy-starling-lite.yml"
+  pull_request:
+    paths:
+      - "mcp/starling-lite/**"
+      - "heron-ops"
+      - "heron-ops/**"
+      - "shrikeops"
+      - "shrikeops/**"
+      - "mcp/tools/**"
+      - "deploy/railway/**"
+      - "railway.toml"
+      - "scripts/ci/starling-lite-smoke.py"
+      - ".github/workflows/deploy-starling-lite.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  RAILWAY_CLI_VERSION: "5.64.2"
+
+jobs:
+  image:
+    name: Build image & container smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          submodules: recursive
+          token: ${{ secrets.WARBLE_CI_PAT }}
+
+      - name: Stamp revision
+        run: echo "${GITHUB_SHA}" > deploy/railway/REVISION
+
+      - name: Build deploy/railway/Dockerfile
+        run: docker build -f deploy/railway/Dockerfile -t starling-lite:ci .
+
+      - name: Smoke the container
+        run: |
+          set -euo pipefail
+          docker run -d --name sl -e PORT=8080 -p 8080:8080 starling-lite:ci
+          python3 scripts/ci/starling-lite-smoke.py --url http://127.0.0.1:8080 --revision "${GITHUB_SHA}" --wait 60
+
+      - name: Container logs
+        if: always()
+        run: docker logs sl 2>&1 | tail -n 50 || true
+
+  deploy:
+    name: Deploy to Railway (production)
+    needs: image
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment:
+      name: production
+      url: ${{ vars.MCP_URL || 'https://mcp.warbleoss.org' }}
+    concurrency:
+      group: railway-production-starling-lite
+      cancel-in-progress: false
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE }}
+      MCP_URL: ${{ vars.MCP_URL || 'https://mcp.warbleoss.org' }}
+    steps:
+      - name: Check deploy configuration
+        run: |
+          ok=1
+          [ -n "${RAILWAY_TOKEN}" ]   || { echo "::error::secret RAILWAY_TOKEN is not set (Railway project token, production environment)"; ok=0; }
+          [ -n "${RAILWAY_SERVICE}" ] || { echo "::error::variable RAILWAY_SERVICE is not set (Railway service name of Starling Lite)"; ok=0; }
+          [ "$ok" = 1 ]
+
+      # The Dockerfile copies heron-ops/ and shrikeops/, so the upload needs the submodules.
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          submodules: recursive
+          token: ${{ secrets.WARBLE_CI_PAT }}
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+
+      - name: Install Railway CLI
+        run: npm install -g "@railway/cli@${RAILWAY_CLI_VERSION}" && railway --version
+
+      - name: Stamp revision
+        run: echo "${GITHUB_SHA}" > deploy/railway/REVISION
+
+      - name: railway up
+        # Project token => project + environment are implied; builds with railway.toml
+        # (deploy/railway/Dockerfile). --ci streams build logs and fails if the build fails.
+        run: railway up --ci --service "${RAILWAY_SERVICE}" --message "starling-lite ${GITHUB_SHA::7} (run ${GITHUB_RUN_ID})"
+
+      - name: Smoke test production
+        # Waits up to 10 min for Railway's healthcheck + switchover, then requires /health to
+        # report this commit, tools/list, a complete scan_manifest and a real-container proposal.
+        run: python3 scripts/ci/starling-lite-smoke.py --url "${MCP_URL}" --revision "${GITHUB_SHA}" --wait 600

@@ -16,6 +16,9 @@ import (
 // version is overridden at build time: -ldflags "-X main.version=..."
 var version = "0.3.0"
 
+// revision is the git commit the binary was built from (-ldflags "-X main.revision=...").
+var revision = "dev"
+
 func main() {
 	var (
 		mode       = flag.String("mode", envOr("STARLING_MODE", "readonly"), "Server mode: readonly | readwrite (env STARLING_MODE)")
@@ -36,7 +39,7 @@ func main() {
 	}
 
 	if *ver {
-		fmt.Printf("starling-lite %s\n", version)
+		fmt.Printf("starling-lite %s (%s)\n", version, revision)
 		os.Exit(0)
 	}
 
@@ -63,6 +66,7 @@ func main() {
 		RegistryPath:    regPath,
 		AllowNamespaces: config.ParseCSV(*allowNS),
 		Version:         version,
+		Revision:        revision,
 	}
 
 	srv, err := server.New(cfg)
@@ -70,8 +74,8 @@ func main() {
 		log.Fatalf("[starling-lite] init: %v", err)
 	}
 
-	log.Printf("[starling-lite] version=%s mode=%s transport=%s registry=%s",
-		version, cfg.Mode, cfg.Transport, cfg.RegistryPath)
+	log.Printf("[starling-lite] version=%s revision=%s mode=%s transport=%s registry=%s",
+		version, revision, cfg.Mode, cfg.Transport, cfg.RegistryPath)
 
 	switch cfg.Transport {
 	case "stdio":
