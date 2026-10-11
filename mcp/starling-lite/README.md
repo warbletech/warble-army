@@ -8,6 +8,25 @@ Thin **OSS MCP facade** that loads [`../tools/registry.json`](../tools/registry.
 | **ShrikeOps** (`pkg/scan`) | `scan_manifest`, `scan_helm`, `scan_cluster_export` |
 | **Local patcher** | `propose_remediation`, `apply_remediation` (dry-run first) |
 
+### Scan results are only graded when every scanner ran
+
+`scan_*` shells out to `pluto`, `polaris` and `kube-score` (via ShrikeOps). If any of them is missing on the
+server, the result carries `"incomplete": true`, `score.grade: "N/A"`, `score.skipped_checks` and a
+`warning` — treat it as *not scanned*, never as a pass. The deploy images under `deploy/` ship pinned versions
+of all three.
+
+### `propose_remediation` inputs
+
+| Input | Effect |
+|-------|--------|
+| `kind`, `name`, `issue` (required) | Pod, Deployment, StatefulSet, DaemonSet, ReplicaSet, ReplicationController, Job, CronJob |
+| `container` | strategic-merge patch for that container |
+| `finding` (ShrikeOps finding) | container taken from `finding.resource` (`…/container:<name>`) |
+| `manifest` (resource YAML) | strategic-merge patch for every container of the matching resource |
+| none of the above | RFC 6902 JSON patch on the **first** container (`patch_type: "json"`), with `missing_inputs` and `notes` |
+
+Every proposal is `dry_run: true` and includes a `kubectl patch … --dry-run=server` hint.
+
 ## Build & run
 
 From the `warble-army` root:

@@ -6,7 +6,7 @@
     {
       "name": "propose_remediation",
       "mode": "readonly",
-      "description": "Given a finding or issue id, produce a JSON patch / strategic merge patch / YAML snippet. Never mutates the cluster.",
+      "description": "Given a finding or issue id, produce a dry-run patch. With container/manifest/finding: strategic-merge patch naming the containers; otherwise a JSON patch on the first container plus missing_inputs. Never mutates the cluster.",
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -23,7 +23,9 @@
           "finding": {
             "type": "object",
             "description": "Optional full ShrikeOps finding object"
-          }
+          },
+          "container": { "type": "string", "description": "Container to patch. Else taken from finding.resource (.../container:<name>) or manifest; if unknown, a JSON patch on the first container is returned." },
+          "manifest": { "type": "string", "description": "Optional resource YAML (multi-doc ok) used to find the real container names." }
         },
         "required": ["kind", "name", "issue"]
       }
@@ -42,6 +44,8 @@
             "type": "string",
             "description": "Issue id or rule name"
           },
+          "container": { "type": "string", "description": "Container to patch. Else taken from finding.resource (.../container:<name>) or manifest; if unknown, a JSON patch on the first container is returned." },
+          "manifest": { "type": "string", "description": "Optional resource YAML (multi-doc ok) used to find the real container names." },
           "patch": {
             "type": "string",
             "description": "Patch body (JSON or YAML) from propose_remediation"
