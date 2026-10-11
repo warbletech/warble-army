@@ -1,10 +1,10 @@
-module github.com/warble-tech/warble-army/mcp/starling-lite
+module github.com/warbletech/warble-army/mcp/starling-lite
 
 go 1.22
 
 require (
-	github.com/warble-tech/heron-ops v0.0.0
-	github.com/warble-tech/shrikeops/scanner v0.0.0
+	github.com/warbletech/heron-ops v0.0.0
+	github.com/warbletech/shrikeops/scanner v0.0.0
 )
 
 require (
@@ -70,6 +70,6 @@ require (
 )
 
 // Local OSS modules (Docker build copies them next to this tree)
-replace github.com/warble-tech/heron-ops => ../../heron-ops
+replace github.com/warbletech/heron-ops => ../../heron-ops
 
-replace github.com/warble-tech/shrikeops/scanner => ../../shrikeops/scanner
+replace github.com/warbletech/shrikeops/scanner => ../../shrikeops/scanner
