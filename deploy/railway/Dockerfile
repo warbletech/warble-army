@@ -26,10 +26,13 @@ COPY mcp/starling-lite ./mcp/starling-lite
 COPY heron-ops ./heron-ops
 COPY shrikeops ./shrikeops
 COPY mcp/tools ./mcp/tools
+# Git commit stamped by CD (.github/workflows/deploy-starling-lite.yml); "dev" in git.
+COPY deploy/railway/REVISION /src/REVISION
 
 WORKDIR /src/mcp/starling-lite
 RUN go mod tidy \
- && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X main.version=0.3.0" -o /out/starling-lite ./cmd/starling-lite
+ && REV="$(tr -d '[:space:]' < /src/REVISION)" \
+ && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X main.version=0.3.0 -X main.revision=${REV:-dev}" -o /out/starling-lite ./cmd/starling-lite
 
 FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /

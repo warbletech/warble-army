@@ -97,6 +97,36 @@ Use a ServiceAccount that is **namespace-scoped + get/list/watch only**.
 
 ---
 
+## Continuous deployment (GitHub Actions)
+
+[`.github/workflows/deploy-starling-lite.yml`](../../.github/workflows/deploy-starling-lite.yml)
+deploys this service whenever a push to `main` touches the paths in the root `railway.toml`
+watch list (including submodule bumps of `heron-ops` / `shrikeops`), or on a manual run.
+
+1. **image** (also on PRs): stamps `deploy/railway/REVISION` with the commit, builds
+   `deploy/railway/Dockerfile`, runs the container, and runs
+   [`scripts/ci/starling-lite-smoke.py`](../../scripts/ci/starling-lite-smoke.py).
+2. **deploy** (`production` environment, one at a time): runs
+   `railway up --ci --service $RAILWAY_SERVICE`.
+3. **smoke**: waits until `https://mcp.warbleoss.org/health` reports `"revision": "<sha>"`.
+   It then requires `tools/list`, a complete `scan_manifest` (`incomplete: false`, graded,
+   with high findings on a bad Pod), and a `propose_remediation` that names the real
+   container.
+
+One-time setup (repo **Settings → Environments → production**):
+
+| Kind | Name | Value |
+|------|------|-------|
+| Secret | `RAILWAY_TOKEN` | Railway → project → **Settings → Tokens** → create a *project* token for the `production` environment |
+| Variable | `RAILWAY_SERVICE` | the Starling Lite service name in that project (as shown on the Railway canvas) |
+| Variable | `MCP_URL` | optional; defaults to `https://mcp.warbleoss.org` |
+
+`WARBLE_CI_PAT` (already used by `check.yml`) is needed to check out the private submodules.
+If the Railway service is also connected to this GitHub repo, turn its auto-deploy off.
+Otherwise every push deploys twice.
+
+`/health` now includes `revision` (the git commit baked in at build time; `dev` for local builds).
+
 ## Fly.io alternative
 
 ```bash

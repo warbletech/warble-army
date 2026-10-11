@@ -112,6 +112,7 @@ func (s *Server) ServeHTTP(addr string) error {
 			"status":             "ok",
 			"server":             "starling-lite",
 			"version":            s.cfg.Version,
+			"revision":           s.cfg.Revision,
 			"mode":               s.cfg.Mode,
 			"cluster":            s.cluster != nil,
 			"mcp":                "/mcp",

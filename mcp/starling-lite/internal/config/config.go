@@ -12,6 +12,7 @@ type Config struct {
 	RegistryPath    string
 	AllowNamespaces []string
 	Version         string
+	Revision        string // git commit of the build ("dev" when unknown)
 }
 
 // ParseCSV splits a comma-separated list, trimming empties.

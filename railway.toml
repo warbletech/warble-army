@@ -6,7 +6,10 @@ builder = "DOCKERFILE"
 dockerfilePath = "deploy/railway/Dockerfile"
 watchPatterns = [
   "mcp/starling-lite/**",
+  # submodule bumps change the gitlink path itself, which "dir/**" does not match
+  "heron-ops",
   "heron-ops/**",
+  "shrikeops",
   "shrikeops/**",
   "mcp/tools/**",
   "deploy/railway/**",
