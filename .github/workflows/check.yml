@@ -47,6 +47,22 @@ jobs:
             heron-ops/go.sum
             shrikeops/scanner/go.sum
 
+      # Same pinned versions as deploy/railway/Dockerfile and the ShrikeOps README.
+      - name: Install ShrikeOps scanners (pluto, polaris, kube-score)
+        env:
+          PLUTO_VERSION: "5.24.4"
+          POLARIS_VERSION: "10.2.5"
+          KUBE_SCORE_VERSION: "1.20.0"
+        run: |
+          set -euo pipefail
+          curl -fsSL "https://github.com/FairwindsOps/pluto/releases/download/v${PLUTO_VERSION}/pluto_${PLUTO_VERSION}_linux_amd64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin pluto
+          curl -fsSL "https://github.com/FairwindsOps/polaris/releases/download/v${POLARIS_VERSION}/polaris_${POLARIS_VERSION}_linux_amd64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin polaris
+          curl -fsSL "https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}/kube-score_${KUBE_SCORE_VERSION}_linux_amd64.tar.gz" \
+            | sudo tar -xz -C /usr/local/bin kube-score
+          pluto version && polaris version && kube-score version
+
       - name: Build Heron Ops
         run: |
           mkdir -p bin
@@ -57,7 +73,8 @@ jobs:
         run: |
           cd mcp/starling-lite
           go mod tidy
-          go test ./...
+          go vet ./...
+          go test -count=1 ./...
           go build -o ../../bin/starling-lite ./cmd/starling-lite
 
       - name: MCP tools/list smoke
@@ -115,6 +132,8 @@ jobs:
               text=r["result"]["content"][0]["text"]
               report=json.loads(text)
               assert "score" in report and "findings" in report, report.keys()
+              # scanners are installed above, so the scan must be complete (graded)
+              assert report.get("incomplete") is False, report.get("warning")
               print("ok scan_manifest source=", report.get("source"),
                     "grade=", report.get("score",{}).get("grade"),
                     "findings=", len(report.get("findings") or []))
