@@ -87,7 +87,7 @@ helm upgrade --install starling-ex-ce ./charts/starling-ex-ce \
 
 ## Community
 
-- Discord Office Hours: Saturday 7–8 PM IST — https://discord.gg/WHsJkEFTt  
+- Discord Office Hours: Saturday 7–8 PM IST — https://discord.gg/kAfR57mVDX  
 - RFCs / WGs / showcase — github.com/warbletech/community  
 
 ## Support / crowdfunding
