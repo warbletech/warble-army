@@ -1,0 +1,4 @@
+Project sandbox {{ include "sandbox.namespace" . }} for project {{ .Values.project }}:
+  - Pod Security: {{ .Values.podSecurity }} (enforced)
+  - Network: default deny{{ if .Values.network.allowDNS }} + DNS{{ end }}{{ with .Values.network.egressCIDRs }} + {{ join "," . }}{{ end }}
+  - ServiceAccount sandbox-runner: no token automount, no RBAC bindings

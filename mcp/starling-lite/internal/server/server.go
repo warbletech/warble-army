@@ -14,6 +14,7 @@ import (
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/protocol"
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/registry"
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/remediate"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/sandbox"
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/scanx"
 	"github.com/warbletech/heron-ops/pkg/mcpserver"
 )
@@ -350,6 +351,8 @@ func (s *Server) callRemediate(name string, args map[string]any) protocol.ToolCa
 	}
 
 	switch name {
+	case "sandbox_project":
+		return s.callSandbox(args)
 	case "propose_remediation":
 		p, err := remediate.ProposeFor(req)
 		if err != nil {
@@ -392,4 +395,40 @@ func (s *Server) callRemediate(name string, args map[string]any) protocol.ToolCa
 	default:
 		return protocol.ErrorResult("unknown remediate tool: " + name)
 	}
+}
+
+func strList(v any) []string {
+	var out []string
+	switch t := v.(type) {
+	case []any:
+		for _, x := range t {
+			if str, ok := x.(string); ok && str != "" {
+				out = append(out, str)
+			}
+		}
+	case string:
+		out = config.ParseCSV(t)
+	}
+	return out
+}
+
+// callSandbox renders an isolated project sandbox (dry-run manifests only).
+func (s *Server) callSandbox(args map[string]any) protocol.ToolCallResult {
+	spec := sandbox.Spec{}
+	spec.Project, _ = args["project"].(string)
+	spec.Namespace, _ = args["namespace"].(string)
+	spec.CPU, _ = args["cpu"].(string)
+	spec.Memory, _ = args["memory"].(string)
+	spec.Image, _ = args["image"].(string)
+	if p, ok := args["pods"].(float64); ok {
+		spec.Pods = int(p)
+	}
+	spec.EgressCIDRs = strList(args["egress_cidrs"])
+	spec.Command = strList(args["command"])
+	out, err := sandbox.Render(spec)
+	if err != nil {
+		return protocol.ErrorResult(err.Error())
+	}
+	return protocol.TextResult("# DRY-RUN project sandbox (not applied). Review, then:\n" +
+		"#   kubectl apply --dry-run=server -f sandbox.yaml && kubectl apply -f sandbox.yaml\n" + out)
 }

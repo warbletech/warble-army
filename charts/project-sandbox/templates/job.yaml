@@ -1,0 +1,57 @@
+{{- if .Values.task.enabled }}
+{{- $img := required "task.image is required when task.enabled" .Values.task.image }}
+{{- if hasSuffix ":latest" $img }}{{ fail "task.image must be pinned, not :latest" }}{{ end }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: sandbox-task
+  namespace: {{ include "sandbox.namespace" . }}
+  labels:
+    {{- include "sandbox.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.task.backoffLimit }}
+  activeDeadlineSeconds: {{ .Values.task.activeDeadlineSeconds }}
+  ttlSecondsAfterFinished: {{ .Values.task.ttlSecondsAfterFinished }}
+  template:
+    metadata:
+      labels:
+        {{- include "sandbox.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: sandbox-runner
+      automountServiceAccountToken: false
+      enableServiceLinks: false
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: task
+          image: {{ $img }}
+          {{- with .Values.task.command }}
+          command: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.task.args }}
+          args: {{- toYaml . | nindent 12 }}
+          {{- end }}
+          workingDir: /work
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            privileged: false
+            runAsNonRoot: true
+            capabilities: { drop: [ALL] }
+            seccompProfile: { type: RuntimeDefault }
+          resources:
+            {{- toYaml .Values.task.resources | nindent 12 }}
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+            - { name: work, mountPath: /work }
+      volumes:
+        - name: tmp
+          emptyDir: { sizeLimit: {{ .Values.task.tmpSizeLimit }} }
+        - name: work
+          emptyDir: { sizeLimit: {{ .Values.task.workSizeLimit }} }
+{{- end }}

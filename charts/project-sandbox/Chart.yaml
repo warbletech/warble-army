@@ -1,0 +1,10 @@
+apiVersion: v2
+name: project-sandbox
+description: Isolated, least-privilege namespace for running Warble Army agent/remediation tasks against one target project.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://warbleoss.org
+sources:
+  - https://github.com/warbletech/warble-army
+keywords: [sandbox, security, kubernetes, mcp, agents]

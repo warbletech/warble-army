@@ -1,0 +1,37 @@
+# Target project slug (DNS-1123). Namespace defaults to sbx-<project>.
+project: ""
+namespace: ""
+
+# Pod Security Admission level enforced on the namespace.
+podSecurity: restricted
+
+# Network: default-deny ingress+egress; DNS to kube-dns is allowed.
+network:
+  allowDNS: true
+  # Extra allowed egress, e.g. ["10.20.0.0/16"]. 0.0.0.0/0 is rejected.
+  egressCIDRs: []
+
+quota:
+  cpu: "2"
+  memory: 2Gi
+  pods: 5
+  secrets: 5
+
+limitRange:
+  default: { cpu: 500m, memory: 512Mi }
+  defaultRequest: { cpu: 100m, memory: 128Mi }
+
+# Optional one-shot task Job run inside the sandbox.
+task:
+  enabled: false
+  image: ""          # must be pinned (tag or digest); ":latest" rejected
+  command: []
+  args: []
+  backoffLimit: 0
+  activeDeadlineSeconds: 900
+  ttlSecondsAfterFinished: 600
+  resources:
+    requests: { cpu: 100m, memory: 128Mi }
+    limits: { cpu: "1", memory: 1Gi }
+  workSizeLimit: 1Gi
+  tmpSizeLimit: 256Mi
