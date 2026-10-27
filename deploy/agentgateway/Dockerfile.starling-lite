@@ -15,7 +15,7 @@ RUN apk add --no-cache curl tar \
  && curl -fsSL "https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}/kube-score_${KUBE_SCORE_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz -C /out kube-score \
  && /out/pluto version && /out/polaris version && /out/kube-score version
 
-FROM golang:1.22-bookworm AS build
+FROM golang:1.25-bookworm AS build
 WORKDIR /src
 # Context must be warble-army repo root (see Makefile agentgateway-image)
 COPY mcp/starling-lite ./mcp/starling-lite

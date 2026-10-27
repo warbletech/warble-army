@@ -115,8 +115,20 @@ def main():
     # 4. propose_remediation names the real container
     import re
     m = re.search(r"^kind:\s*(\S+)", manifest, re.M)
-    n = re.search(r"^metadata:\s*\n(?:\s+.*\n)*?\s+name:\s*(\S+)", manifest, re.M)
-    kind, name = (m.group(1) if m else "Pod"), (n.group(1) if n else "smoke")
+    name = None
+    in_meta = False
+    for line in manifest.splitlines():
+        if line.startswith("metadata:"):
+            in_meta = True
+            continue
+        if in_meta:
+            if line and not line[0].isspace():
+                break
+            nm = re.match(r"\s+name:\s*(\S+)", line)
+            if nm:
+                name = nm.group(1)
+                break
+    kind, name = (m.group(1) if m else "Pod"), (name or "smoke")
     prop = call_tool(mcp, 3, "propose_remediation", {
         "kind": kind, "name": name, "namespace": "default",
         "issue": "missing-resource-limits", "manifest": manifest,
