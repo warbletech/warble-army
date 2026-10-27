@@ -11,6 +11,9 @@ concurrency:
   group: check-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   submodules-and-mcp:
     name: submodules (ubuntu-latest)
@@ -41,7 +44,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.22.x"
+          go-version: "1.25.x"
           cache-dependency-path: |
             mcp/starling-lite/go.sum
             heron-ops/go.sum
@@ -165,7 +168,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.22.x"
+          go-version: "1.25.x"
           cache-dependency-path: mcp/starling-lite/go.sum
 
       - name: Build Starling Lite

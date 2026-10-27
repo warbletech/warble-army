@@ -16,7 +16,11 @@ func Manifest(path, manifest, source string) (string, error) {
 	var content string
 	src := source
 	if path != "" {
-		b, err := os.ReadFile(path)
+		safe, err := resolveScanPath(path)
+		if err != nil {
+			return "", err
+		}
+		b, err := os.ReadFile(safe)
 		if err != nil {
 			return "", fmt.Errorf("read path: %w", err)
 		}
@@ -50,6 +54,41 @@ func Manifest(path, manifest, source string) (string, error) {
 		return "", err
 	}
 	return string(b), nil
+}
+
+// resolveScanPath confines path-based scans to an allowed root directory so
+// MCP callers cannot read arbitrary files on the host (CodeQL go/path-injection).
+// The root defaults to the working directory and can be overridden with
+// STARLING_SCAN_ROOT.
+func resolveScanPath(p string) (string, error) {
+	root := os.Getenv("STARLING_SCAN_ROOT")
+	if root == "" {
+		wd, err := os.Getwd()
+		if err != nil {
+			return "", fmt.Errorf("resolve scan root: %w", err)
+		}
+		root = wd
+	}
+	absRoot, err := filepath.Abs(root)
+	if err != nil {
+		return "", fmt.Errorf("resolve scan root: %w", err)
+	}
+	if r, err := filepath.EvalSymlinks(absRoot); err == nil {
+		absRoot = r
+	}
+	abs := p
+	if !filepath.IsAbs(abs) {
+		abs = filepath.Join(absRoot, abs)
+	}
+	abs = filepath.Clean(abs)
+	if r, err := filepath.EvalSymlinks(abs); err == nil {
+		abs = r
+	}
+	rel, err := filepath.Rel(absRoot, abs)
+	if err != nil || rel == ".." || strings.HasPrefix(rel, ".."+string(filepath.Separator)) {
+		return "", fmt.Errorf("path %q is outside the allowed scan root", p)
+	}
+	return abs, nil
 }
 
 // Helm renders a chart with helm template then scans.
