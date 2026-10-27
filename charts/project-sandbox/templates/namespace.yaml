@@ -1,0 +1,22 @@
+{{- if not (regexMatch "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$" (include "sandbox.project" .)) }}
+{{- fail "project must be a DNS-1123 label" }}
+{{- end }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "sandbox.namespace" . }}
+  labels:
+    {{- include "sandbox.labels" . | nindent 4 }}
+    pod-security.kubernetes.io/enforce: {{ .Values.podSecurity }}
+    pod-security.kubernetes.io/enforce-version: latest
+    pod-security.kubernetes.io/audit: {{ .Values.podSecurity }}
+    pod-security.kubernetes.io/warn: {{ .Values.podSecurity }}
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: sandbox-runner
+  namespace: {{ include "sandbox.namespace" . }}
+  labels:
+    {{- include "sandbox.labels" . | nindent 4 }}
+automountServiceAccountToken: false

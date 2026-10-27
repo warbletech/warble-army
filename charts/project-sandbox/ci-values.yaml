@@ -1,0 +1,7 @@
+project: demo
+network:
+  egressCIDRs: ["10.20.0.0/16"]
+task:
+  enabled: true
+  image: ghcr.io/warbletech/shrikeops:v0.1.0
+  command: ["shrikeops", "scan", "/work"]

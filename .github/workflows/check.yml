@@ -194,3 +194,15 @@ jobs:
             --mcp http://127.0.0.1:8822/mcp \
             --path shrikeops-demo/k8s/bad/root-container.yaml
           kill "$(cat /tmp/sl.pid)" 2>/dev/null || true
+
+  project-sandbox-chart:
+    name: project-sandbox chart (ubuntu-latest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.16.4
+      - name: Lint + render + invariants
+        run: ./scripts/ci/test-project-sandbox.sh

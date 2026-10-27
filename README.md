@@ -231,6 +231,7 @@ make registry && make starling-lite && make test-mcp
 | [`docs/architecture.md`](docs/architecture.md) | Technical stack, OSS vs SaaS |
 | [`docs/MAINTAINING.md`](docs/MAINTAINING.md) | Submodules, remotes, hooks, release pins |
 | [`docs/safety.md`](docs/safety.md) | RBAC, write gates, audit |
+| [`docs/sandbox.md`](docs/sandbox.md) | Per-project sandbox namespace (`charts/project-sandbox`, `sandbox_project` tool) |
 | [`docs/gke-pdb-unpermissive-2026-07.md`](docs/gke-pdb-unpermissive-2026-07.md) | GKE Active Assist PDB fix on `warble-cluster` |
 | [`mcp/README.md`](mcp/README.md) | Tool layout + client setup |
 | [`mcp/PROTOCOL.md`](mcp/PROTOCOL.md) | MCP JSON-RPC conventions for this flock |

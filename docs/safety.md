@@ -26,3 +26,7 @@ Run with least privilege: scoped ServiceAccount + ClusterRole limited to needed 
 ## Secrets
 
 Hooks reject staged files that look like private keys or `.env` with live credentials. Do not put kubeconfig or cloud tokens in this umbrella repo.
+
+## Project sandbox
+
+Agent/remediation tasks that need to run something for a target project should run in a per-project sandbox namespace: PSA restricted, default-deny network, no SA token, quota, read-only root FS. See [sandbox.md](sandbox.md) (`charts/project-sandbox`, MCP tool `sandbox_project`).

@@ -1,7 +1,7 @@
 .PHONY: help hooks submodules status registry starling-lite steadyhelm test-mcp agent-demo \
 	agentgateway-bin agentgateway-local agentgateway-image agentgateway-apply \
 	railway-image railway-run ce-up ce-preview ce-docker ce-helm-template ce-down ce-smoke ce-status \
-	ops-smoke ops-deploy clean
+	ops-smoke ops-deploy sandbox-test sandbox-template clean
 
 ROOT := $(abspath .)
 BIN  := $(ROOT)/bin
@@ -34,6 +34,8 @@ help:
 	@echo "  make ce-down            stop local CE process/container"
 	@echo "  make ops-smoke          smoke public Railway MCP (mcp.warbleoss.org)"
 	@echo "  make ops-deploy         railway up via helper script"
+	@echo "  make sandbox-test       lint/test project-sandbox chart"
+	@echo "  make sandbox-template   render sandbox (PROJECT=name)"
 	@echo "  make clean              remove bin/"
 
 hooks:
@@ -163,3 +165,10 @@ ce-status:
 
 clean:
 	rm -rf $(BIN)
+
+sandbox-test:
+	./scripts/ci/test-project-sandbox.sh
+
+PROJECT ?= demo
+sandbox-template:
+	helm template sbx-$(PROJECT) charts/project-sandbox --set project=$(PROJECT)
