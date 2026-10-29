@@ -32,15 +32,23 @@ jobs:
       - name: Package and push
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           echo "$GHCR_TOKEN" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
           mkdir -p dist
           for chart in charts/*; do
             [ -f "$chart/Chart.yaml" ] || continue
+            cp LICENSE "$chart/LICENSE"
             helm package "$chart" --destination dist
           done
           for tgz in dist/*.tgz; do
             helm push "$tgz" oci://ghcr.io/warbletech/charts
-            echo "pushed $(basename "$tgz")"
+            base=$(basename "$tgz" .tgz)
+            name=${base%-*}
+            gh api --method PUT \
+              -H "Accept: application/vnd.github+json" \
+              "/orgs/warbletech/packages/container/charts%2F${name}/visibility" \
+              -f visibility=public
+            echo "pushed ${name} Apache-2.0"
           done

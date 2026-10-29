@@ -4,6 +4,9 @@ description: Starling EX Community Edition — Heron Ops + Starling Lite MCP for
 type: application
 version: 0.1.0
 appVersion: "0.2.0"
+annotations:
+  artifacthub.io/license: Apache-2.0
+  licenses: Apache-2.0
 home: https://warbleoss.org
 sources:
   - https://github.com/warbletech/warble-army
