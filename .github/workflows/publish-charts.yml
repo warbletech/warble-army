@@ -46,9 +46,7 @@ jobs:
             helm push "$tgz" oci://ghcr.io/warbletech/charts
             base=$(basename "$tgz" .tgz)
             name=${base%-*}
-            gh api --method PUT \
-              -H "Accept: application/vnd.github+json" \
-              "/orgs/warbletech/packages/container/charts%2F${name}/visibility" \
-              -f visibility=public
             echo "pushed ${name} Apache-2.0"
+          gh api "/orgs/warbletech/packages?package_type=container&per_page=100" \
+            --jq '.[] | {name,visibility,url}' || true
           done
