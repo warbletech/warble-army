@@ -1,0 +1,23 @@
+name: Make chart packages public
+
+on:
+  workflow_dispatch:
+
+permissions:
+  packages: write
+
+jobs:
+  public:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Set chart packages public
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          for name in charts%2Fstarling-ex-ce charts%2Fproject-sandbox; do
+            gh api --method PUT \
+              -H "Accept: application/vnd.github+json" \
+              "/orgs/warbletech/packages/container/${name}/visibility" \
+              -f visibility=public
+          done
