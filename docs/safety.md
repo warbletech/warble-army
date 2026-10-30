@@ -23,6 +23,17 @@ Run with least privilege: scoped ServiceAccount + ClusterRole limited to needed 
 | `propose_remediation` | Always allowed; returns patch, never mutates |
 | `apply_remediation` | Requires `mode=readwrite`, allowlist, and `confirm=true` |
 
+## LLM-assisted remediation (`propose_remediation_llm`)
+
+| Gate | Rule |
+|------|------|
+| Order | Deterministic rules first; LLM only as fallback, output labelled `generator: llm` |
+| Input | Manifest/finding/cluster context sent as untrusted JSON data (prompt-injection framing) |
+| Output | Strict JSON, size caps, field denylist, typed strategic-merge patch |
+| Verify | ShrikeOps re-scan: no score regression, no new findings; `kubectl apply --dry-run=server` when a cluster exists |
+| Effect | Dry-run proposal only; `apply_remediation` gates unchanged |
+| Config | `LLM_PROVIDER` + keys from env only; missing key = fail closed |
+
 ## Secrets
 
 Hooks reject staged files that look like private keys or `.env` with live credentials. Do not put kubeconfig or cloud tokens in this umbrella repo.

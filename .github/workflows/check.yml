@@ -176,6 +176,9 @@ jobs:
           mkdir -p bin
           cd mcp/starling-lite && go mod tidy && go build -o ../../bin/starling-lite ./cmd/starling-lite
 
+      - name: Reflexion unit tests
+        run: python3 -m unittest discover -s agents/reflexion/tests -v
+
       - name: Run Reflexion agent over HTTP MCP
         run: |
           set -euo pipefail

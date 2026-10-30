@@ -56,6 +56,20 @@ func Manifest(path, manifest, source string) (string, error) {
 	return string(b), nil
 }
 
+// ReportFor scans inline YAML and returns the normalized report (used by the
+// LLM remediation guardrail to re-scan patched manifests).
+func ReportFor(manifest, source string) (Report, error) {
+	rep, err := scan.Run(scan.Request{Manifest: manifest, Source: source})
+	if err != nil {
+		return nil, err
+	}
+	raw, err := json.Marshal(rep)
+	if err != nil {
+		return nil, err
+	}
+	return Normalize(raw)
+}
+
 // resolveScanPath confines path-based scans to an allowed root directory so
 // MCP callers cannot read arbitrary files on the host (CodeQL go/path-injection).
 // The root defaults to the working directory and can be overridden with
