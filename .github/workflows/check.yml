@@ -5,8 +5,9 @@ name: check
 #   - fork PRs and runs inside forks      -> GitHub-hosted `ubuntu-latest`
 #     (untrusted fork code never runs on the self-hosted runner; hosted
 #     minutes are free for public repos/forks)
-# All submodules are public, so no secret is needed. WARBLE_CI_PAT is used
-# only when present (e.g. if a submodule ever goes private again).
+# All submodules are public, so checkout uses github.token. WARBLE_CI_PAT is
+# opt-in via repo variable CI_USE_PAT=true (only if a submodule goes private;
+# forks never have it and fall back to github.token).
 on:
   push:
     branches: [main, master]
@@ -26,11 +27,11 @@ jobs:
     runs-on: ${{ (github.repository_owner == 'warbletech' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'warble-ci' || 'ubuntu-latest' }}
     timeout-minutes: 15
     steps:
-      # Submodules are public; the PAT is optional (forks don't have it).
+      # Submodules are public; the PAT is opt-in (vars.CI_USE_PAT), forks never need it.
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.WARBLE_CI_PAT || github.token }}
+          token: ${{ vars.CI_USE_PAT == 'true' && secrets.WARBLE_CI_PAT || github.token }}
 
       - name: Submodule status
         run: ./scripts/submodules.sh status
@@ -46,7 +47,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.WARBLE_CI_PAT || github.token }}
+          token: ${{ vars.CI_USE_PAT == 'true' && secrets.WARBLE_CI_PAT || github.token }}
 
       - uses: actions/setup-go@v5
         with:
@@ -174,7 +175,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          token: ${{ secrets.WARBLE_CI_PAT || github.token }}
+          token: ${{ vars.CI_USE_PAT == 'true' && secrets.WARBLE_CI_PAT || github.token }}
 
       - uses: actions/setup-go@v5
         with:
