@@ -1,5 +1,9 @@
 # Warble Army
 
+[![check](https://github.com/warbletech/warble-army/actions/workflows/check.yml/badge.svg)](https://github.com/warbletech/warble-army/actions/workflows/check.yml)
+[![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/warbletech/warble-army/badge)](https://scorecard.dev/viewer/?uri=github.com/warbletech/warble-army)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+
 **Open flock of Kubernetes agents + MCP** — scan, observe, propose, remediate.
 
 > Birds of a feather: **[ShrikeOps](brand/shrike-ops/)** hunts bad config, **[Heron Ops](brand/heron-ops/)** (formerly SteadyHelm) gives agents live cluster context via MCP, **Starling EX Community** coordinates the flock (**CNCF donation planned**). Community home: **[warbleoss.org](https://warbleoss.org)**. Platform LF wing: **Frakma-X**.
@@ -208,7 +212,7 @@ Safety defaults: readonly mode, namespace allowlists, dry-run first. See [`docs/
 
 ## CI
 
-GitHub Actions (`.github/workflows/check.yml`) on every push/PR:
+GitHub Actions (`.github/workflows/check.yml`) on every push/PR — forks get green CI without org secrets; see [`docs/CI.md`](docs/CI.md) for runners, DCO, Scorecard and CodeQL:
 
 1. Submodule status + MCP registry validation  
 2. Build **SteadyHelm** + **Starling Lite**, `tools/list` + `scan_manifest` smoke  
@@ -226,6 +230,8 @@ make registry && make starling-lite && make test-mcp
 | [`docs/BRAND.md`](docs/BRAND.md) | Flock brand map (Heron Ops, ShrikeOps, Starling) |
 | [`docs/GOVERNANCE.md`](docs/GOVERNANCE.md) | Warble / CNCF path / Frakma-X LF wing |
 | [`docs/cncf/`](docs/cncf/) | **CNCF Sandbox application draft + CoC/SECURITY** |
+| [`docs/cncf/SANDBOX_CHECKLIST.md`](docs/cncf/SANDBOX_CHECKLIST.md) | **CNCF Sandbox readiness checklist** · [CNCF landscape](https://landscape.cncf.io/) |
+| [`docs/CI.md`](docs/CI.md) · [`docs/RELEASING.md`](docs/RELEASING.md) · [`docs/LABELS.md`](docs/LABELS.md) | CI/forks, release process, label taxonomy · [`CHANGELOG.md`](CHANGELOG.md) |
 | [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md) | Starling EX Community + CNCF donation plan |
 | [`docs/HERON_OPS_RENAME.md`](docs/HERON_OPS_RENAME.md) | SteadyHelm → Heron Ops checklist |
 | [`docs/architecture.md`](docs/architecture.md) | Technical stack, OSS vs SaaS |

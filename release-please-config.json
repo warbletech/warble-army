@@ -1,0 +1,16 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "include-component-in-tag": true,
+  "packages": {
+    ".": {
+      "release-type": "simple",
+      "component": "warble-army",
+      "changelog-path": "CHANGELOG.md"
+    },
+    "mcp/starling-lite": {
+      "release-type": "go",
+      "component": "starling-lite",
+      "changelog-path": "CHANGELOG.md"
+    }
+  }
+}
