@@ -1,0 +1,40 @@
+# Dependabot version updates. Free for public repos; PRs run the normal check.yml.
+version: 2
+updates:
+  - package-ecosystem: gomod
+    directory: /mcp/starling-lite
+    schedule:
+      interval: weekly
+    labels: ["area/mcp", "kind/dependencies"]
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      gomod:
+        patterns: ["*"]
+
+  - package-ecosystem: pip
+    directory: /agents/reflexion
+    schedule:
+      interval: weekly
+    labels: ["area/agents", "kind/dependencies"]
+    commit-message:
+      prefix: "chore(deps)"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels: ["area/ci", "kind/dependencies"]
+    commit-message:
+      prefix: "ci(deps)"
+    groups:
+      actions:
+        patterns: ["*"]
+
+  - package-ecosystem: gitsubmodule
+    directory: /
+    schedule:
+      interval: weekly
+    labels: ["area/submodules", "kind/dependencies"]
+    commit-message:
+      prefix: "chore(submodules)"
