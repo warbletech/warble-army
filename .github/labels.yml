@@ -1,0 +1,28 @@
+# Label taxonomy for warble-army (source of truth; NOT auto-synced yet).
+# Apply with a sync tool (e.g. EndBug/label-sync or `gh label create`) once a
+# maintainer approves — see docs/LABELS.md.
+# area/*
+- {name: area/mcp,         color: "1d76db", description: "mcp/ — Starling Lite server and tool registry"}
+- {name: area/charts,      color: "1d76db", description: "charts/ — Helm charts (starling-ex-ce, project-sandbox)"}
+- {name: area/agents,      color: "1d76db", description: "agents/ — Reflexion and other agent loops"}
+- {name: area/submodules,  color: "1d76db", description: "Submodule gitlinks (heron-ops, shrikeops, starling, shrikeops-demo)"}
+- {name: area/ci,          color: "1d76db", description: "GitHub Actions, build, release tooling"}
+- {name: area/deploy,      color: "1d76db", description: "deploy/ — Railway, Agent Gateway, k8s manifests"}
+- {name: area/docs,        color: "1d76db", description: "Documentation, README, CNCF docs"}
+- {name: area/security,    color: "1d76db", description: "Safety gates, RBAC, supply chain"}
+# kind/*
+- {name: kind/bug,          color: "d73a4a", description: "Something is broken"}
+- {name: kind/feature,      color: "a2eeef", description: "New capability"}
+- {name: kind/docs,         color: "0075ca", description: "Docs-only change"}
+- {name: kind/cleanup,      color: "c5def5", description: "Refactor / tech debt"}
+- {name: kind/dependencies, color: "0366d6", description: "Dependency or submodule bump (Dependabot)"}
+- {name: kind/support,      color: "d876e3", description: "Question; prefer Discussions"}
+# priority/*
+- {name: priority/critical, color: "b60205", description: "Drop everything (outage, security)"}
+- {name: priority/high,     color: "d93f0b", description: "Next up"}
+- {name: priority/medium,   color: "fbca04", description: "Planned"}
+- {name: priority/low,      color: "0e8a16", description: "Nice to have"}
+# triage / contributor
+- {name: triage/needed,     color: "ededed", description: "Needs maintainer triage"}
+- {name: good first issue,  color: "7057ff", description: "Small, well-scoped, good for newcomers"}
+- {name: help wanted,       color: "008672", description: "Maintainers welcome outside help"}

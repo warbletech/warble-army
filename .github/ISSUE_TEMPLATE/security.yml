@@ -1,0 +1,21 @@
+name: Security vulnerability
+description: Do NOT report vulnerabilities publicly. Use this only to be redirected to the private process.
+title: "security: redirect"
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Please do not file vulnerabilities as public issues
+
+        Report privately instead:
+        - **GitHub private vulnerability reporting:** https://github.com/warbletech/warble-army/security/advisories/new
+        - Or follow [SECURITY.md](https://github.com/warbletech/warble-army/blob/main/SECURITY.md).
+
+        Maintainers will close public security issues and ask you to re-report privately.
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Acknowledgement
+      options:
+        - label: I understand this issue is public and I have NOT included exploit details here.
+          required: true
