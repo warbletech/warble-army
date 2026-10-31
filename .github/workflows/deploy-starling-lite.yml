@@ -11,7 +11,8 @@ name: deploy-starling-lite
 #   secret   RAILWAY_TOKEN    Railway *project* token for the production environment
 #   variable RAILWAY_SERVICE  Railway service name of Starling Lite (e.g. starling-lite)
 #   variable MCP_URL          optional, default https://mcp.warbleoss.org
-# Plus the existing repo secret WARBLE_CI_PAT (private submodules), as in check.yml.
+# Submodules are public, so checkout uses github.token. Set repo variable
+# CI_USE_PAT=true to use secret WARBLE_CI_PAT instead (only if a submodule goes private).
 
 on:
   push:
@@ -56,7 +57,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           submodules: recursive
-          token: ${{ secrets.WARBLE_CI_PAT }}
+          token: ${{ vars.CI_USE_PAT == 'true' && secrets.WARBLE_CI_PAT || github.token }}
 
       - name: Stamp revision
         run: echo "${GITHUB_SHA}" > deploy/railway/REVISION
@@ -102,7 +103,7 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
         with:
           submodules: recursive
-          token: ${{ secrets.WARBLE_CI_PAT }}
+          token: ${{ vars.CI_USE_PAT == 'true' && secrets.WARBLE_CI_PAT || github.token }}
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability (private)
+    url: https://github.com/warbletech/warble-army/security/advisories/new
+    about: Please report vulnerabilities privately — see SECURITY.md.
+  - name: Questions & ideas (GitHub Discussions)
+    url: https://github.com/warbletech/warble-army/discussions
+    about: Ask usage questions and discuss ideas before opening a feature request.
+  - name: Community (Office Hours, working groups)
+    url: https://github.com/warbletech/community
+    about: Working groups, Office Hours and the wider Warble OSS flock.

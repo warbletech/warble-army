@@ -1,0 +1,22 @@
+name: release-please
+
+# Manual for now (see docs/RELEASING.md). Switch to `push: branches: [main]`
+# once maintainers agree and "Allow GitHub Actions to create and approve pull
+# requests" is enabled for the repo.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    if: github.repository == 'warbletech/warble-army'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

@@ -31,8 +31,30 @@ make registry
 1. Open an issue for large changes (design first).  
 2. Use [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`).  
 3. Keep PRs focused; include tests where applicable.  
-4. Sign commits if required by the target repo.  
-5. DCO: by contributing you agree your work is licensed under the project’s stated license (Apache-2.0 unless noted).
+4. Sign off every commit (DCO, below) — `git commit -s`.  
+5. Fill in the [PR template](../../.github/PULL_REQUEST_TEMPLATE.md) (submodule-bump and safety checklists).  
+6. Forks get green CI without org secrets: `check.yml` runs on GitHub-hosted runners for forks and fork PRs (see [docs/CI.md](../CI.md)).
+
+## Developer Certificate of Origin (DCO)
+
+All contributions are made under the [Developer Certificate of Origin 1.1](https://developercertificate.org/).
+By adding a `Signed-off-by` trailer you certify that you wrote the change or
+otherwise have the right to submit it under the project's license
+(Apache-2.0 unless noted).
+
+```bash
+git commit -s -m "fix(charts): drop privileged securityContext"
+# trailer added: Signed-off-by: Your Name <you@example.com>
+```
+
+The name/email must match the commit author. The `dco` workflow checks every
+commit in a PR. Forgot? Fix your branch with
+`git rebase --signoff origin/main && git push --force-with-lease`.
+
+## Labels & releases
+
+- Label taxonomy: [docs/LABELS.md](../LABELS.md)
+- Release process / changelog: [docs/RELEASING.md](../RELEASING.md), [CHANGELOG.md](../../CHANGELOG.md)
 
 ## Security
 

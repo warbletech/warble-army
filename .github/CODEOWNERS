@@ -1,0 +1,27 @@
+# CODEOWNERS — https://docs.github.com/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# Later rules win. Swap individual handles for teams (e.g. @warbletech/maintainers)
+# once org teams exist; see MAINTAINERS.md.
+
+*                     @warble-tech
+
+# MCP server + tool registry
+/mcp/                 @warble-tech @yaksha-warble
+
+# Helm charts
+/charts/              @warble-tech
+
+# Agents
+/agents/              @warble-tech @yaksha-warble
+
+# Submodule gitlinks + their wiring (bumps need a maintainer)
+/.gitmodules          @warble-tech
+/heron-ops            @warble-tech
+/shrikeops            @warble-tech
+/shrikeops-demo       @warble-tech
+/starling             @warble-tech
+/scripts/submodules.sh @warble-tech
+
+# CI, release and repo policy
+/.github/             @warble-tech
+/SECURITY.md          @warble-tech
+/docs/cncf/           @warble-tech

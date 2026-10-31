@@ -1,0 +1,35 @@
+name: Feature request
+description: Propose a new tool, chart option, agent behaviour or workflow improvement.
+title: "feat: "
+labels: ["kind/feature", "triage/needed"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / use case
+      description: What are you trying to do, and why is it hard today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+  - type: dropdown
+    id: safety
+    attributes:
+      label: Does this add or change a write path (mutating cluster state)?
+      description: Write paths must follow docs/safety.md (readonly default, dry-run first, namespace allowlist, audit).
+      options:
+        - "No — readonly only"
+        - "Yes — see safety notes below"
+        - "Not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Additional context / safety notes

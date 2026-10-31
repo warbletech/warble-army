@@ -1,0 +1,60 @@
+name: Bug report
+description: Something in warble-army (Starling Lite, charts, agents, CI) does not work as documented.
+title: "bug: "
+labels: ["kind/bug", "triage/needed"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report! **Security issues must not be filed here** — see [SECURITY.md](https://github.com/warbletech/warble-army/blob/main/SECURITY.md).
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - mcp / starling-lite
+        - charts
+        - agents / reflexion
+        - submodules (heron-ops, shrikeops, starling, shrikeops-demo)
+        - CI / build
+        - docs
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include the exact command and the full error output.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. git clone --recurse-submodules ...
+        2. make starling-lite
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: OS, Go version (`go version`), commit SHA (`git rev-parse HEAD`), MCP mode (readonly/readwrite), Kubernetes version if relevant.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: I searched existing issues and this is not a duplicate.
+          required: true
+        - label: I removed secrets, kubeconfigs and tokens from logs above.
+          required: true
