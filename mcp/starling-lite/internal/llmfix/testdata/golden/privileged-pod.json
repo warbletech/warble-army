@@ -1,0 +1,40 @@
+[
+  {
+    "file": "privileged-pod.yaml",
+    "kind": "Pod",
+    "name": "privileged-debug",
+    "issue": "POL-linuxHardening",
+    "outcome": "accepted",
+    "generator": "llm",
+    "patch_type": "strategic-merge",
+    "patch": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: privileged-debug\n  namespace: default\nspec:\n  containers:\n  - name: debug\n    securityContext:\n      capabilities:\n        drop:\n        - ALL\n      seccompProfile:\n        type: RuntimeDefault\n",
+    "dry_run": true,
+    "resolved_findings": [
+      "POL-insecureCapabilities@Pod/default/privileged-debug/container:debug",
+      "POL-linuxHardening@Pod/default/privileged-debug/container:debug"
+    ],
+    "score_not_regressed": true
+  },
+  {
+    "file": "privileged-pod.yaml",
+    "kind": "Pod",
+    "name": "privileged-debug",
+    "issue": "runAsNonRoot",
+    "outcome": "rules",
+    "generator": "rules",
+    "patch_type": "strategic-merge",
+    "patch": "apiVersion: v1\nkind: Pod\nmetadata:\n  name: privileged-debug\n  namespace: default\nspec:\n  containers:\n    - name: debug\n      securityContext:\n        allowPrivilegeEscalation: false\n        runAsNonRoot: true\n        runAsUser: 1000\n  securityContext:\n    runAsNonRoot: true\n    runAsUser: 1000\n",
+    "dry_run": true,
+    "score_not_regressed": false
+  },
+  {
+    "file": "privileged-pod.yaml",
+    "kind": "Pod",
+    "name": "privileged-debug",
+    "issue": "POL-hostNetworkSet",
+    "outcome": "rejected",
+    "reason": "denied value podSpec.hostNetwork=true (only false allowed)",
+    "dry_run": false,
+    "score_not_regressed": false
+  }
+]

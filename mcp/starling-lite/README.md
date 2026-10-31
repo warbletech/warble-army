@@ -6,7 +6,7 @@ Thin **OSS MCP facade** that loads [`../tools/registry.json`](../tools/registry.
 |---------|--------|
 | **SteadyHelm** (`pkg/mcpserver`) | `list_*`, `get_*`, `cluster_summary`, writes |
 | **ShrikeOps** (`pkg/scan`) | `scan_manifest`, `scan_helm`, `scan_cluster_export` |
-| **Local patcher** | `propose_remediation`, `apply_remediation` (dry-run first) |
+| **Local patcher** | `propose_remediation`, `propose_remediation_llm` (guarded LLM fallback), `apply_remediation` (dry-run first) |
 
 ### Scan results are only graded when every scanner ran
 
@@ -26,6 +26,42 @@ of all three.
 | none of the above | RFC 6902 JSON patch on the **first** container (`patch_type: "json"`), with `missing_inputs` and `notes` |
 
 Every proposal is `dry_run: true` and includes a `kubectl patch … --dry-run=server` hint.
+
+### `propose_remediation_llm` (guarded LLM fallback)
+
+Same inputs plus `manifest` (required), optional `finding`, `cluster_context` (Heron Ops `cluster_*` output)
+and `server_dry_run`. Output is the same `Proposal`, plus `generator`, `provider` and `validation`.
+
+1. **Rules first.** If `propose_remediation` has a built-in fix, it is returned with `generator: "rules"` and no LLM call.
+2. **LLM fallback.** Otherwise the provider from `LLM_PROVIDER` drafts a patch. The manifest (comments stripped),
+   finding and cluster context are sent as a JSON data block that the system prompt marks as untrusted.
+3. **Guardrails (LLM output is untrusted):**
+   - strict JSON `{patch, rationale}` only, 32 KiB completion / 16 KiB patch caps, rationale sanitised;
+   - denylist: only the pod spec of existing containers may change; no `apiVersion`/`kind`/`metadata`
+     changes, no `image`/`command`/`args`/`env`/volumes/`hostPath`/host ports/service accounts, no new
+     containers, no `$patch` directives; `privileged`, `allowPrivilegeEscalation`, `hostNetwork|PID|IPC`
+     must be `false`, `runAsUser` > 0, `capabilities` may only `drop`, no `Unconfined` seccomp;
+   - must decode as a typed Kubernetes strategic-merge patch and apply to the original object;
+   - ShrikeOps re-scan of original vs patched: rejected if the scan is incomplete, the score drops, a new
+     finding appears, or nothing is resolved;
+   - `kubectl apply --dry-run=server` only when a cluster backend is available (else `skipped`).
+4. Accepted proposals carry `generator: "llm"`, a `[LLM-generated — review before applying]` rationale and
+   `dry_run: true`. Rejections return an error with the reason and validation detail. Nothing is ever applied;
+   `apply_remediation` gates are unchanged.
+
+| Env | Meaning |
+|-----|---------|
+| `LLM_PROVIDER` | `vertex` \| `openai` \| `ollama` \| `avirka`; unset = LLM fallback disabled (fail closed) |
+| `LLM_MODEL` | model id (defaults: openai `gpt-4o-mini`, vertex `gemini-2.5-flash`, ollama `llama3.1`; avirka: required) |
+| `LLM_TIMEOUT_SECONDS` | per-call timeout, default 30, max 120 |
+| `OPENAI_API_KEY`, `OPENAI_BASE_URL` | openai (key required) |
+| `VERTEX_ACCESS_TOKEN`, `VERTEX_PROJECT`, `VERTEX_LOCATION` | vertex (token + project required; e.g. `gcloud auth print-access-token`) |
+| `OLLAMA_HOST` | ollama, default `http://127.0.0.1:11434` (no key) |
+| `AVIRKA_API_KEY`, `AVIRKA_BASE_URL` | avirka, OpenAI-compatible chat-completions endpoint (both required) |
+
+Keys are read from the environment only and never logged. Tests use an in-process fake provider; no test
+calls a real LLM. Golden tests over `shrikeops-demo/k8s/bad/*` live in `internal/llmfix/testdata/golden`
+(regenerate with `go test ./internal/llmfix -run Golden -update`; they need the three scanners on `PATH`).
 
 ## Build & run
 

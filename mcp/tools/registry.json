@@ -321,6 +321,58 @@
       }
     },
     {
+      "name": "propose_remediation_llm",
+      "group": "remediate",
+      "backend": "starling-lite",
+      "mode": "readonly",
+      "description": "LLM-assisted fallback for ShrikeOps findings the deterministic rules cannot fix. Deterministic propose_remediation rules run first (generator=rules); otherwise the configured provider (LLM_PROVIDER=vertex|openai|ollama|avirka) drafts a strategic-merge patch that must pass strict parsing, a field denylist, a ShrikeOps re-scan (no score regression, no new findings) and, when a cluster is available, kubectl apply --dry-run=server. Output is a dry-run Proposal labelled generator=llm. Never mutates the cluster; fails closed when the provider or its API key is not configured.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "Kubernetes kind, e.g. Deployment"
+          },
+          "name": {
+            "type": "string",
+            "description": "Resource name"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "Namespace"
+          },
+          "issue": {
+            "type": "string",
+            "description": "Issue id or rule name (defaults to finding.id)"
+          },
+          "finding": {
+            "type": "object",
+            "description": "Full ShrikeOps finding object"
+          },
+          "container": {
+            "type": "string",
+            "description": "Container hint (deterministic path only)"
+          },
+          "manifest": {
+            "type": "string",
+            "description": "Resource YAML (multi-doc ok). Required for the LLM path (used for the re-scan)."
+          },
+          "cluster_context": {
+            "description": "Optional Heron Ops cluster_* output (string or object), passed to the model as untrusted data"
+          },
+          "server_dry_run": {
+            "type": "boolean",
+            "description": "Run kubectl apply --dry-run=server when a cluster is available (default true)"
+          }
+        },
+        "required": [
+          "kind",
+          "name",
+          "manifest"
+        ]
+      }
+    },
+    {
       "name": "apply_remediation",
       "group": "remediate",
       "backend": "starling-lite",

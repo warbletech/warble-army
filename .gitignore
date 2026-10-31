@@ -35,3 +35,4 @@ bin/
 
 # Railway force-redeploy stamps
 deploy/railway/.deploy-stamp
+__pycache__/
