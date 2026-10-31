@@ -5,6 +5,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 )
@@ -317,7 +318,11 @@ func main() {
 	if err := os.WriteFile(filepath.Join(srcDir, "main.go"), []byte(src), 0o644); err != nil {
 		t.Fatal(err)
 	}
-	bin := filepath.Join(dir, "helm.exe")
+	name := "helm"
+	if runtime.GOOS == "windows" {
+		name += ".exe"
+	}
+	bin := filepath.Join(dir, name)
 	cmd := exec.Command("go", "build", "-o", bin, ".")
 	cmd.Dir = srcDir
 	cmd.Env = os.Environ()
