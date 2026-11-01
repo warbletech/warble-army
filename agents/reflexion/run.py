@@ -56,11 +56,90 @@ def critic(scan: dict) -> tuple[bool, str]:
     return True, f"ok to propose remediations (critical={crit} high={high} grade={grade})"
 
 
+WORKLOAD_KINDS = {
+    "Pod", "Deployment", "StatefulSet", "DaemonSet", "ReplicaSet",
+    "ReplicationController", "Job", "CronJob",
+}
+
+
+def parse_resource(resource: str) -> tuple[str, str, str, str]:
+    """Split a ShrikeOps finding resource into (kind, namespace, name, container).
+
+    Handles "Kind/ns/name", "Kind/ns/name/container:c" (Polaris) and
+    "Kind/group/version/ns/name" (kube-score).
+    """
+    parts = [p for p in (resource or "").split("/") if p]
+    container = ""
+    if parts and parts[-1].startswith("container:"):
+        container = parts.pop()[len("container:"):]
+    if not parts:
+        return "Deployment", "default", "unknown", container
+    kind = parts[0]
+    rest = parts[1:]
+    if len(rest) >= 3:  # kube-score: group/version/ns/name or v1/ns/name
+        rest = rest[-2:]
+    if len(rest) == 2:
+        return kind, rest[0] or "default", rest[1], container
+    if len(rest) == 1:
+        return kind, "default", rest[0], container
+    return kind, "default", "unknown", container
+
+
+def needs_llm(proposal: dict) -> bool:
+    """The deterministic rules had no concrete patch for this issue."""
+    return proposal.get("patch_type") == "yaml-snippet"
+
+
+def heal(call, findings: list, manifest: str, audit, llm_fallback: bool = True) -> list:
+    """Propose (never apply) remediations for findings.
+
+    call(name, arguments, id_) -> (text, is_error). propose_remediation always
+    runs first; propose_remediation_llm is only a fallback and its output is
+    labelled generator=llm by the server.
+    """
+    proposals = []
+    for i, f in enumerate(findings):
+        issue = f.get("id") or f.get("message") or "unknown"
+        kind, ns, name, container = parse_resource(f.get("resource") or "")
+        if kind not in WORKLOAD_KINDS:
+            audit("healer.skip", {"issue": issue, "resource": f.get("resource"), "reason": "not a workload"})
+            continue
+        base = {"kind": kind, "name": name, "namespace": ns, "issue": issue,
+                "finding": f, "manifest": manifest}
+        if container:
+            base["container"] = container
+        text, err = call("propose_remediation", base, 10 + i)
+        audit("healer.propose", {"issue": issue, "resource": f.get("resource"), "is_error": err})
+        if err:
+            continue
+        try:
+            proposal = json.loads(text)
+        except json.JSONDecodeError:
+            proposals.append({"raw": text})
+            continue
+        if llm_fallback and needs_llm(proposal):
+            llm_text, llm_err = call("propose_remediation_llm", base, 100 + i)
+            audit("healer.propose_llm", {"issue": issue, "is_error": llm_err, "detail": llm_text[:300] if llm_err else ""})
+            if not llm_err:
+                try:
+                    proposal = json.loads(llm_text)
+                except json.JSONDecodeError:
+                    pass
+        proposals.append(proposal)
+    return proposals
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description="Reflexion agent over Starling Lite MCP")
     ap.add_argument("--mcp", default="http://127.0.0.1:8822/mcp", help="MCP HTTP endpoint")
     ap.add_argument("--path", required=True, help="Manifest path to scan")
     ap.add_argument("--trace-dir", default=None, help="Trace output dir")
+    ap.add_argument(
+        "--no-llm-fallback",
+        dest="llm_fallback",
+        action="store_false",
+        help="Do not call propose_remediation_llm when the rules have no patch",
+    )
     args = ap.parse_args()
 
     root = Path(__file__).resolve().parents[2]
@@ -129,27 +208,16 @@ def main() -> int:
         print("stopped before propose.")
         return 4
 
-    # Healer: propose for top findings
+    # Healer: deterministic propose_remediation first, guarded LLM fallback second
     findings = scan.get("findings") or []
-    proposals = []
-    for i, f in enumerate(findings[:5]):
-        issue = f.get("id") or f.get("message") or "unknown"
-        resource = f.get("resource") or "Deployment/unknown"
-        kind, name = "Deployment", "unknown"
-        if "/" in resource:
-            kind, name = resource.split("/", 1)
-        text, err = call_tool(
-            args.mcp,
-            "propose_remediation",
-            {"kind": kind, "name": name, "namespace": "default", "issue": issue},
-            id_=10 + i,
-        )
-        audit("healer.propose", {"issue": issue, "resource": resource, "is_error": err})
-        if not err:
-            try:
-                proposals.append(json.loads(text))
-            except json.JSONDecodeError:
-                proposals.append({"raw": text})
+    manifest_text = path.read_text()
+    proposals = heal(
+        lambda name, arguments, id_: call_tool(args.mcp, name, arguments, id_),
+        findings[:5],
+        manifest_text,
+        audit,
+        llm_fallback=args.llm_fallback,
+    )
 
     print(f"\n=== PROPOSALS ({len(proposals)}) ===")
     for p in proposals:

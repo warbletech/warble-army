@@ -28,6 +28,25 @@ type Proposal struct {
 	Notes         []string `json:"notes,omitempty"`
 	// Kubectl is a suggested server-side dry-run command for the patch.
 	Kubectl string `json:"kubectl,omitempty"`
+	// Generator is "rules" (deterministic fixFor) or "llm" (propose_remediation_llm
+	// fallback). Empty for plain propose_remediation output.
+	Generator string `json:"generator,omitempty"`
+	// Provider names the LLM provider when Generator == "llm".
+	Provider string `json:"provider,omitempty"`
+	// Validation reports the guardrail results for LLM-generated patches.
+	Validation *Validation `json:"validation,omitempty"`
+}
+
+// Validation is the guardrail evidence attached to an LLM-generated proposal.
+type Validation struct {
+	ParsedStrategicMerge bool     `json:"parsed_strategic_merge"`
+	DenylistPassed       bool     `json:"denylist_passed"`
+	ScoreBefore          float64  `json:"score_before"`
+	ScoreAfter           float64  `json:"score_after"`
+	ResolvedFindings     []string `json:"resolved_findings,omitempty"`
+	NewFindings          []string `json:"new_findings,omitempty"`
+	// ServerDryRun is "passed", "failed: ..." or "skipped: <reason>".
+	ServerDryRun string `json:"server_dry_run"`
 }
 
 // Request is the full input to ProposeFor.
@@ -96,7 +115,7 @@ func ProposeFor(r Request) (*Proposal, error) {
 	if strings.TrimSpace(r.Kind) == "" || strings.TrimSpace(r.Name) == "" || strings.TrimSpace(r.Issue) == "" {
 		return nil, fmt.Errorf("kind, name and issue are required")
 	}
-	issueKey := strings.ReplaceAll(strings.ToLower(strings.TrimSpace(r.Issue)), "_", "-")
+	issueKey := normalizeIssue(r.Issue)
 	shape, ok := shapeFor(r.Kind)
 	if !ok {
 		return nil, fmt.Errorf("unsupported kind %q: expected one of Pod, Deployment, StatefulSet, DaemonSet, ReplicaSet, ReplicationController, Job, CronJob", r.Kind)
@@ -343,6 +362,10 @@ func ApplyGate(mode string, dryRun, confirm bool, ns string, allow func(string) 
 		return fmt.Sprintf("namespace %q not in --allow-namespaces", ns)
 	}
 	return ""
+}
+
+func normalizeIssue(issue string) string {
+	return strings.ReplaceAll(strings.ToLower(strings.TrimSpace(issue)), "_", "-")
 }
 
 func containsAny(s string, parts ...string) bool {

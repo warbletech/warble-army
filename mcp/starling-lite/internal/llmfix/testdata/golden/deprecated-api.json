@@ -1,0 +1,70 @@
+[
+  {
+    "file": "deprecated-api.yaml",
+    "kind": "Ingress",
+    "name": "legacy-ingress",
+    "issue": "POL-linuxHardening",
+    "outcome": "error",
+    "reason": "unsupported kind \"Ingress\"",
+    "dry_run": false,
+    "score_not_regressed": false
+  },
+  {
+    "file": "deprecated-api.yaml",
+    "kind": "Ingress",
+    "name": "legacy-ingress",
+    "issue": "runAsNonRoot",
+    "outcome": "error",
+    "reason": "unsupported kind \"Ingress\": expected one of Pod, Deployment, StatefulSet, DaemonSet, ReplicaSet, ReplicationController, Job, CronJob",
+    "dry_run": false,
+    "score_not_regressed": false
+  },
+  {
+    "file": "deprecated-api.yaml",
+    "kind": "Ingress",
+    "name": "legacy-ingress",
+    "issue": "POL-hostNetworkSet",
+    "outcome": "error",
+    "reason": "unsupported kind \"Ingress\"",
+    "dry_run": false,
+    "score_not_regressed": false
+  },
+  {
+    "file": "deprecated-api.yaml",
+    "kind": "Deployment",
+    "name": "legacy-deployment",
+    "issue": "POL-linuxHardening",
+    "outcome": "accepted",
+    "generator": "llm",
+    "patch_type": "strategic-merge",
+    "patch": "apiVersion: apps/v1beta1\nkind: Deployment\nmetadata:\n  name: legacy-deployment\n  namespace: default\nspec:\n  template:\n    spec:\n      containers:\n      - name: app\n        securityContext:\n          capabilities:\n            drop:\n            - ALL\n          seccompProfile:\n            type: RuntimeDefault\n",
+    "dry_run": true,
+    "resolved_findings": [
+      "POL-insecureCapabilities@Deployment/default/legacy-deployment/container:app",
+      "POL-linuxHardening@Deployment/default/legacy-deployment/container:app"
+    ],
+    "score_not_regressed": true
+  },
+  {
+    "file": "deprecated-api.yaml",
+    "kind": "Deployment",
+    "name": "legacy-deployment",
+    "issue": "runAsNonRoot",
+    "outcome": "rules",
+    "generator": "rules",
+    "patch_type": "strategic-merge",
+    "patch": "apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: legacy-deployment\n  namespace: default\nspec:\n  template:\n    spec:\n      containers:\n        - name: app\n          securityContext:\n            allowPrivilegeEscalation: false\n            runAsNonRoot: true\n            runAsUser: 1000\n      securityContext:\n        runAsNonRoot: true\n        runAsUser: 1000\n",
+    "dry_run": true,
+    "score_not_regressed": false
+  },
+  {
+    "file": "deprecated-api.yaml",
+    "kind": "Deployment",
+    "name": "legacy-deployment",
+    "issue": "POL-hostNetworkSet",
+    "outcome": "rejected",
+    "reason": "denied value podSpec.hostNetwork=true (only false allowed)",
+    "dry_run": false,
+    "score_not_regressed": false
+  }
+]

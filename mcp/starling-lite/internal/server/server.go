@@ -8,9 +8,13 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/config"
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/llmfix"
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/protocol"
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/registry"
 	"github.com/warbletech/warble-army/mcp/starling-lite/internal/remediate"
@@ -254,6 +258,9 @@ func (s *Server) dispatch(ctx context.Context, params protocol.ToolCallParams) p
 	case "shrikeops":
 		return s.callScan(params.Name, params.Arguments)
 	case "starling-lite":
+		if params.Name == "propose_remediation_llm" {
+			return s.callRemediateLLM(ctx, params.Arguments)
+		}
 		return s.callRemediate(params.Name, params.Arguments)
 	default:
 		return protocol.ErrorResult(fmt.Sprintf("unhandled backend %q for %s", def.Backend, params.Name))
@@ -431,4 +438,69 @@ func (s *Server) callSandbox(args map[string]any) protocol.ToolCallResult {
 	}
 	return protocol.TextResult("# DRY-RUN project sandbox (not applied). Review, then:\n" +
 		"#   kubectl apply --dry-run=server -f sandbox.yaml && kubectl apply -f sandbox.yaml\n" + out)
+}
+
+// llmOptions is overridable in tests (fake provider / scanner).
+var llmOptions = func(s *Server, args map[string]any) llmfix.Options {
+	o := llmfix.Options{Scan: llmfix.DefaultScanner}
+	o.Provider, o.ProviderErr = llmfix.FromEnv(os.Getenv)
+	useDryRun := true
+	if v, ok := args["server_dry_run"].(bool); ok {
+		useDryRun = v
+	}
+	if useDryRun && s.cluster != nil {
+		if kubectl, err := exec.LookPath("kubectl"); err == nil {
+			kubeconfig := s.cfg.Kubeconfig
+			o.DryRun = func(ctx context.Context, manifest string) error {
+				cmdArgs := []string{"apply", "--dry-run=server", "-o", "name", "-f", "-"}
+				if kubeconfig != "" {
+					cmdArgs = append([]string{"--kubeconfig", kubeconfig}, cmdArgs...)
+				}
+				cmd := exec.CommandContext(ctx, kubectl, cmdArgs...)
+				cmd.Stdin = strings.NewReader(manifest)
+				if out, err := cmd.CombinedOutput(); err != nil {
+					return fmt.Errorf("%v: %s", err, strings.TrimSpace(string(out)))
+				}
+				return nil
+			}
+		}
+	}
+	return o
+}
+
+// callRemediateLLM: deterministic rules first, then the guarded LLM fallback.
+// Dry-run only; never mutates.
+func (s *Server) callRemediateLLM(ctx context.Context, args map[string]any) protocol.ToolCallResult {
+	r := llmfix.Request{}
+	r.Kind, _ = args["kind"].(string)
+	r.Name, _ = args["name"].(string)
+	r.Namespace, _ = args["namespace"].(string)
+	r.Issue, _ = args["issue"].(string)
+	r.Container, _ = args["container"].(string)
+	r.Manifest, _ = args["manifest"].(string)
+	r.Finding, _ = args["finding"].(map[string]any)
+	if r.Issue == "" && r.Finding != nil {
+		r.Issue, _ = r.Finding["id"].(string)
+	}
+	switch cc := args["cluster_context"].(type) {
+	case string:
+		r.ClusterContext = cc
+	case nil:
+	default:
+		b, _ := json.Marshal(cc)
+		r.ClusterContext = string(b)
+	}
+	ctx, cancel := context.WithTimeout(ctx, llmfix.Timeout(os.Getenv)+30*time.Second)
+	defer cancel()
+	p, err := llmfix.Propose(ctx, r, llmOptions(s, args))
+	if err != nil {
+		if re, ok := llmfix.IsRejected(err); ok {
+			b, _ := json.MarshalIndent(map[string]any{
+				"rejected": true, "provider": re.Provider, "reason": re.Reason, "validation": re.Detail,
+			}, "", "  ")
+			return protocol.ErrorResult(string(b))
+		}
+		return protocol.ErrorResult(err.Error())
+	}
+	return protocol.TextResult(remediate.FormatJSON(p))
 }

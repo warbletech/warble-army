@@ -67,7 +67,7 @@ Umbrella process that loads `tools/registry.json` and dispatches:
 |---------------|---------|
 | `list_*`, `get_*`, `cluster_summary`, write tools | SteadyHelm library / subprocess |
 | `scan_manifest`, `scan_helm` | ShrikeOps scan API or CLI |
-| `propose_remediation`, `apply_remediation` | Local patch generator |
+| `propose_remediation`, `propose_remediation_llm`, `apply_remediation` | Local patch generator (+ guarded LLM fallback, dry-run only) |
 
 Binary path (future): `mcp/starling-lite/` — schemas land first so agents can mock.
 

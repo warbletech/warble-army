@@ -51,7 +51,7 @@ jobs:
 
       - uses: actions/setup-go@v7
         with:
-          go-version: "1.25.x"
+          go-version: "1.26.x"
           cache-dependency-path: |
             mcp/starling-lite/go.sum
             heron-ops/go.sum
@@ -179,7 +179,7 @@ jobs:
 
       - uses: actions/setup-go@v7
         with:
-          go-version: "1.25.x"
+          go-version: "1.26.x"
           cache-dependency-path: mcp/starling-lite/go.sum
 
       - name: Build Starling Lite
@@ -190,6 +190,9 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+
+      - name: Reflexion unit tests
+        run: python3 -m unittest discover -s agents/reflexion/tests -v
 
       - name: Run Reflexion agent over HTTP MCP
         run: |

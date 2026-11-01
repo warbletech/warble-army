@@ -6,7 +6,8 @@ Minimal **Actor → Critic → propose** loop over Starling Lite MCP (HTTP).
 Incident / path
     → Actor:   call scan_manifest + cluster_summary
     → Critic:  reject if blast radius high / missing dry_run
-    → Healer:  propose_remediation for top findings
+    → Healer:  propose_remediation for top findings;
+               propose_remediation_llm only when the rules have no patch (labelled generator=llm)
     → Audit:   write JSONL trace
 ```
 
@@ -43,3 +44,16 @@ python3 agents/reflexion/run.py \
 - [ ] Wire real LLMs (OpenAI-compatible / Ollama) for free-form reasoning
 - [ ] Avirka webhook intake
 - [ ] Apply path behind dual approval
+
+## LLM fallback
+
+When `propose_remediation` returns only a hint (`patch_type: yaml-snippet`), the healer calls
+`propose_remediation_llm` with the finding and manifest. The server only uses an LLM if `LLM_PROVIDER`
+is configured (see `mcp/starling-lite/README.md`); otherwise the call fails closed and the rules hint
+is kept. Disable with `--no-llm-fallback`. Proposals are never applied.
+
+## Tests
+
+```bash
+python3 -m unittest discover -s agents/reflexion/tests -v
+```

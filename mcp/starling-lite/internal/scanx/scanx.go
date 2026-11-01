@@ -74,6 +74,20 @@ func Manifest(path, manifest, source string) (string, error) {
 	return string(b), nil
 }
 
+// ReportFor scans inline YAML and returns the normalized report (used by the
+// LLM remediation guardrail to re-scan patched manifests).
+func ReportFor(manifest, source string) (Report, error) {
+	rep, err := scan.Run(scan.Request{Manifest: manifest, Source: source})
+	if err != nil {
+		return nil, err
+	}
+	raw, err := json.Marshal(rep)
+	if err != nil {
+		return nil, err
+	}
+	return Normalize(raw)
+}
+
 // scanRoot is STARLING_SCAN_ROOT, or the working directory when that is unset.
 // The result is absolute and symlink-free.
 func scanRoot() (string, error) {
