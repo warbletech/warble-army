@@ -214,3 +214,30 @@ func TestApplyGate(t *testing.T) {
 		t.Fatal("expected allowlist deny")
 	}
 }
+
+func TestAIGPULimitFix(t *testing.T) {
+	p, err := ProposeFor(Request{Kind: "Job", Name: "finetune", Namespace: "ml", Issue: "AI-GPU-NO-LIMIT", Container: "train"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if p.PatchType != "strategic-merge" || !strings.Contains(p.Patch, "nvidia.com/gpu: 1") || !strings.Contains(p.Patch, "limits:") {
+		t.Fatalf("gpu patch: %+v\n%s", p, p.Patch)
+	}
+}
+
+func TestAIHintOnly(t *testing.T) {
+	for _, id := range []string{"AI-HOSTPATH-MODEL-CACHE", "AI-MODEL-PICKLE", "AI-MCP-READWRITE-EXPOSED", "AI-AGENT-LETHAL-TRIFECTA"} {
+		p, err := ProposeFor(Request{Kind: "Deployment", Name: "x", Namespace: "ns", Issue: id, Container: "c"})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if p.PatchType != "yaml-snippet" || !strings.Contains(p.Rationale, id) || !strings.Contains(p.Rationale, "hint only") {
+			t.Fatalf("%s: want hint-only, got %s / %s", id, p.PatchType, p.Rationale)
+		}
+	}
+	// privileged device plugin maps onto the existing privileged rule
+	p, _ := ProposeFor(Request{Kind: "DaemonSet", Name: "nvidia-device-plugin", Issue: "AI-PRIVILEGED-DEVICE-PLUGIN", Container: "ctr"})
+	if !strings.Contains(p.Patch, "privileged: false") {
+		t.Fatalf("device plugin: %s", p.Patch)
+	}
+}

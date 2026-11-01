@@ -1,0 +1,16 @@
+# Clean counterpart: declarative tool descriptions, readonly agent.
+apiVersion: v1
+kind: ConfigMap
+metadata: {name: agent-tools, namespace: agents}
+data:
+  tools.json: |
+    {"tools": [
+      {"name": "add_numbers", "description": "Adds two numbers and returns the sum."},
+      {"name": "scan_manifest", "description": "Scan a Kubernetes manifest and return findings. Never mutates the cluster."}
+    ]}
+  agent.yaml: |
+    name: triage-bot
+    mode: readonly
+    tools:
+      - web_fetch
+      - scan_manifest
