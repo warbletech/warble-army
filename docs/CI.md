@@ -11,7 +11,7 @@
 ## Forks
 
 1. Fork, enable Actions on your fork.
-2. `make starling-lite` locally (Go 1.25+, Python 3, GNU make).
+2. `make starling-lite` locally (Go 1.26+, Python 3, GNU make).
 3. Push / open a PR — `check.yml` runs on GitHub-hosted runners in your
    fork (free for public repos) and fork PRs to warbletech also run on hosted
    runners. All submodules are public, so no secrets are required.

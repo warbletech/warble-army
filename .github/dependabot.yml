@@ -9,6 +9,10 @@ updates:
     commit-message:
       prefix: "chore(deps)"
     groups:
+      # k8s.io/api, client-go, metrics and apimachinery must move together.
+      kubernetes:
+        patterns:
+          - "k8s.io/*"
       gomod:
         patterns: ["*"]
 
