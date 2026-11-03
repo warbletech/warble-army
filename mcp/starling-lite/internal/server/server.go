@@ -321,6 +321,15 @@ func (s *Server) callScan(name string, args map[string]any) protocol.ToolCallRes
 			return protocol.ErrorResult(err.Error())
 		}
 		return protocol.TextResult(out)
+	case "scan_model":
+		path, _ := args["path"].(string)
+		b64, _ := args["bytes_base64"].(string)
+		source, _ := args["source"].(string)
+		out, err := scanx.ScanModel(path, b64, source)
+		if err != nil {
+			return protocol.ErrorResult(err.Error())
+		}
+		return protocol.TextResult(out)
 	case "scan_cluster_export":
 		ns, _ := args["namespace"].(string)
 		var kinds []string

@@ -1,0 +1,34 @@
+# INTENTIONALLY MISCONFIGURED — ai-* rule fixture
+# Expected: AI-PRIVILEGED-DEVICE-PLUGIN, AI-GPU-NO-LIMIT (requests only)
+apiVersion: apps/v1
+kind: DaemonSet
+metadata: {name: nvidia-device-plugin, namespace: kube-system}
+spec:
+  selector: {matchLabels: {name: nvidia-device-plugin}}
+  template:
+    metadata: {labels: {name: nvidia-device-plugin}}
+    spec:
+      containers:
+        - name: nvidia-device-plugin-ctr
+          image: nvcr.io/nvidia/k8s-device-plugin:v0.16.2
+          securityContext:
+            privileged: true
+          volumeMounts:
+            - {name: device-plugin, mountPath: /var/lib/kubelet/device-plugins}
+      volumes:
+        - name: device-plugin
+          hostPath: {path: /var/lib/kubelet/device-plugins}
+---
+apiVersion: batch/v1
+kind: Job
+metadata: {name: finetune, namespace: ml}
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: train
+          image: example/trainer:0.9.1
+          resources:
+            requests: {nvidia.com/gpu: 1, cpu: "4", memory: 32Gi}
+            limits: {cpu: "8", memory: 64Gi}
