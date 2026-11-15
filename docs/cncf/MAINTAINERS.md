@@ -4,10 +4,11 @@ Seed list for CNCF Sandbox application. Expand as multi-org maintainers join.
 
 ## Project lead (interim)
 
-| Name | GitHub | Email | Focus |
-|------|--------|-------|-------|
-| Avinash | *TBD* | avinash@warblecloud.com | Overall / product |
-| Warble Tech | warble-tech | contact@warblecloud.com | Org steward |
+| Name | GitHub ID | Company |
+|------|-----------|---------|
+| Avinash Patil | avinashetrx | Warblecloud, LLC |
+| Yaksha | yaksha-warble | Warblecloud, LLC |
+| Akshat Dwivedi | akshat-warble | Warblecloud, LLC |
 
 ## Component maintainers (interim)
 
