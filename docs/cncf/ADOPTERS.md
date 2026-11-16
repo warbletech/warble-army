@@ -4,7 +4,7 @@ Organizations and teams using components of Starling EX Community (Heron Ops, Sh
 
 | Organization | Contact | Components | Notes |
 |--------------|---------|------------|-------|
-| ChirpStack LLP / Warble Cloud | contact@warblecloud.com | Full flock, public MCP demo | Steward / dogfood |
+| Warblecloud, LLC (Warble Cloud) | contact@warblecloud.com | Full flock, public MCP demo | Steward / dogfood |
 
 ## Add your organization
 

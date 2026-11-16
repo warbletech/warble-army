@@ -2,7 +2,7 @@
 
 **Status:** Community Edition live (chart + demo); **CNCF donation planned**  
 **Home:** [warbleoss.org](https://warbleoss.org)  
-**Demo MCP (today):** [https://starling-ex.frakma.io/lite/mcp](https://starling-ex.frakma.io/lite/mcp)  
+**Demo MCP (today):** [https://mcp.warbleoss.org/mcp](https://mcp.warbleoss.org/mcp)  
 **Governance:** [GOVERNANCE.md](GOVERNANCE.md) — Warble steward today; **plan to donate Starling EX Community to CNCF**. Platform LF work is **Frakma-X**, not this project.
 
 ## What CE is
@@ -120,7 +120,7 @@ Exposes:
 | Surface | Audience |
 |---------|----------|
 | warbleoss.org | Open source users, contributors |
-| starling-ex.frakma.io/lite | Live CE-compatible MCP demo |
+| mcp.warbleoss.org | Live CE-compatible MCP demo (read-only) |
 | warblecloud.com | Paid Starling Cloud / Enterprise |
 | frakma.io | FRAKMA platform, enterprise MLOps |
 

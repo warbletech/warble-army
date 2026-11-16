@@ -40,7 +40,7 @@ Use on white or light backgrounds. Wordmark optional: **Heron Ops** / **ShrikeOp
 | CLI binary (transition) | `heron-ops` (new), keep `steadyhelm` alias one major | Breaking rename without alias |
 | Go module (transition) | `github.com/warbletech/heron-ops` after migrate | Silent dual modules forever |
 | GitHub org for pure OSS | `warbletech` or future `warble-oss` | Mixing private SaaS secrets into CE repos |
-| Public MCP URL (today) | `https://starling-ex.frakma.io/lite/mcp` | Advertising private endpoints as CE |
+| Public MCP URL (today) | `https://mcp.warbleoss.org/mcp` | Advertising private endpoints as CE |
 
 ## Package identity (transition)
 
@@ -61,7 +61,7 @@ ShrikeOps spelling stays **ShrikeOps** (product) / `shrikeops` (CLI & repo). Opt
 | [warbleoss.org](https://warbleoss.org) | **Starling EX Community** home (CNCF path candidate) |
 | [warblecloud.com](https://warblecloud.com) | Commercial Starling / Warble Cloud product |
 | [frakma.io](https://frakma.io) | FRAKMA platform / enterprise |
-| starling-ex.frakma.io/lite | Public **Starling Lite** MCP (CE-friendly demo) |
+| mcp.warbleoss.org | Public **Starling Lite** MCP (CE-friendly demo) |
 | *Frakma-X (LF)* | Linux Foundation wing (when chartered) |
 
 ## Foundations (short)

@@ -31,7 +31,7 @@ We prefer coordinated disclosure. Fix timelines depend on severity. Credits for 
 ## Scope notes
 
 - Heron Ops **readwrite** mode can mutate clusters — treat as high impact.  
-- Public demo MCP (`starling-ex.frakma.io/lite/mcp`) is **readonly** and demo-grade; report abuse to the same alias.  
+- Public demo MCP (`https://mcp.warbleoss.org/mcp`) is **readonly** and demo-grade; report abuse to the same alias.  
 - Supply-chain / dependency issues in scanners (Pluto, Polaris, etc.) may need upstream coordination.
 
 ## Security-related configuration

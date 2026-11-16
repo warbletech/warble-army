@@ -10,13 +10,13 @@ Track readiness before opening https://github.com/cncf/sandbox/issues/new?templa
 | CONTRIBUTING | ✅ | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | CODE_OF_CONDUCT | ✅ | [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) |
 | SECURITY | ✅ | [SECURITY.md](SECURITY.md) |
-| MAINTAINERS | ✅ seed | [MAINTAINERS.md](MAINTAINERS.md) |
+| MAINTAINERS | ⚠️ draft, TODOs left | [MAINTAINERS.md](MAINTAINERS.md) |
 | ADOPTERS | ✅ template | [ADOPTERS.md](ADOPTERS.md) |
 | GOVERNANCE (project) | ✅ seed | [PROJECT_GOVERNANCE.md](PROJECT_GOVERNANCE.md) |
-| License Apache-2.0 on primary repos | ⚠️ verify each repo has LICENSE | heron-ops, shrikeops, warble-army |
+| License Apache-2.0 on primary repos | ✅ GitHub detects Apache-2.0 | heron-ops, shrikeops, shrikeops-demo, warble-army |
 | Dependency license scan | ⬜ | Attach before filing |
 | Trademark legal review (name) | ⬜ | Counsel |
-| Contribution Agreement signatory | ⬜ | ChirpStack LLP |
+| Contribution Agreement signatory | ⬜ | Warblecloud, LLC (TODO: signatory name and title) |
 | TAG presentation / Day 0 GTR | ⬜ | App Delivery / Runtime |
 | File issue on cncf/sandbox | ⬜ | After checklist green |
 
@@ -25,23 +25,23 @@ Track readiness before opening https://github.com/cncf/sandbox/issues/new?templa
 | Item | Status |
 |------|--------|
 | Public repos | ✅ heron-ops, shrikeops, warble-army |
-| Live demo MCP | ✅ starling-ex.frakma.io/lite/mcp |
-| Helm CE chart | ✅ charts/starling-ex-ce |
+| Live demo MCP | ✅ https://mcp.warbleoss.org/mcp (read-only; cluster tools need an attached demo cluster) |
+| Helm CE chart | ⚠️ charts/starling-ex-ce exists; anonymous image/chart pull still blocked |
 | Speaking rules (not “CNCF project” yet) | ✅ GOVERNANCE.md |
 | Adopters with real orgs | ⬜ need ≥1–3 named if possible |
 
 ## Public visibility (blocker)
 
-Repos must be **public** before filing or claiming open source. Wave order: see monorepo `OSS_PORTFOLIO_ALIGNMENT.md`.
+Repos must be **public** before filing or claiming open source. Status checked 16 Nov 2026 (IST) with the GitHub API.
 
 | Repo | Public? |
 |------|---------|
-| warbleoss.org | ⬜ private (review freeze — re-open after approval) |
-| shrikeops-demo | ⬜ private (review freeze) |
-| shrikeops | ⬜ private (review freeze) |
-| heron-ops | ⬜ private (review freeze) |
-| warble-army | ⬜ private (review freeze) |
-| community | ⬜ private (review freeze) |
+| warbleoss.org | ✅ public |
+| shrikeops-demo | ✅ public |
+| shrikeops | ✅ public |
+| heron-ops | ✅ public |
+| warble-army | ✅ public |
+| community | ✅ public (GitHub does not detect a licence yet) |
 
 ## After TOC acceptance (do not start early)
 
@@ -58,4 +58,4 @@ Repos must be **public** before filing or claiming open source. Wave order: see 
 |------|------|---------|
 | Application lead | *TBD* | contact@warblecloud.com |
 | Technical lead | *TBD* | |
-| Legal / CA signatory | *TBD* | ChirpStack LLP |
+| Legal / CA signatory | *TBD* | Warblecloud, LLC |

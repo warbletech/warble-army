@@ -54,7 +54,7 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 - [ ] **GitHub repos public** (Wave 1 flock) — *review freeze 2026-07-31: private until post-fix approval*
 - [x] Apache-2.0 (or equivalent) LICENSE files on primary components
 - [x] Clear product rename (Heron Ops, ShrikeOps)
-- [x] Live demo MCP (`starling-ex.frakma.io/lite/mcp`)
+- [x] Live demo MCP (`https://mcp.warbleoss.org/mcp`)
 - [x] CE Helm chart
 - [x] Documented maintainers + CoC + security policy → [docs/cncf/](cncf/)
 - [x] Adopters list (seed) + sandbox application **draft** → [cncf/SANDBOX_APPLICATION.md](cncf/SANDBOX_APPLICATION.md)
@@ -90,7 +90,7 @@ Frakma-X does **not** replace Starling EX Community’s CNCF path. Different lay
 | [warbleoss.org](https://warbleoss.org) | OSS flock + CE; future CNCF project landing candidate |
 | [warblecloud.com](https://warblecloud.com) | Commercial Starling / Warble |
 | [frakma.io](https://frakma.io) | FRAKMA platform + enterprise |
-| starling-ex.frakma.io/lite | Live CE-compatible MCP demo |
+| mcp.warbleoss.org | Live CE-compatible MCP demo (read-only) |
 | *Frakma-X LF site* | Linux Foundation wing (when chartered) |
 
 ## Speaking rules (press, README, conferences)
