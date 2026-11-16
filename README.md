@@ -54,6 +54,8 @@ Umbrella-owned (not submodules):
 
 ## Quick start
 
+> **Evaluating the project?** Follow [`QUICKSTART.md`](QUICKSTART.md): a 15-minute path from clone to a dry-run fix on a local kind cluster, or a 2-minute check against the public demo.
+
 ### 1. Clone with submodules
 
 ```bash
