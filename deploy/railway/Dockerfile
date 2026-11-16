@@ -32,19 +32,25 @@ COPY deploy/railway/REVISION /src/REVISION
 WORKDIR /src/mcp/starling-lite
 RUN go mod tidy \
  && REV="$(tr -d '[:space:]' < /src/REVISION)" \
- && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X main.version=0.3.0 -X main.revision=${REV:-dev}" -o /out/starling-lite ./cmd/starling-lite
+ && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X main.version=0.3.0 -X main.revision=${REV:-dev}" -o /out/starling-lite ./cmd/starling-lite \
+ && mkdir -p /out/scan-root
 
 FROM gcr.io/distroless/static-debian12:nonroot
 WORKDIR /
 COPY --from=build /out/starling-lite /usr/local/bin/starling-lite
 COPY --from=scanners /out/pluto /out/polaris /out/kube-score /usr/local/bin/
 COPY --from=build /src/mcp/tools/registry.json /etc/warble-army/registry.json
+# Empty, read-only scan root: path= / chart_path= arguments on the public server
+# resolve inside it, never against "/" (KUBECONFIG_B64 is written under /tmp).
+COPY --from=build --chown=0:0 /out/scan-root /srv/scan
 
 # Railway injects PORT; default 8080 is common on PaaS
 ENV PORT=8080 \
     STARLING_MODE=readonly \
     STARLING_TRANSPORT=http \
-    STARLING_REGISTRY=/etc/warble-army/registry.json
+    STARLING_REGISTRY=/etc/warble-army/registry.json \
+    STARLING_SCAN_ROOT=/srv/scan \
+    STARLING_CHART_ROOT=/srv/scan
 
 USER nonroot:nonroot
 EXPOSE 8080
