@@ -66,4 +66,4 @@ See [MAINTAINERS.md](MAINTAINERS.md).
 
 ## CNCF
 
-This flock is **planning a CNCF Sandbox donation**. See [SANDBOX_APPLICATION.md](SANDBOX_APPLICATION.md). Until accepted, Warble/ChirpStack stewards the project; do not claim “CNCF project” status.
+This flock is **planning a CNCF Sandbox donation**. See [SANDBOX_APPLICATION.md](SANDBOX_APPLICATION.md). Until accepted, Warblecloud, LLC stewards the project; do not claim “CNCF project” status.

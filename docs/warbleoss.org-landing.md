@@ -25,7 +25,7 @@ Pills:
 - Frakma-X · LF wing (forming)  
 - Self-host CE · no phone-home  
 
-CTAs: [Try MCP live](https://starling-ex.frakma.io/lite/mcp) · [Get the army](https://github.com/warbletech/warble-army) · Easy first PR
+CTAs: [Try MCP live](https://mcp.warbleoss.org/mcp) · [Get the army](https://github.com/warbletech/warble-army) · Easy first PR
 
 ---
 
@@ -65,7 +65,7 @@ cd warble-army && make starling-lite
 ./bin/starling-lite --mode=readonly --transport=http --addr=:8822
 ```
 
-Live demo: `https://starling-ex.frakma.io/lite/mcp`
+Live demo: `https://mcp.warbleoss.org/mcp`
 
 Helm:
 

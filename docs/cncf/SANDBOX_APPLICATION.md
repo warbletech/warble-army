@@ -3,7 +3,7 @@
 **Status:** DRAFT for review (not yet filed on `cncf/sandbox`)  
 **Target form:** [CNCF Sandbox application](https://github.com/cncf/sandbox/issues/new?template=application.yml)  
 **Issue title when filing:** `[Sandbox] Starling EX Community`  
-**Steward today:** ChirpStack LLP (Warble Cloud)  
+**Steward today:** Warblecloud, LLC (Delaware limited liability company)  
 **Related:** [GOVERNANCE.md](../GOVERNANCE.md) · [STARLING_EX_CE.md](../STARLING_EX_CE.md)
 
 > **Caution (CNCF):** Do not represent this project as “donated” or “a CNCF project” until the TOC votes to accept **and** a Contribution Agreement is signed. This document is an internal draft for filing.
@@ -63,10 +63,9 @@ https://github.com/warbletech/warble-army
 
 ### Website URL
 
-https://warbletech.github.io/warbleoss.org/  
-(Custom domain https://warbleoss.org pending DNS)
+https://warbleoss.org
 
-Live MCP demo: https://starling-ex.frakma.io/lite/mcp  
+Live MCP demo (read-only): https://mcp.warbleoss.org/mcp (health: https://mcp.warbleoss.org/health)  
 
 ### Roadmap
 
@@ -191,7 +190,7 @@ Not yet. Plan: present to relevant TAG (App Delivery and/or Runtime) and complet
 
 | Name | Address | Type | Signatory name and title | Email address |
 |------|---------|------|--------------------------|---------------|
-| ChirpStack LLP | *legal address TBD* | *entity type TBD* | *signatory TBD* | contact@warblecloud.com |
+| Warblecloud, LLC | *TODO: registered address* | Delaware limited liability company | *TODO: signatory name and title* | contact@warblecloud.com |
 
 ### CNCF contacts
 
@@ -199,7 +198,7 @@ Not yet. Plan: present to relevant TAG (App Delivery and/or Runtime) and complet
 
 ### Additional information
 
-- Public MCP demo: https://starling-ex.frakma.io/lite/mcp  
+- Public MCP demo (read-only): https://mcp.warbleoss.org/mcp  
 - Flock brand map: https://github.com/warbletech/warble-army/blob/main/docs/BRAND.md  
 - Separation of **Frakma-X** (Linux Foundation wing for platform) from this CNCF agent-ops path is intentional.  
 - Commercial site: https://warblecloud.com (not in scope)

@@ -1,21 +1,33 @@
 # Maintainers — Starling EX Community
 
-Seed list for CNCF Sandbox application. Expand as multi-org maintainers join.
+Maintainer list for the foundation sandbox application (AAIF first, CNCF later). Foundations close or return
+applications when this file has missing names, GitHub IDs or companies, so every row below must name a real
+person. Organisation and bot accounts (for example `warble-tech`) are not maintainers and are listed separately.
 
-## Project lead (interim)
+> **Status: draft.** Cells marked **TODO** must be filled by the named person or by Avinash before filing.
+> Do not file while any TODO remains.
 
-| Name | GitHub | Email | Focus |
-|------|--------|-------|-------|
-| Avinash | *TBD* | avinash@warblecloud.com | Overall / product |
-| Warble Tech | warble-tech | contact@warblecloud.com | Org steward |
+## Maintainers
 
-## Component maintainers (interim)
+| Name | GitHub ID | Company | Focus | Email |
+|------|-----------|---------|-------|-------|
+| Avinash Patil | [@avinashetrx](https://github.com/avinashetrx) | TODO: confirm employer (steward is Warblecloud, LLC) | Project lead, overall / product | avinash@warblecloud.com |
+| Yaksha Tikoria | [@yaksha-warble](https://github.com/yaksha-warble) | TODO: confirm employer | TODO: confirm focus | TODO |
+| Akshat TODO: full name | TODO: confirm primary ID ([@Akshat-124](https://github.com/Akshat-124) or [@akshat-warble](https://github.com/akshat-warble); both have commits) | TODO: confirm employer | TODO: confirm focus | TODO |
+
+## Component maintainers
 
 | Component | Repo | Maintainers |
 |-----------|------|-------------|
-| Army umbrella / CE chart / MCP registry | warbletech/warble-army | Warble Tech |
-| Heron Ops | warbletech/heron-ops | Warble Tech |
-| ShrikeOps | warbletech/shrikeops | Warble Tech |
+| Army umbrella / CE chart / MCP registry | warbletech/warble-army | TODO: assign from the table above |
+| Heron Ops | warbletech/heron-ops | TODO: assign from the table above |
+| ShrikeOps | warbletech/shrikeops | TODO: assign from the table above |
+
+## Organisation accounts (not maintainers)
+
+| Account | Owner | Use |
+|---------|-------|-----|
+| [@warble-tech](https://github.com/warble-tech) | Warblecloud, LLC | Org automation and releases; operated by the maintainers above |
 
 ## Becoming a maintainer
 

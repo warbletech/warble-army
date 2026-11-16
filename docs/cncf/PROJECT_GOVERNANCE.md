@@ -6,7 +6,7 @@ Lightweight governance for the open flock until CNCF processes apply.
 
 - **Contributors** — anyone with a merged PR or meaningful issue work.  
 - **Maintainers** — listed in [MAINTAINERS.md](MAINTAINERS.md); merge rights and release authority.  
-- **Steward (interim)** — ChirpStack LLP / Warble Cloud until CNCF donation completes.
+- **Steward (interim)** — Warblecloud, LLC (Delaware) until a foundation donation completes.
 
 ## Decisions
 

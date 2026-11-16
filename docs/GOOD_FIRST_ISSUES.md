@@ -13,6 +13,6 @@ Start here if you want a small, high-signal contribution.
 
 Label: **`good first issue`** · **`help wanted`**
 
-Site: [warbleoss.org](https://warbleoss.org) · Live MCP: https://starling-ex.frakma.io/lite/mcp
+Site: [warbleoss.org](https://warbleoss.org) · Live MCP: https://mcp.warbleoss.org/mcp
 
 | [warble-bootstrap](https://github.com/warbletech/warble-bootstrap) | Local k3s / Rancher one-shot — Linux/macOS docs, smoke tests |
