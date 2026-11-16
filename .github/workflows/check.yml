@@ -224,3 +224,15 @@ jobs:
           version: v3.16.4
       - name: Lint + render + invariants
         run: ./scripts/ci/test-project-sandbox.sh
+
+  starling-ex-ce-chart:
+    name: starling-ex-ce chart
+    runs-on: ${{ (github.repository_owner == 'warbletech' && (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository)) && 'warble-ci' || 'ubuntu-latest' }}
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: azure/setup-helm@v5
+        with:
+          version: v3.16.4
+      - name: Render GHCR image reference
+        run: ./scripts/ci/test-starling-ex-ce-chart.sh

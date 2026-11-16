@@ -32,7 +32,6 @@ jobs:
       - name: Package and push
         env:
           GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           echo "$GHCR_TOKEN" | helm registry login ghcr.io -u "${{ github.actor }}" --password-stdin
@@ -43,10 +42,16 @@ jobs:
             helm package "$chart" --destination dist
           done
           for tgz in dist/*.tgz; do
-            helm push "$tgz" oci://ghcr.io/warbletech/charts
             base=$(basename "$tgz" .tgz)
             name=${base%-*}
-            echo "pushed ${name} Apache-2.0"
-          gh api "/orgs/warbletech/packages?package_type=container&per_page=100" \
-            --jq '.[] | {name,visibility,url}' || true
+            version=${base##*-}
+            ref="oci://ghcr.io/warbletech/charts/${name}"
+            # A chart version already stored in GHCR is left as it is.
+            # This job does not call the package visibility API.
+            if helm show chart "$ref" --version "$version" >/dev/null 2>&1; then
+              echo "already published: ${name} ${version}"
+            else
+              helm push "$tgz" oci://ghcr.io/warbletech/charts
+              echo "pushed ${name} ${version} Apache-2.0"
+            fi
           done

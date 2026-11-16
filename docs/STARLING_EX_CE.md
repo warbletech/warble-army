@@ -55,17 +55,27 @@ make ce-smoke
 
 # Or Helm on a cluster you own
 ./scripts/install.sh helm-template
-# CE_FORCE=1 ./scripts/install.sh helm   # if context is GKE — explicit opt-in
-
-# Hosted always-on (no install)
-curl -sS https://mcp.warbleoss.org/health
+# CE_IMAGE_TAG=<published-git-sha> CE_FORCE=1 ./scripts/install.sh helm
 ```
 
-One-liner / helm repo (later):
+`<published-git-sha>` is not a tag. The chart image repository is `ghcr.io/warbletech/warble-army/starling-lite`. `.github/workflows/publish-starling-lite.yml` pushes only the full git commit SHA, and only after it runs on `main` or by hand. No SHA has been pushed. `image.tag` is empty until then. Cluster install fails closed without `CE_IMAGE_TAG`.
+
+Intended anonymous OCI install, after the chart package and the image tag both exist and are public. Not verified:
 
 ```bash
-# Planned: curl -fsSL https://warbleoss.org/install.sh | bash
-# Planned: helm repo add warbleoss https://warbleoss.org/charts
+helm pull oci://ghcr.io/warbletech/charts/starling-ex-ce --version 0.1.1
+helm upgrade --install starling-ex-ce \
+  oci://ghcr.io/warbletech/charts/starling-ex-ce \
+  --version 0.1.1 \
+  --namespace warble-army --create-namespace \
+  --set image.tag=<published-git-sha>
+```
+
+Chart `0.1.1` is not published yet. Do not point pulls at `registry.frakma.io`. `https://warbleoss.org/install.sh` and `https://warbleoss.org/charts` are still planned and are not this install path.
+
+```bash
+# Hosted always-on (no install)
+curl -sS https://mcp.warbleoss.org/health
 ```
 
 Exposes:

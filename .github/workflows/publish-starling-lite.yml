@@ -1,0 +1,68 @@
+name: Publish starling-lite image
+
+# Build deploy/agentgateway/Dockerfile.starling-lite (port 8822, the chart
+# image) and push one immutable tag to GHCR:
+#
+#   ghcr.io/warbletech/warble-army/starling-lite:<full git commit SHA>
+#
+# Pull requests build only. A push to main that touches the image inputs,
+# or a manual run, also pushes that SHA. This workflow does not push :latest
+# and does not call the package visibility API. GITHUB_TOKEN can create a
+# private package. Anonymous pull stays blocked until an org owner makes
+# the package public.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "deploy/agentgateway/Dockerfile.starling-lite"
+      - "mcp/starling-lite/**"
+      - "heron-ops"
+      - "heron-ops/**"
+      - "shrikeops"
+      - "shrikeops/**"
+      - "mcp/tools/**"
+      - ".github/workflows/publish-starling-lite.yml"
+  push:
+    branches: [main]
+    paths:
+      - "deploy/agentgateway/Dockerfile.starling-lite"
+      - "mcp/starling-lite/**"
+      - "heron-ops"
+      - "heron-ops/**"
+      - "shrikeops"
+      - "shrikeops/**"
+      - "mcp/tools/**"
+      - ".github/workflows/publish-starling-lite.yml"
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/warbletech/warble-army/starling-lite
+
+jobs:
+  image:
+    name: build starling-lite
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          submodules: recursive
+          token: ${{ vars.CI_USE_PAT == 'true' && secrets.WARBLE_CI_PAT || github.token }}
+
+      - name: Build
+        run: docker build -f deploy/agentgateway/Dockerfile.starling-lite -t "${IMAGE}:${{ github.sha }}" .
+
+      - name: Push git SHA tag
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "$GHCR_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          docker push "${IMAGE}:${{ github.sha }}"
+          echo "pushed ${IMAGE}:${{ github.sha }}"
+          echo "visibility was not changed; anonymous pull is not granted by this job"
