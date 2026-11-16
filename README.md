@@ -24,7 +24,7 @@ This repository is the **umbrella** that wires the flock together with submodule
   scanner   live MCP    self-host community edition
 ```
 
-Public demo MCP: **[https://mcp.warbleoss.org](https://mcp.warbleoss.org)**  
+Public demo MCP: **[https://mcp.warbleoss.org](https://mcp.warbleoss.org)** (scan-only until a read-only demo cluster is attached, see [`deploy/demo-cluster/`](deploy/demo-cluster/README.md); `/health` shows `"cluster"`)  
 Always-on PaaS deploy (Railway / Fly — independent of GKE): [`deploy/railway/README.md`](deploy/railway/README.md)  
 Brand map: [`docs/BRAND.md`](docs/BRAND.md) · CE plan: [`docs/STARLING_EX_CE.md`](docs/STARLING_EX_CE.md)
 

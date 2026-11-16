@@ -25,8 +25,10 @@ Today’s GKE demo (`starling-ex.frakma.io/lite/mcp`) can stay as primary or bec
 | `tools/list`, health | ✅ | ✅ |
 | ShrikeOps `scan_*` (image ships pluto, polaris, kube-score) | ✅ | ✅ |
 | Dry-run remediation | ✅ | ✅ |
-| Live cluster MCP (`list_pods`, …) | ❌ graceful | ✅ points at **your** cluster API |
+| Live cluster MCP (`list_pods`, …) | not listed in `tools/list`; a direct call explains scan-only mode | ✅ points at **your** cluster API |
+| `scan_cluster_export` | not listed | listed only where `kubectl` is installed (not in this image) |
 
+`/health` reports `"cluster": true|false` and the number of advertised `tools`.
 For a **true vendor-neutral public demo**, leave kubeconfig unset: only scan tools.  
 Cluster tools always depend on *some* Kubernetes API (yours or a small free-tier cluster).
 
@@ -86,14 +88,17 @@ Copy `deploy/railway/railway.toml` to repo root if your Railway project expects 
 
 **Do not** put production cluster admin kubeconfigs on a public demo.
 
-For a private Railway service (auth in front / non-public URL):
+Use the read-only identity in [`deploy/demo-cluster/`](../demo-cluster/README.md)
+(dedicated demo cluster, `get/list/watch` only, no secrets) and its
+`make-kubeconfig.sh`, then:
 
 ```bash
-# base64 of a least-privilege readonly kubeconfig
-base64 -w0 ~/.kube/readonly-demo.yaml | railway variables set KUBECONFIG_B64=@/dev/stdin
+base64 -w0 demo.kubeconfig | railway variables set KUBECONFIG_B64=@/dev/stdin
+python3 scripts/ci/starling-lite-smoke.py --url https://mcp.warbleoss.org --require-cluster
 ```
 
-Use a ServiceAccount that is **namespace-scoped + get/list/watch only**.
+The image pins `STARLING_SCAN_ROOT=/srv/scan` (empty), so `scan_manifest path=...` cannot
+read the kubeconfig written under `/tmp`.
 
 ---
 
@@ -219,7 +224,8 @@ curl -s localhost:8080/health
 | `STARLING_NAMESPACE` | empty | Restrict cluster tools |
 | `STARLING_ALLOW_NAMESPACES` | empty | Write allowlist |
 | `KUBECONFIG` | empty | Path inside container |
-| `KUBECONFIG_B64` | empty | Base64 kubeconfig for optional cluster tools |
+| `KUBECONFIG_B64` | empty | Base64 kubeconfig for optional cluster tools (see `deploy/demo-cluster/`) |
+| `STARLING_SCAN_ROOT` / `STARLING_CHART_ROOT` | `/srv/scan` (empty) in image | Directory `path=` / `chart_path=` arguments must resolve inside |
 
 ---
 
