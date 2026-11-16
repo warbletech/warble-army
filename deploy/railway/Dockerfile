@@ -7,7 +7,7 @@
 # ShrikeOps scanners — without these, scan_* results are reported as incomplete.
 # Static Go binaries, so they run on distroless/static. Versions match the
 # ShrikeOps README "Requirements" (parsers are tested against them).
-FROM alpine:3.20 AS scanners
+FROM alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc AS scanners
 ARG TARGETARCH=amd64
 ARG PLUTO_VERSION=5.24.4
 ARG POLARIS_VERSION=10.2.5
@@ -19,7 +19,7 @@ RUN apk add --no-cache curl tar \
  && curl -fsSL "https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}/kube-score_${KUBE_SCORE_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz -C /out kube-score \
  && /out/pluto version && /out/polaris version && /out/kube-score version
 
-FROM golang:1.26-bookworm AS build
+FROM golang:1.26-bookworm@sha256:dc40a13b61304647ed7e5d581d246b86413dfc29d63c6d018310feb93cd98fc0 AS build
 WORKDIR /src
 
 COPY mcp/starling-lite ./mcp/starling-lite
@@ -34,7 +34,7 @@ RUN go mod tidy \
  && REV="$(tr -d '[:space:]' < /src/REVISION)" \
  && CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w -X main.version=0.3.0 -X main.revision=${REV:-dev}" -o /out/starling-lite ./cmd/starling-lite
 
-FROM gcr.io/distroless/static-debian12:nonroot
+FROM gcr.io/distroless/static-debian12:nonroot@sha256:afa5c872c891853ca7fcf1f12c3edb23f7eeef36189728842dd51042ff57f7ab
 WORKDIR /
 COPY --from=build /out/starling-lite /usr/local/bin/starling-lite
 COPY --from=scanners /out/pluto /out/polaris /out/kube-score /usr/local/bin/

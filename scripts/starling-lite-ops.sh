@@ -61,14 +61,16 @@ cmd_smoke() {
   need python3
   url="${url%/}"
   log "health  $url$HEALTH_PATH"
-  curl -fsS --max-time 30 "$url$HEALTH_PATH" | python3 -m json.tool
+  local resp
+  resp=$(curl -fsS --max-time 30 "$url$HEALTH_PATH")
+  printf '%s\n' "$resp" | python3 -m json.tool
   log "tools/list  $url$MCP_PATH"
   local n
-  n=$(curl -fsS --max-time 60 -X POST "$url$MCP_PATH" \
+  resp=$(curl -fsS --max-time 60 -X POST "$url$MCP_PATH" \
     -H 'Content-Type: application/json' \
     -H 'MCP-Protocol-Version: 2026-07-28' \
-    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \
-    | python3 -c 'import sys,json; r=json.load(sys.stdin); print(len(r.get("result",{}).get("tools",[])))')
+    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+  n=$(printf '%s\n' "$resp" | python3 -c 'import sys,json; r=json.load(sys.stdin); print(len(r.get("result",{}).get("tools",[])))')
   log "tools count: $n"
   [[ "$n" -gt 0 ]] || die "no tools returned"
   log "smoke OK"
@@ -146,9 +148,10 @@ cmd_cloudflare-dns() {
 
   # Resolve zone by name if needed
   if [[ -n "$zone_name" && -z "$zone_id" ]]; then
-    zone_id=$(curl -fsS "https://api.cloudflare.com/client/v4/zones?name=${zone_name}" \
-      -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
-      | python3 -c 'import sys,json; r=json.load(sys.stdin); print(r["result"][0]["id"] if r.get("result") else "")')
+    local zones
+    zones=$(curl -fsS "https://api.cloudflare.com/client/v4/zones?name=${zone_name}" \
+      -H "Authorization: Bearer $token" -H "Content-Type: application/json")
+    zone_id=$(printf '%s\n' "$zones" | python3 -c 'import sys,json; r=json.load(sys.stdin); print(r["result"][0]["id"] if r.get("result") else "")')
   fi
 
   local fqdn="$host"
@@ -159,23 +162,25 @@ cmd_cloudflare-dns() {
   log "upsert CNAME $fqdn → $target (proxied=$proxied)"
 
   # Find existing record
-  local rec_id
-  rec_id=$(curl -fsS "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records?type=CNAME&name=${fqdn}" \
-    -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
-    | python3 -c 'import sys,json; r=json.load(sys.stdin); print(r["result"][0]["id"] if r.get("result") else "")')
+  local rec_id records
+  records=$(curl -fsS "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records?type=CNAME&name=${fqdn}" \
+    -H "Authorization: Bearer $token" -H "Content-Type: application/json")
+  rec_id=$(printf '%s\n' "$records" | python3 -c 'import sys,json; r=json.load(sys.stdin); print(r["result"][0]["id"] if r.get("result") else "")')
 
   local body
   body=$(python3 -c "import json; print(json.dumps({'type':'CNAME','name':'''$host''','content':'''$target''','ttl':1,'proxied': $proxied}))")
 
+  local upsert
   if [[ -n "$rec_id" ]]; then
-    curl -fsS -X PUT "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records/${rec_id}" \
+    upsert=$(curl -fsS -X PUT "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records/${rec_id}" \
       -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
-      -d "$body" | python3 -m json.tool
+      -d "$body")
   else
-    curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records" \
+    upsert=$(curl -fsS -X POST "https://api.cloudflare.com/client/v4/zones/${zone_id}/dns_records" \
       -H "Authorization: Bearer $token" -H "Content-Type: application/json" \
-      -d "$body" | python3 -m json.tool
+      -d "$body")
   fi
+  printf '%s\n' "$upsert" | python3 -m json.tool
 
   # Also register custom domain on Railway if linked
   if command -v railway >/dev/null 2>&1 && railway status >/dev/null 2>&1; then

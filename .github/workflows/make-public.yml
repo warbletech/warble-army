@@ -4,11 +4,13 @@ on:
   workflow_dispatch:
 
 permissions:
-  packages: write
+  contents: read
 
 jobs:
   public:
     runs-on: ubuntu-24.04
+    permissions:
+      packages: write # change chart package visibility
     steps:
       - name: Set chart packages public
         env:
