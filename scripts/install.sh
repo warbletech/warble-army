@@ -139,12 +139,12 @@ cmd_smoke() {
   curl -fsS --max-time 20 "$url/health" | (command -v python3 >/dev/null && python3 -m json.tool || cat)
   echo
   log "tools/list $url/mcp"
-  local n
-  n=$(curl -fsS --max-time 30 -X POST "$url/mcp" \
+  local n resp
+  resp=$(curl -fsS --max-time 30 -X POST "$url/mcp" \
     -H 'Content-Type: application/json' \
     -H 'MCP-Protocol-Version: 2026-07-28' \
-    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' \
-    | python3 -c 'import sys,json; r=json.load(sys.stdin); print(len(r.get("result",{}).get("tools",[])))')
+    -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}')
+  n=$(printf '%s\n' "$resp" | python3 -c 'import sys,json; r=json.load(sys.stdin); print(len(r.get("result",{}).get("tools",[])))')
   log "tools count: $n"
   [[ "$n" -gt 0 ]] || die "no tools returned"
   log "smoke OK"
