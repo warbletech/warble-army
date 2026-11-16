@@ -100,6 +100,7 @@ jobs:
             | ./bin/starling-lite \
                 --mode=readonly \
                 --transport=stdio \
+                --kubeconfig=/nonexistent/kubeconfig \
                 --registry="${GITHUB_WORKSPACE}/mcp/tools/registry.json" \
             2>/tmp/sl.err \
             | tee /tmp/sl.out
@@ -116,8 +117,9 @@ jobs:
           # readonly: write tools filtered
           names={t["name"] for t in tools}
           assert "scan_manifest" in names, names
-          assert "cluster_summary" in names, names
           assert "propose_remediation" in names, names
+          # no kubeconfig in CI: scan-only server, cluster tools are not advertised
+          assert "cluster_summary" not in names, "cluster tools listed without a cluster"
           assert "scale_deployment" not in names, "write tools should be hidden in readonly"
           print(f"ok tools/list count={len(tools)}")
           PY

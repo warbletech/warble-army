@@ -120,6 +120,7 @@ func (s *Server) ServeHTTP(addr string) error {
 			"revision":           s.cfg.Revision,
 			"mode":               s.cfg.Mode,
 			"cluster":            s.cluster != nil,
+			"tools":              len(s.listedTools()),
 			"mcp":                "/mcp",
 			"protocolVersions":   protocol.SupportedProtocolVersions,
 			"protocolPreferred":  protocol.LatestProtocolVersion,
@@ -179,7 +180,7 @@ func (s *Server) handle(ctx context.Context, raw []byte, headerProtocol string) 
 				ProtocolVersion: ver,
 				ServerInfo:      protocol.ServerInfo{Name: "starling-lite", Version: s.cfg.Version},
 				Capabilities:    protocol.DefaultCapabilities(),
-				Instructions:    protocol.DefaultInstructions(),
+				Instructions:    protocol.Instructions(s.ClusterAttached()),
 			},
 		}
 	case "server/discover":
@@ -192,14 +193,14 @@ func (s *Server) handle(ctx context.Context, raw []byte, headerProtocol string) 
 				ProtocolVersion: ver,
 				ServerInfo:      protocol.ServerInfo{Name: "starling-lite", Version: s.cfg.Version},
 				Capabilities:    protocol.DefaultCapabilities(),
-				Instructions:    protocol.DefaultInstructions(),
+				Instructions:    protocol.Instructions(s.ClusterAttached()),
 			},
 		}
 	case "notifications/initialized":
 		// Legacy handshake ack — accepted for 2024/2025 clients; no-op on 2026-07-28
 		return protocol.Response{}
 	case "tools/list":
-		tools := s.reg.Filtered(s.cfg.Mode)
+		tools := s.listedTools()
 		defs := make([]protocol.ToolDefinition, 0, len(tools))
 		for _, t := range tools {
 			defs = append(defs, protocol.ToolDefinition{
@@ -251,6 +252,13 @@ func (s *Server) dispatch(ctx context.Context, params protocol.ToolCallParams) p
 	if params.Arguments == nil {
 		params.Arguments = map[string]any{}
 	}
+	if needsCluster(def) && s.cluster == nil {
+		return protocol.ErrorResult(s.noClusterMessage(params.Name))
+	}
+	if !s.available(def) {
+		return protocol.ErrorResult(fmt.Sprintf("%s needs kubectl on the server, which this build does not ship; "+
+			"export with kubectl yourself and pass the YAML to scan_manifest (manifest=...)", params.Name))
+	}
 
 	switch def.Backend {
 	case "steadyhelm":
@@ -267,13 +275,66 @@ func (s *Server) dispatch(ctx context.Context, params protocol.ToolCallParams) p
 	}
 }
 
+// ClusterAttached reports whether a Kubernetes config was found at startup.
+func (s *Server) ClusterAttached() bool { return s.cluster != nil }
+
+// needsCluster marks tools that only work against a live Kubernetes API:
+// every SteadyHelm (heron-ops) tool plus scan_cluster_export.
+func needsCluster(t registry.Tool) bool {
+	return t.Backend == "steadyhelm" || t.Name == "scan_cluster_export"
+}
+
+// lookPath finds kubectl for scan_cluster_export (overridable in tests).
+var lookPath = exec.LookPath
+
+// available reports whether t can work on this server: live cluster tools need
+// an attached cluster, and scan_cluster_export also shells out to kubectl
+// (not in the Railway image).
+func (s *Server) available(t registry.Tool) bool {
+	if !needsCluster(t) {
+		return true
+	}
+	if s.cluster == nil {
+		return false
+	}
+	if t.Name == "scan_cluster_export" {
+		_, err := lookPath("kubectl")
+		return err == nil
+	}
+	return true
+}
+
+// listedTools is what tools/list advertises: the mode filter, minus tools that
+// cannot work here. A scan-only server (the public demo at mcp.warbleoss.org)
+// should not offer tools that can only fail.
+func (s *Server) listedTools() []registry.Tool {
+	all := s.reg.Filtered(s.cfg.Mode)
+	out := make([]registry.Tool, 0, len(all))
+	for _, t := range all {
+		if s.available(t) {
+			out = append(out, t)
+		}
+	}
+	return out
+}
+
+// noClusterMessage explains a cluster tool call on a scan-only server and
+// how to get a cluster-backed one.
+func (s *Server) noClusterMessage(tool string) string {
+	msg := fmt.Sprintf("%s needs a Kubernetes cluster, and none is attached to this server "+
+		"(scan-only mode). scan_manifest and propose_remediation still work: pass YAML as manifest=... . "+
+		"To use cluster tools, run starling-lite with a kubeconfig, e.g. against a local kind cluster: "+
+		"kind create cluster && starling-lite --transport=http --mode=readonly "+
+		"(see https://github.com/warbletech/warble-army/tree/main/deploy/demo-cluster).", tool)
+	if s.clusterE != nil {
+		msg += " Detail: " + s.clusterE.Error()
+	}
+	return msg
+}
+
 func (s *Server) callCluster(ctx context.Context, name string, args map[string]any) protocol.ToolCallResult {
 	if s.cluster == nil {
-		msg := "cluster backend unavailable"
-		if s.clusterE != nil {
-			msg = s.clusterE.Error()
-		}
-		return protocol.ErrorResult(msg + " (set KUBECONFIG or --kubeconfig)")
+		return protocol.ErrorResult(s.noClusterMessage(name))
 	}
 	if name == "scale_deployment" || name == "delete_pod" {
 		ns, _ := args["namespace"].(string)
