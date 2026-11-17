@@ -3,7 +3,7 @@
 # ShrikeOps scanners — without these, scan_* results are reported as incomplete.
 # Static Go binaries, so they run on distroless/static. Versions match the
 # ShrikeOps README "Requirements" (parsers are tested against them).
-FROM alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6e2a4b6bc AS scanners
+FROM alpine:3.24@sha256:f59abe656b692d901e184be3445e084786602108599d2a51d229c0f5a48c71bf AS scanners
 ARG TARGETARCH=amd64
 ARG PLUTO_VERSION=5.24.4
 ARG POLARIS_VERSION=10.2.5
@@ -15,7 +15,7 @@ RUN apk add --no-cache curl tar \
  && curl -fsSL "https://github.com/zegl/kube-score/releases/download/v${KUBE_SCORE_VERSION}/kube-score_${KUBE_SCORE_VERSION}_linux_${TARGETARCH}.tar.gz" | tar -xz -C /out kube-score \
  && /out/pluto version && /out/polaris version && /out/kube-score version
 
-FROM golang:1.26-bookworm@sha256:dc40a13b61304647ed7e5d581d246b86413dfc29d63c6d018310feb93cd98fc0 AS build
+FROM golang:1.27-bookworm@sha256:4fa7c968ba93f1635670522dbb01a2c78150443e1385746924566079f36570ea AS build
 WORKDIR /src
 # Context must be warble-army repo root (see Makefile agentgateway-image)
 COPY mcp/starling-lite ./mcp/starling-lite
