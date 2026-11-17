@@ -15,6 +15,7 @@
 # Env:
 #   CE_PORT=8822  CE_NS=warble-army  CE_RELEASE=starling-ex-ce
 #   CE_MODE=readonly  CE_IMAGE=starling-lite:ce
+#   CE_IMAGE_TAG=<published git sha>   # required for `helm` against a cluster
 #
 set -euo pipefail
 
@@ -90,10 +91,13 @@ cmd_docker() {
 cmd_helm_template() {
   need helm
   [[ -d "$CHART" ]] || die "chart missing: $CHART"
-  log "helm template dry-run (namespace=$CE_NS)"
+  # "local" only renders the manifest. It is not a GHCR tag.
+  local render_tag="${CE_IMAGE_TAG:-local}"
+  log "helm template dry-run (namespace=$CE_NS, image.tag=$render_tag, not a published pull)"
   helm template "$CE_RELEASE" "$CHART" \
     --namespace "$CE_NS" \
     --set mode="$CE_MODE" \
+    --set image.tag="$render_tag" \
     --set publicDemoUrl="$PUBLIC_DEMO/mcp" \
     --set docsUrl=https://warbleoss.org
   log "template OK — no cluster changes"
@@ -116,11 +120,16 @@ cmd_helm() {
     die "context looks shared/prod ($ctx). Set CE_FORCE=1 to install, or use local/docker preview"
   fi
 
-  log "helm upgrade --install $CE_RELEASE (ns=$CE_NS)"
+  if [[ -z "${CE_IMAGE_TAG:-}" ]]; then
+    die "CE_IMAGE_TAG is required. Set it to the full git SHA pushed by .github/workflows/publish-starling-lite.yml. No GHCR tag has been published from this tree."
+  fi
+
+  log "helm upgrade --install $CE_RELEASE (ns=$CE_NS, image.tag=$CE_IMAGE_TAG)"
   helm upgrade --install "$CE_RELEASE" "$CHART" \
     --namespace "$CE_NS" \
     --create-namespace \
     --set mode="$CE_MODE" \
+    --set image.tag="$CE_IMAGE_TAG" \
     --set publicDemoUrl="$PUBLIC_DEMO/mcp" \
     --set docsUrl=https://warbleoss.org \
     --wait --timeout 3m

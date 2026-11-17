@@ -27,7 +27,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: starling-lite
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.image.repository }}:{{ required "image.tag must be the full git commit SHA already pushed to ghcr.io/warbletech/warble-army/starling-lite" .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
             - --mode={{ .Values.mode }}

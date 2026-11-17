@@ -100,6 +100,10 @@ agentgateway-bin:
 agentgateway-local: agentgateway-bin
 	$(BIN)/agentgateway -f $(ROOT)/deploy/agentgateway/config.local.yaml
 
+# Pushes $(REGISTRY)/starling-lite:latest for the existing GKE manifest.
+# The Helm chart does not use that tag. Its image is
+# ghcr.io/warbletech/warble-army/starling-lite:<full git sha>, published by
+# .github/workflows/publish-starling-lite.yml.
 agentgateway-image:
 	@command -v docker >/dev/null || { echo "docker required for image build"; exit 1; }
 	docker build -f deploy/agentgateway/Dockerfile.starling-lite \

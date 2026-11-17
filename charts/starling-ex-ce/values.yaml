@@ -4,8 +4,11 @@ nameOverride: ""
 fullnameOverride: "starling-ex-ce"
 
 image:
-  repository: us-central1-docker.pkg.dev/warble-tech/warble/starling-lite
-  tag: "6c6505f"
+  # Published by .github/workflows/publish-starling-lite.yml.
+  # Tag is the full git commit SHA of the run that pushed the image.
+  # Empty until that workflow has pushed a tag. Do not invent one.
+  repository: ghcr.io/warbletech/warble-army/starling-lite
+  tag: ""
   pullPolicy: IfNotPresent
 
 # In-cluster MCP (Starling Lite embeds Heron Ops cluster tools)
