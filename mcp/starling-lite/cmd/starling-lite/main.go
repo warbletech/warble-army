@@ -14,7 +14,7 @@ import (
 )
 
 // version is overridden at build time: -ldflags "-X main.version=..."
-var version = "0.3.0"
+var version = "0.3.0" // x-release-please-version
 
 // revision is the git commit the binary was built from (-ldflags "-X main.revision=...").
 var revision = "dev"

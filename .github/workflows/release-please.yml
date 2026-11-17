@@ -3,6 +3,11 @@ name: release-please
 # Manual for now (see docs/RELEASING.md). Switch to `push: branches: [main]`
 # once maintainers agree and "Allow GitHub Actions to create and approve pull
 # requests" is enabled for the repo.
+#
+# Run 1: opens or updates the release PR (version bump + CHANGELOG).
+# Run 2 (after a maintainer merges that PR): tags, creates the GitHub Release,
+# then calls release.yml to build, sign and upload the assets. Tags created
+# with GITHUB_TOKEN do not trigger other workflows, so the call is explicit.
 on:
   workflow_dispatch:
 
@@ -17,8 +22,38 @@ jobs:
     permissions:
       contents: write # release commits and tags
       pull-requests: write # open the release PR
+    outputs:
+      army_created: ${{ steps.release.outputs.release_created }}
+      army_tag: ${{ steps.release.outputs.tag_name }}
+      lite_created: ${{ steps.release.outputs['mcp/starling-lite--release_created'] }}
+      lite_tag: ${{ steps.release.outputs['mcp/starling-lite--tag_name'] }}
     steps:
-      - uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+      - id: release
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+
+  starling-lite-assets:
+    needs: release-please
+    if: needs.release-please.outputs.lite_created == 'true'
+    permissions:
+      contents: write # upload release assets
+      packages: write # push the image to GHCR
+      id-token: write # keyless signing (cosign) and provenance
+      attestations: write # GitHub artifact attestations
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.release-please.outputs.lite_tag }}
+
+  warble-army-assets:
+    needs: release-please
+    if: needs.release-please.outputs.army_created == 'true'
+    permissions:
+      contents: write # upload release assets
+      packages: write # unused for this component; release.yml declares it on its image job
+      id-token: write # keyless signing (cosign) and provenance
+      attestations: write # GitHub artifact attestations
+    uses: ./.github/workflows/release.yml
+    with:
+      tag: ${{ needs.release-please.outputs.army_tag }}

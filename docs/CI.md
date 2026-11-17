@@ -7,6 +7,7 @@
 | `scorecard.yml` | push to main, weekly, manual | `ubuntu-latest`, **only while the repo is public** | none |
 | CodeQL | GitHub **default setup** (repo setting) | GitHub-hosted | none |
 | `release-please.yml` | manual | `ubuntu-latest` | none |
+| `release.yml` | called by `release-please.yml`, `starling-lite-v*` / `warble-army-v*` tag push, manual, PRs touching release files (dry run) | `ubuntu-24.04` | none (`GITHUB_TOKEN` + OIDC for keyless signing; see [RELEASING.md](RELEASING.md)) |
 
 ## Forks
 
