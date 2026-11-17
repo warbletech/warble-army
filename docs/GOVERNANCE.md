@@ -13,7 +13,7 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
           │                         │                         │
    Starling EX (SaaS)        Starling EX Community    ┌───────┴───────┐
    Warble Cloud agents       Heron Ops · ShrikeOps    │               │
-   Enterprise support        Starling Lite · Army     ▼               ▼
+   Enterprise support        Starling Lite · Flock    ▼               ▼
                                                    CNCF path      Linux Foundation
                                                    Starling EX    Frakma-X
                                                    Community      (LF wing)
@@ -24,7 +24,7 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 | Name | Role | Host today | Long-term intent |
 |------|------|------------|------------------|
 | **Warble Cloud** / ChirpStack LLP | Commercial product, trademarks, enterprise | warblecloud.com | Stays commercial |
-| **Warble Army** / warbleoss.org | Umbrella for OSS birds (docs, charts, brand) | GitHub `warbletech/*` | Neutral OSS home |
+| **Warble Flock** (formerly Warble Army) / warbleoss.org | Umbrella for OSS birds (docs, charts, brand) | GitHub `warbletech/*` | Neutral OSS home |
 | **Starling EX Community** | Self-host agent ops CE (MCP flock) | warble-army + public repos | **Plan: donate to CNCF** |
 | **Starling EX** (product) | Full commercial / SaaS agent platform | private core + release channel | Warble Cloud |
 | **FRAKMA** | MLOps/LLMOps platform brand | frakma.io | Product / platform |
@@ -32,7 +32,7 @@ How Warble’s commercial products, open-source flock, and foundation wings rela
 
 ## Starling EX Community → CNCF (planned)
 
-**Goal:** donate **Starling EX Community** (the self-host CE: Heron Ops + ShrikeOps integration + Starling Lite + army packaging) to the **CNCF** so cluster agent ops stays vendor-neutral and community-governed.
+**Goal:** donate **Starling EX Community** (the self-host CE: Heron Ops + ShrikeOps integration + Starling Lite + Warble Flock packaging) to the **CNCF** so cluster agent ops stays vendor-neutral and community-governed.
 
 ### In scope for a CNCF-bound project (intent)
 

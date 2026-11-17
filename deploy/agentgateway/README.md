@@ -1,4 +1,4 @@
-# Agent Gateway + Warble Army
+# Agent Gateway + Warble Flock
 
 [Agentgateway](https://agentgateway.dev) is the **front door** for agent traffic:
 
@@ -120,7 +120,7 @@ Ingress: `deploy/agentgateway/k8s/50-ingress.yaml` (namespace `warblecloud-ai`).
 ## Relation to `warble-labs/agentgateway.yaml`
 
 Labs config routes `/mcp/*` and `/v1/chat/completions` for the IoT/marketing stack.  
-Army config is the **same product**, specialized for K8s ops tools. Keep both; don’t merge blindly.
+Flock config is the **same product**, specialized for K8s ops tools. Keep both; don’t merge blindly.
 
 ## Versions
 

@@ -1,4 +1,6 @@
-# Warble Army — flock brand map
+# Warble Flock — brand map
+
+> Formerly *Warble Army*. The new name is pending LF / AAIF and maintainer sign-off; repo paths still use `warble-army` (see [RENAME.md](RENAME.md)).
 
 Open-source birds of Kubernetes ops. Commercial Starling Cloud remains under Warble; **Starling EX Community** ships under **[warbleoss.org](https://warbleoss.org)** and is **planned for CNCF donation**. Platform openness under the Linux Foundation lives in **Frakma-X** (LF wing)—see [GOVERNANCE.md](GOVERNANCE.md).
 
@@ -14,14 +16,14 @@ Open-source birds of Kubernetes ops. Commercial Starling Cloud remains under War
 | **Starling EX Community** | Starling | Self-host CE flock (Lite + Heron + Shrike); **CNCF donation planned** | `charts/starling-ex-ce` + **warbleoss.org** | **Chart + site; CNCF path** |
 | **Frakma-X** | — | **Linux Foundation wing** for open FRAKMA / platform work | *forming* | LF program (planned) |
 | **Reflexion** | — | Actor/critic agent loop over MCP tools | `agents/reflexion` | Scaffold |
-| **Army umbrella** | Flock | Submodules, MCP tool registry, CI, brand | `warbletech/warble-army` | Live |
+| **Warble Flock umbrella** | Flock | Submodules, MCP tool registry, CI, brand | `warbletech/warble-army` | Live |
 
 ### Bird metaphor (keep it consistent)
 
 - **Shrike** — impales prey on thorns → pins findings to a scored report.  
 - **Heron** — still water, sudden strike → calm observation of the cluster, precise tool use.  
 - **Starling** — murmurations / flock coordination → multi-tool agents and product surface.  
-- **Army / flock** — the collection of specialized birds working together.
+- **Flock** — the collection of specialized birds working together.
 
 ## Logos
 

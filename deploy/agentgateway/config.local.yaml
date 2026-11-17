@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=https://agentgateway.dev/schema/config
-# Local Agent Gateway in front of Warble Army (Starling Lite MCP).
+# Local Agent Gateway in front of Warble Flock (Starling Lite MCP).
 #
 # Run:
 #   make starling-lite && ./bin/starling-lite --transport=http --addr=:8822 \

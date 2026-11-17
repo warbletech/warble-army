@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "name": "warble-army-mcp",
   "version": "0.1.0",
-  "description": "Canonical MCP tools/list for Warble Army (Starling Lite surface). Backends: steadyhelm, shrikeops, starling-lite.",
+  "description": "Canonical MCP tools/list for Warble Flock (Starling Lite surface). Backends: steadyhelm, shrikeops, starling-lite.",
   "groups": ["cluster", "scan", "remediate"],
   "tools": [
     {

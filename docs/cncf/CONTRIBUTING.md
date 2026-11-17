@@ -1,6 +1,6 @@
 # Contributing to Starling EX Community
 
-Thanks for contributing to the **Starling EX Community** flock (Warble Army umbrella, Heron Ops, ShrikeOps, Starling Lite).
+Thanks for contributing to the **Starling EX Community** flock (Warble Flock umbrella, Heron Ops, ShrikeOps, Starling Lite).
 
 ## Code of Conduct
 
@@ -15,7 +15,7 @@ All participation is governed by [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 | ShrikeOps scanner | [warbletech/shrikeops](https://github.com/warbletech/shrikeops) |
 | Scanner demos | [warbletech/shrikeops-demo](https://github.com/warbletech/shrikeops-demo) |
 
-## Development setup (army)
+## Development setup (Warble Flock umbrella)
 
 ```bash
 git clone --recurse-submodules https://github.com/warbletech/warble-army.git

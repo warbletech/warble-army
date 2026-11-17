@@ -7,7 +7,7 @@
 
 ## Why
 
-SteadyHelm is accurate but opaque. **Heron** matches the Warble Army bird flock (with ShrikeOps + Starling) and reads better on warbleoss.org.
+SteadyHelm is accurate but opaque. **Heron** matches the Warble Flock birds (with ShrikeOps + Starling) and reads better on warbleoss.org.
 
 ## Steps
 

@@ -1,4 +1,6 @@
-# Warble Army
+# Warble Flock
+
+> **Naming:** *Warble Flock* is the proposed new name for the project formerly called *Warble Army* (pending LF / AAIF and maintainer sign-off, [warble-marketing#70](https://github.com/warbletech/warble-marketing/issues/70)). The repository, image, chart and Go module paths still say `warble-army` until an org admin renames them — see [`docs/RENAME.md`](docs/RENAME.md).
 
 [![check](https://github.com/warbletech/warble-army/actions/workflows/check.yml/badge.svg)](https://github.com/warbletech/warble-army/actions/workflows/check.yml)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/warbletech/warble-army/badge)](https://scorecard.dev/viewer/?uri=github.com/warbletech/warble-army)

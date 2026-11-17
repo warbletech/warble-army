@@ -1,5 +1,5 @@
 name: Bug report
-description: Something in warble-army (Starling Lite, charts, agents, CI) does not work as documented.
+description: Something in Warble Flock (Starling Lite, charts, agents, CI) does not work as documented.
 title: "bug: "
 labels: ["kind/bug", "triage/needed"]
 body:

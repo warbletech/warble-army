@@ -1,4 +1,4 @@
-# MCP protocol conventions (Warble Army)
+# MCP protocol conventions (Warble Flock)
 
 Subset of [Model Context Protocol](https://spec.modelcontextprotocol.io) used by SteadyHelm and planned Starling Lite.
 
