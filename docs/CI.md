@@ -36,3 +36,17 @@ Do not add `pull_request_target` workflows that check out PR code.
   `ubuntu-latest`.
 - CodeQL uses *default setup* (already active). Do **not** add an advanced
   `codeql.yml` while default setup is on — the two conflict.
+
+## Supply-chain rules (OpenSSF Scorecard)
+
+- Pin every `uses:` to a full commit SHA with the version as a comment
+  (`actions/checkout@<sha> # v7.0.1`). Dependabot (`github-actions`) bumps
+  the SHA and the comment together.
+- Pin Dockerfile base images by digest (`image:tag@sha256:...`). Dependabot
+  (`docker`) keeps them current.
+- Workflow tokens: top level `contents: read` (or `read-all`); grant any
+  `write` scope only on the job that needs it.
+- Do not pipe `curl` output into an interpreter (`curl | sh`, `curl | python3`).
+  Download to a file or variable first; verify binaries with a SHA-256.
+- Go fuzz targets live next to their parsers (`*_fuzz_test.go`). Run one with
+  `go test ./internal/scanx -run '^$' -fuzz FuzzNormalize -fuzztime 30s`.
