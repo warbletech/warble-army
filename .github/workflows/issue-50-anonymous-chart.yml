@@ -1,0 +1,57 @@
+name: Issue 50 anonymous chart pull
+
+# Temporary check for warbletech/warble-army#50.
+# A public GitHub-hosted runner pulls oci://ghcr.io/warbletech/charts/starling-ex-ce
+# version 0.1.1 with no registry login. Rendering must fail closed without
+# image.tag and succeed when image.tag is the current warble-army main SHA.
+# This workflow must not gain GHCR credentials, PATs, or package write.
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  anonymous-chart:
+    name: anonymous starling-ex-ce 0.1.1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+        with:
+          version: v3.16.4
+
+      - name: Pull and template starling-ex-ce anonymously
+        run: |
+          set -euo pipefail
+          helm registry logout ghcr.io || true
+          SHA=$(git ls-remote https://github.com/warbletech/warble-army refs/heads/main | cut -f1)
+          echo "SHA=$SHA"
+          if [ -z "$SHA" ]; then
+            echo "::error::git ls-remote did not return a SHA for refs/heads/main"
+            exit 1
+          fi
+          helm pull oci://ghcr.io/warbletech/charts/starling-ex-ce --version 0.1.1
+          chart_file=$(ls -1 starling-ex-ce-0.1.1.tgz)
+          echo "CHART_FILE=$chart_file"
+          helm show chart "$chart_file"
+          set +e
+          helm template t oci://ghcr.io/warbletech/charts/starling-ex-ce --version 0.1.1 > /tmp/ce-notag.yaml 2> /tmp/ce-notag.err
+          notag=$?
+          set -e
+          echo "TEMPLATE_WITHOUT_TAG_EXIT=$notag"
+          cat /tmp/ce-notag.err
+          if [ "$notag" -eq 0 ]; then
+            echo "::error::helm template without image.tag succeeded; expected fail-closed"
+            exit 1
+          fi
+          helm template t oci://ghcr.io/warbletech/charts/starling-ex-ce --version 0.1.1 --set "image.tag=$SHA" > /tmp/ce.yaml
+          echo "TEMPLATE_WITH_TAG_EXIT=0"
+          image_line=$(grep -F "ghcr.io/warbletech/warble-army/starling-lite:${SHA}" /tmp/ce.yaml)
+          echo "IMAGE_REF=$image_line"
+          if [ -z "$image_line" ]; then
+            echo "::error::rendered manifest does not use image.tag=$SHA"
+            exit 1
+          fi
