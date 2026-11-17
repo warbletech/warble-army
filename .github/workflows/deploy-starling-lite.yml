@@ -40,6 +40,8 @@ on:
       - "railway.toml"
       - "scripts/ci/starling-lite-smoke.py"
       - ".github/workflows/deploy-starling-lite.yml"
+      # PR-only: the demo-cluster manifests are tested below but never deployed from here.
+      - "deploy/demo-cluster/**"
   workflow_dispatch:
 
 permissions:
@@ -67,14 +69,61 @@ jobs:
         run: docker build -f deploy/railway/Dockerfile -t starling-lite:ci .
 
       - name: Smoke the container
+        # No kubeconfig, like the public demo today: scan-only, cluster tools not listed.
         run: |
           set -euo pipefail
           docker run -d --name sl -e PORT=8080 -p 8080:8080 starling-lite:ci
           python3 scripts/ci/starling-lite-smoke.py --url http://127.0.0.1:8080 --revision "${GITHUB_SHA}" --wait 60
 
+      - name: Local paths stay inside the empty scan root
+        run: |
+          set -euo pipefail
+          for p in /etc/warble-army/registry.json ../etc/warble-army/registry.json; do
+            body="{\"jsonrpc\":\"2.0\",\"id\":1,\"method\":\"tools/call\",\"params\":{\"name\":\"scan_manifest\",\"arguments\":{\"path\":\"$p\"}}}"
+            out="$(curl -fsS -H 'Content-Type: application/json' -d "$body" http://127.0.0.1:8080/mcp)"
+            echo "$out" | python3 -c 'import json,sys; r=json.load(sys.stdin)["result"]; assert r.get("isError"), r; print("refused:", r["content"][0]["text"][:120])'
+          done
+
+      # warble-marketing#80: the read-only identity in deploy/demo-cluster against a
+      # throwaway kind cluster, then the same image with KUBECONFIG_B64 must answer
+      # cluster_summary. Nothing here touches a real cluster or Railway.
+      - name: Create kind cluster
+        uses: helm/kind-action@ea822c7bf1874f08e5a491df991c228edffc3376 # v1.15.2
+        with:
+          cluster_name: starling-demo
+
+      - name: Apply deploy/demo-cluster/rbac.yaml and build the read-only kubeconfig
+        run: |
+          set -euo pipefail
+          shellcheck deploy/demo-cluster/make-kubeconfig.sh
+          # The shrikeops-demo samples create these namespaces; empty ones are enough here.
+          for ns in demo broken-config broken-readiness broken-scheduling broken-hpa; do
+            kubectl create namespace "$ns"
+          done
+          kubectl apply -f deploy/demo-cluster/rbac.yaml
+          for _ in $(seq 30); do
+            [ -n "$(kubectl -n starling-demo-reader get secret starling-lite-demo-token -o jsonpath='{.data.token}')" ] && break
+            sleep 2
+          done
+          deploy/demo-cluster/make-kubeconfig.sh --context kind-starling-demo --out "${RUNNER_TEMP}/demo.kubeconfig"
+
+      - name: Smoke the container with the demo cluster attached
+        run: |
+          set -euo pipefail
+          # --network host: the kind API server listens on 127.0.0.1
+          docker run -d --name sl-cluster --network host -e PORT=8081 \
+            -e KUBECONFIG_B64="$(base64 -w0 "${RUNNER_TEMP}/demo.kubeconfig")" starling-lite:ci
+          python3 scripts/ci/starling-lite-smoke.py --url http://127.0.0.1:8081 --revision "${GITHUB_SHA}" --wait 60 --require-cluster
+          # Outside the demo namespaces, ConfigMaps stay unreadable.
+          body='{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_configmap","arguments":{"namespace":"kube-system","name":"kube-proxy"}}}'
+          curl -fsS -H 'Content-Type: application/json' -d "$body" http://127.0.0.1:8081/mcp \
+            | python3 -c 'import json,sys; r=json.load(sys.stdin)["result"]; t=r["content"][0]["text"]; assert r.get("isError") and "forbidden" in t, r; print("refused:", t[:120])'
+
       - name: Container logs
         if: always()
-        run: docker logs sl 2>&1 | tail -n 50 || true
+        run: |
+          docker logs sl 2>&1 | tail -n 50 || true
+          docker logs sl-cluster 2>&1 | tail -n 50 || true
 
   deploy:
     name: Deploy to Railway (production)

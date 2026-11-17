@@ -130,7 +130,21 @@ func DefaultCapabilities() map[string]any {
 }
 
 func DefaultInstructions() string {
-	return "Starling Lite: Kubernetes agent ops MCP. Use scan_* for manifests/Helm, " +
-		"cluster_* when kubeconfig is present, propose_remediation for dry-run fixes. " +
-		"Prefer readonly mode. Protocol: 2026-07-28 preferred; 2024-11-05 still supported."
+	return Instructions(true)
+}
+
+// Instructions describes the server to the model. Without an attached cluster
+// the live cluster tools are not listed, so say so instead of pointing at them.
+func Instructions(clusterAttached bool) string {
+	if clusterAttached {
+		return "Starling Lite: Kubernetes agent ops MCP. Use scan_* for manifests/Helm, " +
+			"cluster tools (cluster_summary, list_*, get_*) for the attached cluster, " +
+			"propose_remediation for dry-run fixes. " +
+			"Prefer readonly mode. Protocol: 2026-07-28 preferred; 2024-11-05 still supported."
+	}
+	return "Starling Lite: Kubernetes agent ops MCP. No Kubernetes cluster is attached to this " +
+		"server, so it is scan-only: pass YAML to scan_manifest (manifest=...) and use " +
+		"propose_remediation for dry-run fixes. Live cluster tools (cluster_summary, list_*, get_*) " +
+		"appear when the server has a kubeconfig; run starling-lite locally against a kind cluster " +
+		"to use them. Protocol: 2026-07-28 preferred; 2024-11-05 still supported."
 }

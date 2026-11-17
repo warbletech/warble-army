@@ -49,6 +49,8 @@ func main() {
 			log.Printf("[starling-lite] KUBECONFIG_B64 ignored: %v", err)
 		} else if path != "" {
 			*kubeconfig = path
+			// kubectl (scan_cluster_export, server-side dry-run) reads KUBECONFIG, not our flag.
+			_ = os.Setenv("KUBECONFIG", path)
 		}
 	}
 

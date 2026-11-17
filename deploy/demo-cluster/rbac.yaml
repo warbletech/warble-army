@@ -1,0 +1,159 @@
+# Read-only identity for the public Starling Lite demo (mcp.warbleoss.org).
+# warble-marketing#80. Apply to a DEDICATED demo cluster only (nothing else
+# runs there): see README.md. Nothing here is applied by CI.
+#
+# Cluster-wide: get/list/watch on what cluster_summary and the list_* tools
+# read. Never secrets, never write verbs, never wildcards.
+# ConfigMaps and pod logs (get_configmap, get_pod_logs) are readable only in the
+# demo namespaces below, through RoleBindings.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: starling-demo-reader
+  labels:
+    app.kubernetes.io/part-of: warble-army
+    pod-security.kubernetes.io/enforce: restricted
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: starling-lite-demo
+  namespace: starling-demo-reader
+automountServiceAccountToken: false
+---
+# Token for the Railway service (KUBECONFIG_B64). Revoke by deleting this
+# Secret; Kubernetes issues a new token into a re-created one.
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/service-account-token
+metadata:
+  name: starling-lite-demo-token
+  namespace: starling-demo-reader
+  annotations:
+    kubernetes.io/service-account.name: starling-lite-demo
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: starling-lite-demo-read
+  labels:
+    app.kubernetes.io/part-of: warble-army
+rules:
+  - apiGroups: [""]
+    resources: [namespaces, nodes, pods, events, services]
+    verbs: [get, list, watch]
+  - apiGroups: [apps]
+    resources: [deployments, replicasets, statefulsets, daemonsets]
+    verbs: [get, list, watch]
+  - apiGroups: [autoscaling]
+    resources: [horizontalpodautoscalers]
+    verbs: [get, list, watch]
+  - apiGroups: [events.k8s.io]
+    resources: [events]
+    verbs: [get, list, watch]
+  - apiGroups: [metrics.k8s.io]
+    resources: [pods, nodes]
+    verbs: [get, list]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: starling-lite-demo-read
+  labels:
+    app.kubernetes.io/part-of: warble-army
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: starling-lite-demo-read
+subjects:
+  - kind: ServiceAccount
+    name: starling-lite-demo
+    namespace: starling-demo-reader
+---
+# Bound per namespace only (RoleBinding), never cluster-wide.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: starling-lite-demo-read-content
+  labels:
+    app.kubernetes.io/part-of: warble-army
+rules:
+  - apiGroups: [""]
+    resources: [configmaps]
+    verbs: [get, list, watch]
+  - apiGroups: [""]
+    resources: [pods/log]
+    verbs: [get]
+---
+# Demo namespaces: shrikeops-demo k8s/broken (demo) and
+# k8s/broken/scenarios/* (broken-*). They are created by the samples, so apply
+# this file after the samples (README.md, step 3).
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: starling-lite-demo-read-content
+  namespace: demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: starling-lite-demo-read-content
+subjects:
+  - kind: ServiceAccount
+    name: starling-lite-demo
+    namespace: starling-demo-reader
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: starling-lite-demo-read-content
+  namespace: broken-config
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: starling-lite-demo-read-content
+subjects:
+  - kind: ServiceAccount
+    name: starling-lite-demo
+    namespace: starling-demo-reader
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: starling-lite-demo-read-content
+  namespace: broken-readiness
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: starling-lite-demo-read-content
+subjects:
+  - kind: ServiceAccount
+    name: starling-lite-demo
+    namespace: starling-demo-reader
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: starling-lite-demo-read-content
+  namespace: broken-scheduling
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: starling-lite-demo-read-content
+subjects:
+  - kind: ServiceAccount
+    name: starling-lite-demo
+    namespace: starling-demo-reader
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: starling-lite-demo-read-content
+  namespace: broken-hpa
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: starling-lite-demo-read-content
+subjects:
+  - kind: ServiceAccount
+    name: starling-lite-demo
+    namespace: starling-demo-reader
