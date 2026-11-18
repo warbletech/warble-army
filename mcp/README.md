@@ -1,4 +1,4 @@
-# MCP — Warble Army tool layout
+# MCP — Warble Flock tool layout
 
 Stable **tool contracts** for the flock. Implementations may live in SteadyHelm (cluster), ShrikeOps (scan), or Starling Lite (facade). Agents and IDEs should bind to these names.
 

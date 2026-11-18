@@ -1,6 +1,6 @@
 apiVersion: v2
 name: project-sandbox
-description: Isolated, least-privilege namespace for running Warble Army agent/remediation tasks against one target project.
+description: Isolated, least-privilege namespace for running Warble Flock agent/remediation tasks against one target project.
 type: application
 version: 0.1.0
 appVersion: "0.1.0"

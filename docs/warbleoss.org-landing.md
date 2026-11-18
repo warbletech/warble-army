@@ -25,7 +25,7 @@ Pills:
 - Frakma-X · LF wing (forming)  
 - Self-host CE · no phone-home  
 
-CTAs: [Try MCP live](https://starling-ex.frakma.io/lite/mcp) · [Get the army](https://github.com/warbletech/warble-army) · Easy first PR
+CTAs: [Try MCP live](https://starling-ex.frakma.io/lite/mcp) · [Get the flock](https://github.com/warbletech/warble-army) · Easy first PR
 
 ---
 
@@ -82,7 +82,7 @@ helm upgrade --install starling-ex-ce ./charts/starling-ex-ce \
 |--|---------------------------|--------------|
 | Layer | Agent ↔ cluster ops (MCP) | Platform / LLMOps openness |
 | Path | **CNCF donation (planned)** | **Linux Foundation wing** |
-| Today | warbleoss.org + army repos | frakma-oss forming under LF |
+| Today | warbleoss.org + Warble Flock repos | frakma-oss forming under LF |
 | Funding later | LFX after Sandbox + community | LF program / separate fund |
 
 ## Community

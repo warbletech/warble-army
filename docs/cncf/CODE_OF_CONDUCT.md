@@ -1,6 +1,6 @@
 # Code of Conduct
 
-Starling EX Community and the Warble Army flock adopt the [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct, version 2.1.
+Starling EX Community and the Warble Flock projects adopt the [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct, version 2.1.
 
 ## Our pledge
 

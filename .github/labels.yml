@@ -1,4 +1,4 @@
-# Label taxonomy for warble-army (source of truth; NOT auto-synced yet).
+# Label taxonomy for Warble Flock (warble-army repo; source of truth; NOT auto-synced yet).
 # Apply with a sync tool (e.g. EndBug/label-sync or `gh label create`) once a
 # maintainer approves — see docs/LABELS.md.
 # area/*

@@ -11,7 +11,7 @@ RAILWAY_IMAGE ?= starling-lite:railway
 CE_PORT ?= 8822
 
 help:
-	@echo "Warble Army targets:"
+	@echo "Warble Flock targets:"
 	@echo "  make hooks              install .githooks"
 	@echo "  make submodules         init/update submodules"
 	@echo "  make status             submodule + registry status"
