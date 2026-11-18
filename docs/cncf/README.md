@@ -10,6 +10,7 @@
 | [MAINTAINERS.md](MAINTAINERS.md) | Maintainer list |
 | [ADOPTERS.md](ADOPTERS.md) | Adopter registry |
 | [PROJECT_GOVERNANCE.md](PROJECT_GOVERNANCE.md) | Seed governance |
+| [DEPENDENCY_LICENSES.md](DEPENDENCY_LICENSES.md) | Third-party dependency licence report (regenerate with `scripts/licence-report.sh`) |
 
 **File when ready:** https://github.com/cncf/sandbox/issues/new?template=application.yml  
 

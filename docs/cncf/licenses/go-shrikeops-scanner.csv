@@ -1,0 +1,16 @@
+github.com/gabriel-vasile/mimetype,https://github.com/gabriel-vasile/mimetype/blob/v1.4.3/LICENSE,MIT
+github.com/gin-contrib/sse,https://github.com/gin-contrib/sse/blob/v0.1.0/LICENSE,MIT
+github.com/gin-gonic/gin,https://github.com/gin-gonic/gin/blob/v1.10.0/LICENSE,MIT
+github.com/go-playground/locales,https://github.com/go-playground/locales/blob/v0.14.1/LICENSE,MIT
+github.com/go-playground/universal-translator,https://github.com/go-playground/universal-translator/blob/v0.18.1/LICENSE,MIT
+github.com/go-playground/validator/v10,https://github.com/go-playground/validator/blob/v10.20.0/LICENSE,MIT
+github.com/leodido/go-urn,https://github.com/leodido/go-urn/blob/v1.4.0/LICENSE,MIT
+github.com/mattn/go-isatty,https://github.com/mattn/go-isatty/blob/v0.0.20/LICENSE,MIT
+github.com/pelletier/go-toml/v2,https://github.com/pelletier/go-toml/blob/v2.2.2/LICENSE,MIT
+github.com/ugorji/go/codec,https://github.com/ugorji/go/blob/codec/v1.2.12/codec/LICENSE,MIT
+golang.org/x/crypto/sha3,https://cs.opensource.google/go/x/crypto/+/v0.52.0:LICENSE,BSD-3-Clause
+golang.org/x/net,https://cs.opensource.google/go/x/net/+/v0.55.0:LICENSE,BSD-3-Clause
+golang.org/x/sys,https://cs.opensource.google/go/x/sys/+/v0.45.0:LICENSE,BSD-3-Clause
+golang.org/x/text,https://cs.opensource.google/go/x/text/+/v0.37.0:LICENSE,BSD-3-Clause
+google.golang.org/protobuf,https://github.com/protocolbuffers/protobuf-go/blob/v1.34.1/LICENSE,BSD-3-Clause
+gopkg.in/yaml.v3,https://github.com/go-yaml/yaml/blob/v3.0.1/LICENSE,MIT
