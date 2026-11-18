@@ -1,0 +1,44 @@
+# INTENTIONALLY MISCONFIGURED — ai-* rule fixture
+# Expected: AI-MODEL-PICKLE, AI-MODEL-UNPINNED, AI-MODEL-TRUST-REMOTE-CODE,
+#           AI-HOSTPATH-MODEL-CACHE, AI-GPU-NO-LIMIT
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: llm-server
+  namespace: ml
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: llm-server}
+  template:
+    metadata:
+      labels: {app: llm-server}
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      initContainers:
+        - name: fetch-weights
+          image: curlimages/curl:8.10.1
+          command: ["sh", "-c"]
+          args: ["curl -fsSL $MODEL_URL -o /models/pytorch_model.bin"]
+          env:
+            - name: MODEL_URL
+              value: https://example.com/models/pytorch_model.bin
+          volumeMounts:
+            - {name: model-cache, mountPath: /models}
+      containers:
+        - name: server
+          image: example/llm-server:1.2.3
+          args: ["--model", "/models", "--trust-remote-code"]
+          env:
+            - name: HF_MODEL_ID
+              value: acme/chat-7b
+          resources:
+            requests: {cpu: "2", memory: 16Gi}
+            limits: {cpu: "4", memory: 32Gi}
+          volumeMounts:
+            - {name: model-cache, mountPath: /models}
+      volumes:
+        - name: model-cache
+          hostPath:
+            path: /var/lib/huggingface

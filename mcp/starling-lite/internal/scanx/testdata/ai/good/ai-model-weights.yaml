@@ -1,0 +1,31 @@
+# Clean counterpart: safetensors, pinned revision + digest, GPU limit, emptyDir cache.
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: llm-server, namespace: ml}
+spec:
+  selector: {matchLabels: {app: llm-server}}
+  template:
+    metadata: {labels: {app: llm-server}}
+    spec:
+      nodeSelector:
+        nvidia.com/gpu.present: "true"
+      initContainers:
+        - name: fetch-weights
+          image: example/model-fetcher:1.0.0
+          args: ["--file", "model.safetensors", "--verify-sha256"]
+          env:
+            - {name: HF_MODEL_ID, value: acme/chat-7b}
+            - {name: HF_REVISION, value: 0123456789abcdef0123456789abcdef01234567}
+            - {name: MODEL_SHA256, value: 9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08}
+          volumeMounts: [{name: model-cache, mountPath: /models}]
+      containers:
+        - name: server
+          image: example/llm-server:1.2.3
+          args: ["--model", "/models/model.safetensors"]
+          resources:
+            requests: {cpu: "2", memory: 16Gi, nvidia.com/gpu: 1}
+            limits: {cpu: "4", memory: 32Gi, nvidia.com/gpu: 1}
+          volumeMounts: [{name: model-cache, mountPath: /models, readOnly: true}]
+      volumes:
+        - name: model-cache
+          emptyDir: {sizeLimit: 40Gi}

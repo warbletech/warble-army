@@ -5,7 +5,7 @@ Thin **OSS MCP facade** that loads [`../tools/registry.json`](../tools/registry.
 | Backend | Tools |
 |---------|--------|
 | **SteadyHelm** (`pkg/mcpserver`) | `list_*`, `get_*`, `cluster_summary`, writes |
-| **ShrikeOps** (`pkg/scan`) | `scan_manifest`, `scan_helm`, `scan_cluster_export` |
+| **ShrikeOps** (`pkg/scan`) + `ai-*` rules | `scan_manifest`, `scan_helm`, `scan_cluster_export`, `scan_model` (pickle opcode check) — see [`docs/safety.md`](../../docs/safety.md#ai-workloads-ai-rules) |
 | **Local patcher** | `propose_remediation`, `propose_remediation_llm` (guarded LLM fallback), `apply_remediation` (dry-run first) |
 
 ### Scan results are only graded when every scanner ran

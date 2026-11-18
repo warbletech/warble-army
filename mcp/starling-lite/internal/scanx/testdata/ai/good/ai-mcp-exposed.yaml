@@ -1,0 +1,36 @@
+# Clean counterpart: readonly MCP behind an authenticated Ingress.
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: ops-mcp, namespace: agents}
+spec:
+  selector: {matchLabels: {app: ops-mcp}}
+  template:
+    metadata: {labels: {app: ops-mcp}}
+    spec:
+      containers:
+        - name: starling-lite
+          image: ghcr.io/warbletech/starling-lite:0.3.0
+          args: ["--transport=http", "--addr=:8080", "--mode=readonly"]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: ops-mcp, namespace: agents}
+spec:
+  selector: {app: ops-mcp}
+  ports: [{port: 80, targetPort: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ops-mcp
+  namespace: agents
+  annotations:
+    nginx.ingress.kubernetes.io/auth-url: "https://oauth2.example.com/oauth2/auth"
+spec:
+  rules:
+    - host: mcp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: {service: {name: ops-mcp, port: {number: 80}}}

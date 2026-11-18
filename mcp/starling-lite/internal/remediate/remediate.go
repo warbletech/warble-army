@@ -8,6 +8,7 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/warbletech/warble-army/mcp/starling-lite/internal/scanx"
 	"gopkg.in/yaml.v3"
 )
 
@@ -79,6 +80,14 @@ type fix struct {
 func fixFor(issueKey string) (fix, bool) {
 	// Order matters: "read-only-root" / "writable-root" must not match the run-as-root case.
 	switch {
+	case containsAny(issueKey, "ai-gpu-no-limit"):
+		return fix{
+			rationale: "Set an nvidia.com/gpu limit (extended resources: requests must equal limits; adjust the count if the workload needs more than 1 GPU)",
+			container: map[string]any{"resources": map[string]any{
+				"requests": map[string]any{"nvidia.com/gpu": 1},
+				"limits":   map[string]any{"nvidia.com/gpu": 1},
+			}},
+		}, true
 	case containsAny(issueKey, "readonlyroot", "read-only-root", "readonlyfilesystem", "writable-root"):
 		return fix{
 			rationale: "Mount root filesystem read-only",
@@ -127,6 +136,9 @@ func ProposeFor(r Request) (*Proposal, error) {
 	if !known {
 		p.PatchType = "yaml-snippet"
 		p.Rationale = "Generic remediation hint — refine with the ShrikeOps finding.remediation"
+		if rule, ok := scanx.AIRules[strings.ToUpper(issueKey)]; ok {
+			p.Rationale = "No safe automatic patch for " + rule.ID + " (hint only): " + rule.Remediation
+		}
 		p.Patch = fmt.Sprintf("# issue: %s\n# resource: %s/%s (ns=%s)\n# No built-in patch for this issue; edit the %s pod spec at %s\n",
 			r.Issue, shape.kind, r.Name, r.Namespace, shape.kind, "."+strings.Join(shape.podSpecPath, "."))
 		return p, nil

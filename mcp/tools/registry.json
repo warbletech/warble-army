@@ -295,6 +295,30 @@
       }
     },
     {
+      "name": "scan_model",
+      "group": "scan",
+      "backend": "shrikeops",
+      "mode": "readonly",
+      "description": "Static picklescan-style check of a model weight file (pickle .bin/.pt/.pth/.pkl/.ckpt, torch zip, safetensors). Walks pickle opcodes and flags dangerous imports (os/subprocess/builtins.eval, ...) without ever unpickling. Local file inside the scan root or base64 bytes only; size-capped by STARLING_MODEL_MAX_BYTES (default 256 MiB). No network fetch.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "Model file path inside the scan root"
+          },
+          "bytes_base64": {
+            "type": "string",
+            "description": "Model bytes, base64 (alternative to path)"
+          },
+          "source": {
+            "type": "string",
+            "description": "Label for the report"
+          }
+        }
+      }
+    },
+    {
       "name": "propose_remediation",
       "group": "remediate",
       "backend": "starling-lite",
