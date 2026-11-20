@@ -1,0 +1,11 @@
+{
+  "schema": "warble.incident.alert/v1",
+  "id": "inc-sample-dataops-001",
+  "alert": "PipelineFreshnessSLOBreach",
+  "severity": "high",
+  "namespace": "data-platform",
+  "message": "fact_orders lag 4h (SLO 30m); Airflow DAG fail after upstream schema add column",
+  "playbook": "/playbooks/dataops-incident.md",
+  "evidence": ["task extract_orders failed SchemaError", "downstream dashboards stale"],
+  "recommended_first_action": "diagnose scheduler logs; quarantine bad partition; cost-gate backfill"
+}

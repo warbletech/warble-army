@@ -1,0 +1,11 @@
+{
+  "schema": "warble.incident.alert/v1",
+  "id": "inc-sample-devsecops-001",
+  "alert": "SecretExfiltrationSuspected",
+  "severity": "critical",
+  "namespace": "payments",
+  "message": "Falco: interactive shell + outbound curl from payments-api; DB_PASSWORD in env",
+  "playbook": "/playbooks/devsecops-incident.md",
+  "evidence": ["egress to 203.0.113.10:443", "exec into container by SA payments-api"],
+  "recommended_first_action": "diagnose_logs + network quarantine before mass secret rotation"
+}

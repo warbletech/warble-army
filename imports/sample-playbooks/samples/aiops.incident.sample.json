@@ -1,0 +1,11 @@
+{
+  "schema": "warble.incident.alert/v1",
+  "id": "inc-sample-aiops-001",
+  "alert": "LLMTokenCostSpike",
+  "severity": "high",
+  "namespace": "warblecloud-ai",
+  "message": "LLM spend 8x baseline; actor retry storm on provider 503",
+  "playbook": "/playbooks/aiops-incident.md",
+  "evidence": ["no exponential backoff", "concurrent loops uncapped"],
+  "recommended_first_action": "diagnose engine logs; cap concurrency; enforce backoff before budget raise"
+}
