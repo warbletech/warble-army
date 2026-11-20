@@ -263,3 +263,9 @@ make registry && make starling-lite && make test-mcp
 - **Submodules:** each carries its own LICENSE (Apache-2.0 for ShrikeOps / SteadyHelm / Starling release).
 
 © Warble Cloud / ChirpStack LLP.
+
+## Imported: `sample-playbooks`
+
+> **Visibility warning: merging this PR would make currently private content public.** Source [`warbletech/sample-playbooks`](https://github.com/warbletech/sample-playbooks) is **private**; this repo is **public**. The imported tree would become public under [`imports/sample-playbooks/`](imports/sample-playbooks/).
+
+The history is imported via `git subtree add` (history preserved, no squash). Contents: Army incident / Actor-Critic playbook markdown (`aiops-incident.md`, `dataops-incident.md`, `devsecops-incident.md`, `noops-incident.md`, `platform-devops-incident.md`, `sre-incident.md`), `samples/`, and `demo.cast`. A gitleaks scan of the full source history found no secrets. This PR does not archive the source.
