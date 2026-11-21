@@ -6,9 +6,17 @@ metadata:
   labels:
     {{- include "starling-ex-ce.labels" . | nindent 4 }}
   annotations:
+    {{- if not .Values.ingress.auth.enabled }}
+    {{- fail "ingress.auth.enabled must stay true when ingress.enabled is true" }}
+    {{- end }}
     {{- range $k, $v := .Values.ingress.annotations }}
     {{ $k }}: {{ $v | quote }}
     {{- end }}
+    nginx.ingress.kubernetes.io/auth-url: {{ required "ingress.auth.url is required when ingress is enabled. Point it at oauth2-proxy /oauth2/auth or another forward-auth endpoint." .Values.ingress.auth.url | quote }}
+    {{- with .Values.ingress.auth.signin }}
+    nginx.ingress.kubernetes.io/auth-signin: {{ . | quote }}
+    {{- end }}
+    nginx.ingress.kubernetes.io/auth-response-headers: {{ .Values.ingress.auth.responseHeaders | quote }}
 spec:
   {{- if .Values.ingress.className }}
   ingressClassName: {{ .Values.ingress.className }}

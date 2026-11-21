@@ -74,13 +74,41 @@ curl -sS http://127.0.0.1:8822/health
 | `image.repository` | `ghcr.io/warbletech/warble-army/starling-lite` | Chart image. Not anonymously verified. |
 | `image.tag` | empty | Required. Full git SHA already pushed by the image workflow. |
 | `serviceAccount.clusterRole` | `true` | Heron Ops read ClusterRole |
-| `ingress.enabled` | `false` | Public Ingress |
+| `ingress.enabled` | `false` | Public Ingress. Off by default. |
+| `ingress.auth.enabled` | `true` | Must stay true. The chart will not render a public Ingress without auth. |
+| `ingress.auth.url` | empty | Required when `ingress.enabled` is true. nginx `auth-url`, usually `http://oauth2-proxy.<namespace>.svc.cluster.local/oauth2/auth`. |
+| `ingress.auth.signin` | empty | Optional nginx `auth-signin` URL for the browser redirect. |
 | `publicDemoUrl` | mcp.warbleoss.org/mcp | Documented Try MCP link |
 
 ## Components
 
 - **Starling Lite** container (embeds Heron Ops + ShrikeOps)
 - ServiceAccount + ClusterRole (read-only K8s)
-- Optional Ingress with `/lite` rewrite
+- Optional Ingress with `/lite` rewrite. Enabling it also requires `ingress.auth.url`.
+
+## Ingress auth
+
+A public Ingress without auth is the `AI-MCP-INGRESS-NOAUTH` finding (warble-army#36). The chart refuses that shape: `ingress.enabled=true` with an empty `ingress.auth.url`, or with `ingress.auth.enabled=false`, fails `helm template`.
+
+Run oauth2-proxy (or another forward-auth endpoint) in the cluster, then install with a values file so the `$` in the sign-in URL is not eaten by the shell:
+
+```yaml
+ingress:
+  enabled: true
+  host: starling-ex.frakma.io
+  auth:
+    url: http://oauth2-proxy.warble-army.svc.cluster.local/oauth2/auth
+    signin: https://starling-ex.frakma.io/oauth2/start?rd=$escaped_request_uri
+image:
+  tag: "<published-git-sha>"
+```
+
+```bash
+helm upgrade --install starling-ex-ce ./charts/starling-ex-ce \
+  --namespace warble-army --create-namespace \
+  -f ingress-auth.yaml
+```
+
+nginx applies `auth-url` to every path on that Ingress, including `/lite/health`. In-cluster probes use the Service, not the Ingress. Do not apply this to a live host until the auth service answers. The Railway demo at https://mcp.warbleoss.org is a different front door and is unchanged by this chart.
 
 See [warbleoss.org](https://warbleoss.org) and [STARLING_EX_CE.md](../../docs/STARLING_EX_CE.md).

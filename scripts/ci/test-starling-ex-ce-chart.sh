@@ -30,4 +30,31 @@ if grep -q "us-central1-docker.pkg.dev" /tmp/starling-ex-ce-local.txt; then
   exit 1
 fi
 
+if helm template t "$CHART" --set image.tag=local --set ingress.enabled=true >/tmp/starling-ex-ce-noauth.txt 2>&1; then
+  echo "ingress without ingress.auth.url should fail"
+  exit 1
+fi
+if ! grep -q "ingress.auth.url is required" /tmp/starling-ex-ce-noauth.txt; then
+  echo "missing-auth error did not name ingress.auth.url"
+  cat /tmp/starling-ex-ce-noauth.txt
+  exit 1
+fi
+
+if helm template t "$CHART" --set image.tag=local --set ingress.enabled=true --set ingress.auth.enabled=false --set ingress.auth.url=http://oauth2-proxy.ns.svc/oauth2/auth >/tmp/starling-ex-ce-authoff.txt 2>&1; then
+  echo "ingress.auth.enabled=false should fail"
+  exit 1
+fi
+if ! grep -q "ingress.auth.enabled must stay true" /tmp/starling-ex-ce-authoff.txt; then
+  echo "auth-off error did not name ingress.auth.enabled"
+  cat /tmp/starling-ex-ce-authoff.txt
+  exit 1
+fi
+
+auth="$(helm template t "$CHART" --set image.tag=local --set ingress.enabled=true --set ingress.auth.url=http://oauth2-proxy.ns.svc/oauth2/auth)"
+printf '%s\n' "$auth" > /tmp/starling-ex-ce-auth.txt
+if ! grep -q 'nginx.ingress.kubernetes.io/auth-url: "http://oauth2-proxy.ns.svc/oauth2/auth"' /tmp/starling-ex-ce-auth.txt; then
+  echo "rendered ingress is missing auth-url"
+  exit 1
+fi
+
 echo "ok starling-ex-ce chart renders ${IMAGE}:<tag>"
