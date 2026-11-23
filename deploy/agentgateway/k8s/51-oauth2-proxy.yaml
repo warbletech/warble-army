@@ -1,0 +1,132 @@
+# oauth2-proxy for the public Starling Lite Ingress (deploy/agentgateway/k8s/50-ingress.yaml).
+# Not applied by CI. Do not apply until the Secret below exists, and do not
+# apply 50-ingress.yaml until this Deployment is Ready.
+#
+# Create the Secret out of band. Do not commit it.
+#   kubectl -n warblecloud-ai create secret generic oauth2-proxy \
+#     --from-literal=client-id=... \
+#     --from-literal=client-secret=... \
+#     --from-literal=cookie-secret=... \
+#     --from-literal=oidc-issuer-url=https://<dex-or-other-oidc-issuer>
+#
+# cookie-secret is 16, 24, or 32 bytes, base64 is not required by this env form.
+apiVersion: v1
+kind: Service
+metadata:
+  name: oauth2-proxy
+  namespace: warblecloud-ai
+  labels:
+    app: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/part-of: warble-army
+spec:
+  selector:
+    app: oauth2-proxy
+  ports:
+    - name: http
+      port: 4180
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth2-proxy
+  namespace: warblecloud-ai
+  labels:
+    app: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/part-of: warble-army
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth2-proxy
+  template:
+    metadata:
+      labels:
+        app: oauth2-proxy
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: oauth2-proxy
+          image: quay.io/oauth2-proxy/oauth2-proxy:v7.7.1
+          args:
+            - --http-address=0.0.0.0:4180
+            - --provider=oidc
+            - --email-domain=*
+            - --upstream=static://202
+            - --skip-jwt-bearer-tokens=false
+            - --reverse-proxy=true
+            - --set-xauthrequest=true
+          env:
+            - name: OAUTH2_PROXY_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: client-id
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: client-secret
+            - name: OAUTH2_PROXY_COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: cookie-secret
+            - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: oauth2-proxy
+                  key: oidc-issuer-url
+          ports:
+            - name: http
+              containerPort: 4180
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+          resources:
+            requests:
+              cpu: 20m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 65532
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: oauth2-proxy
+  namespace: warblecloud-ai
+  labels:
+    app: oauth2-proxy
+    app.kubernetes.io/name: oauth2-proxy
+    app.kubernetes.io/part-of: warble-army
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - starling-ex.frakma.io
+      secretName: starling-ex-lite-tls
+  rules:
+    - host: starling-ex.frakma.io
+      http:
+        paths:
+          - path: /oauth2
+            pathType: Prefix
+            backend:
+              service:
+                name: oauth2-proxy
+                port:
+                  number: 4180

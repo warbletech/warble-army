@@ -53,6 +53,14 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/enable-cors: "true"
     warblecloud.com/public-url: https://starling-ex.frakma.io/lite/mcp
+  # Auth is required whenever ingress.enabled is true. The template refuses
+  # to render an Ingress without nginx auth-url (AI-MCP-INGRESS-NOAUTH).
+  # Point url at oauth2-proxy /oauth2/auth, or an equivalent forward-auth endpoint.
+  auth:
+    enabled: true
+    url: ""
+    signin: ""
+    responseHeaders: "Authorization,X-Auth-Request-User,X-Auth-Request-Email"
   tls:
     enabled: true
     secretName: starling-ex-lite-tls
