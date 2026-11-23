@@ -1,10 +1,10 @@
-# Architecture — Warble Army
+# Architecture — Warble Flock
 
 ## Flock
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
-│                     warble-army (umbrella)                      │
+│          Warble Flock umbrella (repo: warble-army)              │
 │  docs · mcp/tools · scripts · .githooks · .gitmodules           │
 └────────────┬──────────────┬──────────────┬──────────────────────┘
              │ submodule    │ submodule    │ submodule

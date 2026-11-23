@@ -1,4 +1,4 @@
-# Maintaining Warble Army
+# Maintaining Warble Flock
 
 How to keep the umbrella, submodules, remotes, and hooks healthy.
 

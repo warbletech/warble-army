@@ -1,6 +1,6 @@
 # Security policy
 
-This is the short version for the warble-army repository. The full policy,
+This is the short version for the Warble Flock (`warble-army`) repository. The full policy,
 with supported versions and scope notes, is in
 [docs/cncf/SECURITY.md](docs/cncf/SECURITY.md).
 

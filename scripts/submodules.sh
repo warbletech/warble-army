@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Maintain warble-army git submodules: init, update, status, bump, remote-add, add.
+# Maintain Warble Flock (warble-army repo) git submodules: init, update, status, bump, remote-add, add.
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
