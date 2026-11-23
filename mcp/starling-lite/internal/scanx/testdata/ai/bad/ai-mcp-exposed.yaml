@@ -1,0 +1,59 @@
+# INTENTIONALLY MISCONFIGURED — ai-* rule fixture
+# Expected: AI-MCP-READWRITE-EXPOSED (ops-mcp), AI-MCP-INGRESS-NOAUTH (docs-mcp)
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: ops-mcp, namespace: agents}
+spec:
+  selector: {matchLabels: {app: ops-mcp}}
+  template:
+    metadata: {labels: {app: ops-mcp}}
+    spec:
+      containers:
+        - name: starling-lite
+          image: ghcr.io/warbletech/starling-lite:0.3.0
+          args: ["--transport=http", "--addr=:8080", "--mode=readwrite"]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: ops-mcp, namespace: agents}
+spec:
+  selector: {app: ops-mcp}
+  ports: [{port: 80, targetPort: 8080}]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: {name: ops-mcp, namespace: agents}
+spec:
+  rules:
+    - host: mcp.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend: {service: {name: ops-mcp, port: {number: 80}}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: docs-mcp, namespace: agents}
+spec:
+  selector: {matchLabels: {app: docs-mcp}}
+  template:
+    metadata: {labels: {app: docs-mcp}}
+    spec:
+      containers:
+        - name: mcp
+          image: example/docs-mcp-server:2.0.0
+          args: ["--mode=readonly"]
+---
+apiVersion: v1
+kind: Service
+metadata: {name: docs-mcp, namespace: agents}
+spec:
+  selector: {app: docs-mcp}
+  ports: [{port: 80}]
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata: {name: docs-mcp, namespace: agents}
+spec:
+  defaultBackend: {service: {name: docs-mcp, port: {number: 80}}}

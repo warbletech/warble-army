@@ -67,6 +67,7 @@ func Manifest(path, manifest, source string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	out = MergeAI(out, content)
 	b, err := json.MarshalIndent(out, "", "  ")
 	if err != nil {
 		return "", err
@@ -85,7 +86,11 @@ func ReportFor(manifest, source string) (Report, error) {
 	if err != nil {
 		return nil, err
 	}
-	return Normalize(raw)
+	out, err := Normalize(raw)
+	if err != nil {
+		return nil, err
+	}
+	return MergeAI(out, manifest), nil
 }
 
 // scanRoot is STARLING_SCAN_ROOT, or the working directory when that is unset.

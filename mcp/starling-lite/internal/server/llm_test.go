@@ -99,3 +99,17 @@ func TestLLMToolWithFakeProvider(t *testing.T) {
 		}
 	}
 }
+
+func TestScanModelTool(t *testing.T) {
+	s := newTestServer(t, "readonly")
+	def, ok := s.reg.ByName("scan_model")
+	if !ok || def.Mode != "readonly" {
+		t.Fatalf("scan_model registry entry: %+v %v", def, ok)
+	}
+	// protocol 0 pickle: GLOBAL posix.system + REDUCE (never executed)
+	evil := "Y3Bvc2l4CnN5c3RlbQpwMAooVmVjaG8gcHduZWQKcDEKdHAyClJwMwou"
+	r := call(s, "scan_model", map[string]any{"bytes_base64": evil})
+	if r.IsError || !strings.Contains(text(r), "unsafe") || !strings.Contains(text(r), "AI-MODEL-PICKLE-RCE") {
+		t.Fatalf("scan_model: %s", text(r))
+	}
+}
