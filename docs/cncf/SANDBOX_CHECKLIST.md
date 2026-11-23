@@ -1,4 +1,4 @@
-# CNCF Sandbox filing checklist — Starling EX Community
+# CNCF Sandbox filing checklist — warble-flock (repo: warble-army)
 
 Track readiness before opening https://github.com/cncf/sandbox/issues/new?template=application.yml
 
@@ -14,10 +14,10 @@ Track readiness before opening https://github.com/cncf/sandbox/issues/new?templa
 | ADOPTERS | ✅ template | [ADOPTERS.md](ADOPTERS.md) |
 | GOVERNANCE (project) | ✅ seed | [PROJECT_GOVERNANCE.md](PROJECT_GOVERNANCE.md) |
 | License Apache-2.0 on primary repos | ⚠️ verify each repo has LICENSE | heron-ops, shrikeops, warble-army |
-| Dependency license scan | ⬜ | Attach before filing |
+| Dependency license scan | ✅ summary in [SANDBOX_APPLICATION.md](SANDBOX_APPLICATION.md); re-run before filing |
 | Trademark legal review (name) | ⬜ | Counsel |
-| Contribution Agreement signatory | ⬜ | ChirpStack LLP |
-| TAG presentation / Day 0 GTR | ⬜ | App Delivery / Runtime |
+| Contribution Agreement signatory | ⬜ | Warblecloud, LLC (see [SANDBOX_APPLICATION.md](SANDBOX_APPLICATION.md)) |
+| TAG presentation / Day 0 GTR | ⬜ | TAG Operational Resilience; Distributed Agentic Systems initiative (TAG Workloads Foundation) |
 | File issue on cncf/sandbox | ⬜ | After checklist green |
 
 ## Pre-flight technical
@@ -25,7 +25,7 @@ Track readiness before opening https://github.com/cncf/sandbox/issues/new?templa
 | Item | Status |
 |------|--------|
 | Public repos | ✅ heron-ops, shrikeops, warble-army |
-| Live demo MCP | ✅ starling-ex.frakma.io/lite/mcp |
+| Live demo MCP | ✅ https://mcp.warbleoss.org (read-only, 5 tools, no cluster attached yet) |
 | Helm CE chart | ✅ charts/starling-ex-ce |
 | Speaking rules (not “CNCF project” yet) | ✅ GOVERNANCE.md |
 | Adopters with real orgs | ⬜ need ≥1–3 named if possible |
